@@ -1,0 +1,27 @@
+---
+import LangToggle from "./LangToggle.tsx";
+---
+
+<div class="mx-auto flex w-full max-w-[1200px] items-center justify-between px-6 py-5">
+  <div class="flex items-center gap-6">
+    <a href="/" class="flex items-center">
+      <img src="/zt-icon.png" alt="ZT" class="h-6 w-auto" style="mix-blend-mode: lighten;" />
+    </a>
+    <nav class="hidden sm:flex items-center gap-5 text-xs font-medium text-white/50">
+      <a href="/portfolio" class="transition-colors hover:text-white"><span data-lang="en">Portfolio</span><span data-lang="th">ผลงาน</span></a>
+      <a href="/about" class="transition-colors hover:text-white"><span data-lang="en">About</span><span data-lang="th">เกี่ยวกับ</span></a>
+    </nav>
+  </div>
+  <div class="flex items-center gap-2.5">
+    <LangToggle client:load />
+    <a
+      href="https://github.com/phumitchreal"
+      target="_blank"
+      rel="noopener"
+      class="inline-flex h-7 items-center gap-1.5 rounded-md bg-[#1a1a1a] px-3 text-xs font-medium text-white/80 transition-colors hover:bg-[#242424] hover:text-white"
+    >
+      <span class="flex h-3 w-3 items-center justify-center rounded-[2px] bg-white/20 text-[8px]">↗</span>
+      GitHub
+    </a>
+  </div>
+</div>

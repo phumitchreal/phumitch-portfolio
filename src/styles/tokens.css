@@ -1,0 +1,39 @@
+:root {
+  --bg: #0a0a0a;
+  --bg-ghost: #141414;
+  --surface: #111111;
+  --surface-hover: #1a1a1a;
+  --surface-muted: #0f0f0f;
+  --border: rgba(255,255,255,0.08);
+  --border-strong: rgba(255,255,255,0.14);
+  --text: #ffffff;
+  --text-body: #e8e8e8;
+  --text-muted: #8a8a8a;
+  --text-dim: #6a6a6a;
+  --accent: #ffffff;
+  --accent-hover: #e8e8e8;
+  --selection-bg: rgba(255, 255, 255, 0.18);
+  --selection-color: #ffffff;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --font-display: "Anton", "Anuphan", "LINE Seed Sans TH", system-ui, sans-serif;
+  --font-body: "Anuphan", "LINE Seed Sans TH", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+[data-theme="light"] {
+  --bg: #fafbfc;
+  --bg-ghost: #eef2f7;
+  --surface: #ffffff;
+  --surface-hover: #f8fafc;
+  --surface-muted: #f1f5f9;
+  --border: rgba(15, 23, 42, 0.08);
+  --border-strong: rgba(15, 23, 42, 0.14);
+  --text: #0f172a;
+  --text-body: #334155;
+  --text-muted: #8a8a8a;
+  --text-dim: #6a6a6a;
+  --accent: #0f172a;
+  --accent-hover: #1e293b;
+  --selection-bg: rgba(15, 23, 42, 0.15);
+  --selection-color: #0f172a;
+}

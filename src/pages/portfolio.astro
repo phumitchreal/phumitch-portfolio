@@ -1,0 +1,49 @@
+---
+import Base from "../layouts/Base.astro";
+import IsaevaNav from "../components/IsaevaNav.astro";
+import WorkGallery from "../components/WorkGallery.tsx";
+---
+
+<Base title="Work · Guitar | phumitch.space" description="Selected work of Guitar · Zexta Studio and other projects">
+  <div class="min-h-screen bg-[#0a0a0a]">
+    <IsaevaNav />
+
+    <div class="mx-auto max-w-[800px] px-6 py-8 md:py-12">
+      <div class="fade-up">
+        <p class="text-xs font-bold uppercase text-white/30" style="letter-spacing: 0.28em;">
+          <span data-lang="en">Portfolio</span
+          ><span data-lang="th">ผลงาน</span>
+        </p>
+        <h1 class="mt-4 text-[42px] font-semibold tracking-[-0.04em] leading-none text-white md:text-[56px]" style="font-family: var(--font-body)">
+          <span data-lang="en">Selected Work</span
+          ><span data-lang="th">ผลงานที่เลือก</span>
+        </h1>
+        <p class="mt-4 max-w-[560px] text-sm leading-6 text-white/40">
+          <span data-lang="en"
+            >1–2 pieces, less but more · Isaeva style. Every piece designed for real use, scalable and maintainable</span
+          ><span data-lang="th"
+            >1–2 ชิ้น น้อยแต่มาก · สไตล์ Isaeva ทุกชิ้นออกแบบเพื่อใช้งานจริง มั่นคงและดูแลง่าย</span
+          >
+        </p>
+      </div>
+
+      <div class="mt-10">
+        <WorkGallery client:load />
+      </div>
+
+      <div class="mt-8 flex flex-wrap gap-2.5">
+        <a href="/" class="inline-flex h-8 items-center gap-1.5 rounded-md border border-white/10 px-3.5 text-xs font-medium text-white/40 hover:text-white hover:border-white/20 transition-colors">
+          <span data-lang="en">← Back to Home</span
+          ><span data-lang="th">← กลับหน้าแรก</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="mx-auto flex w-full max-w-[800px] flex-wrap items-center justify-center gap-6 border-t border-white/[0.06] px-6 py-8 text-xs text-white/30">
+      <a href="/about" class="transition-colors hover:text-white"><span data-lang="en">About</span><span data-lang="th">เกี่ยวกับ</span></a>
+      <a href="/privacy" class="transition-colors hover:text-white"><span data-lang="en">Privacy</span><span data-lang="th">ความเป็นส่วนตัว</span></a>
+      <a href="/terms" class="transition-colors hover:text-white"><span data-lang="en">Terms</span><span data-lang="th">ข้อกำหนด</span></a>
+      <a href="/acceptable-use" class="transition-colors hover:text-white"><span data-lang="en">Acceptable Use</span><span data-lang="th">การใช้งานที่เหมาะสม</span></a>
+    </div>
+  </div>
+</Base>

@@ -1,0 +1,33 @@
+---
+interface Props {
+  id?: string;
+  eyebrow?: string;
+  title: string;
+  desc?: string;
+}
+const { id, eyebrow, title, desc } = Astro.props;
+---
+
+<section id={id} class="border-t py-16 md:py-24" style="border-color: var(--border)">
+  <div class="mx-auto max-w-[1200px] px-6">
+    <div class="grid gap-8 md:grid-cols-12 md:gap-12">
+      <div class="md:col-span-4">
+        {eyebrow && (
+          <p class="flex items-center gap-2 text-[11px] font-bold uppercase text-white/30" style="letter-spacing: 0.22em;">
+            {eyebrow.split(" — ").map((part, i, arr) => (
+              <>
+                <span>{part}</span>
+                {i < arr.length - 1 && <span class="text-white/20" style="letter-spacing: 0;">—</span>}
+              </>
+            ))}
+          </p>
+        )}
+        <h2 class="section-title mt-3" style="color: var(--text);">{title}</h2>
+        {desc && <p class="mt-4 text-[14px] leading-[1.7] max-w-[32ch]" style="color: var(--text-muted)">{desc}</p>}
+      </div>
+      <div class="md:col-span-8">
+        <slot />
+      </div>
+    </div>
+  </div>
+</section>

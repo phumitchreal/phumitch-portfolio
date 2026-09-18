@@ -1,0 +1,89 @@
+---
+import Base from "../layouts/Base.astro";
+import IsaevaNav from "../components/IsaevaNav.astro";
+---
+
+<Base title="Acceptable Use Policy · phumitch.space" description="Acceptable Use Policy for Phumitch Somsri's portfolio and Zexta Studio services">
+  <div class="relative min-h-screen bg-[#0a0a0a] text-white selection:bg-[#722f38] selection:text-white">
+    <div class="pointer-events-none absolute inset-x-0 top-0 h-96 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(114,47,56,0.12),transparent)]"></div>
+
+    <IsaevaNav />
+
+    <div class="relative mx-auto max-w-[800px] px-6 py-10 md:py-16">
+      <div class="fade-up space-y-3">
+        <p class="text-xs font-medium tracking-wider text-white/40">
+          <span data-lang="en">POLICIES</span>
+          <span data-lang="th">นโยบาย</span>
+        </p>
+        <h1 class="text-3xl font-semibold tracking-normal text-white md:text-5xl">
+          <span data-lang="en">Acceptable Use Policy</span>
+          <span data-lang="th">นโยบายการใช้งานที่เหมาะสม</span>
+        </h1>
+        <p class="text-xs text-white/40" style="font-family: var(--font-mono)">
+          <span data-lang="en">Last updated: September 18, 2026</span>
+          <span data-lang="th">อัปเดตล่าสุด: 18 กันยายน 2026</span>
+        </p>
+      </div>
+
+      <div class="mt-10 space-y-8 text-sm leading-relaxed text-white/70">
+        <section class="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-2">
+          <h2 class="text-base font-semibold text-white">
+            <span data-lang="en">1. Prohibited Actions</span>
+            <span data-lang="th">1. ข้อห้ามในการใช้งาน</span>
+          </h2>
+          <p>
+            <span data-lang="en">You must not attempt to disrupt, exploit, spam, or gain unauthorized access to any infrastructure, API endpoints, or Discord bots operated under phumitch.space / Zexta Studio.</span>
+            <span data-lang="th">ห้ามมิให้พยายามก่อกวน โจมตี สแปม หรือเข้าถึงระบบ โครงสร้างพื้นฐาน API หรือ Discord Bot ภายใต้ phumitch.space / Zexta Studio โดยไม่ได้รับอนุญาต</span>
+          </p>
+        </section>
+
+        <section class="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-2">
+          <h2 class="text-base font-semibold text-white">
+            <span data-lang="en">2. Automated Abuse & Scraping</span>
+            <span data-lang="th">2. การสแปมและดึงข้อมูลอัตโนมัติ</span>
+          </h2>
+          <p>
+            <span data-lang="en">Automated botting, excessive API rate limit abuse, vulnerability scanning without authorization, or malicious content scraping is strictly prohibited.</span>
+            <span data-lang="th">ห้ามใช้บอทก่อกวน ยิงคำขอเกินขีดจำกัด (Rate Limit Abuse) สแกนช่องโหว่โดยไม่ได้รับอนุญาต หรือดึงข้อมูลเว็บไซต์เพื่อนำไปใช้ในทางที่ผิด</span>
+          </p>
+        </section>
+
+        <section class="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-2">
+          <h2 class="text-base font-semibold text-white">
+            <span data-lang="en">3. Discord Bot Usage Rules</span>
+            <span data-lang="th">3. กฎการใช้งาน Discord Bot</span>
+          </h2>
+          <p>
+            <span data-lang="en">Bots provided by Zexta Studio must not be used to distribute harmful content, conduct phishing, or violate Discord's official Terms of Service & Developer Guidelines.</span>
+            <span data-lang="th">การใช้งาน Discord Bot ที่พัฒนาโดย Zexta Studio ต้องไม่ถูกนำไปใช้แจกจ่ายเนื้อหาอันเป็นเท็จ ทำ Phishing หรือละเมิดข้อกำหนดการใช้งานของ Discord</span>
+          </p>
+        </section>
+
+        <section class="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 space-y-2">
+          <h2 class="text-base font-semibold text-white">
+            <span data-lang="en">4. Enforcement & Access Restriction</span>
+            <span data-lang="th">4. การบังคับใช้และการระงับสิทธิ์</span>
+          </h2>
+          <p>
+            <span data-lang="en">Violations may result in immediate IP rate limiting, Discord bot server bans, or access revocation without prior warning.</span>
+            <span data-lang="th">หากพบการละเมิดนโยบาย ระบบอาจระงับการเข้าถึง บล็อก IP หรือแบนการใช้งาน Discord Bot ทันทีโดยไม่ต้องแจ้งให้ทราบล่วงหน้า</span>
+          </p>
+        </section>
+      </div>
+
+      <div class="mt-14 flex items-center justify-between border-t border-white/[0.06] pt-8">
+        <a href="/" class="inline-flex h-9 items-center gap-2 rounded-lg border border-white/10 bg-white/[0.02] px-4 text-xs font-medium text-white/50 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.06] hover:text-white">
+          <span data-lang="en">← Back to Home</span>
+          <span data-lang="th">← กลับหน้าแรก</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="mx-auto flex w-full max-w-[800px] flex-wrap items-center justify-center gap-6 border-t border-white/[0.06] px-6 py-8 text-xs text-white/30">
+      <a href="/about" class="transition-colors hover:text-white"><span data-lang="en">About</span><span data-lang="th">เกี่ยวกับ</span></a>
+      <a href="/privacy" class="transition-colors hover:text-white"><span data-lang="en">Privacy</span><span data-lang="th">ความเป็นส่วนตัว</span></a>
+      <a href="/terms" class="transition-colors hover:text-white"><span data-lang="en">Terms</span><span data-lang="th">ข้อกำหนด</span></a>
+      <a href="/acceptable-use" class="transition-colors hover:text-white text-white/80"><span data-lang="en">Acceptable Use</span><span data-lang="th">การใช้งานที่เหมาะสม</span></a>
+    </div>
+  </div>
+</Base>
