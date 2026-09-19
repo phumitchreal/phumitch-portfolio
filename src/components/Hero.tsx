@@ -1,4 +1,5 @@
 import { motion, useMotionValue, useSpring } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 const ease: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -133,10 +134,10 @@ export default function Hero() {
               className="mt-8 flex flex-wrap gap-3"
             >
               <a href="#work" className="group inline-flex h-10 items-center gap-2 rounded-full px-5 text-sm font-medium" style={{ background: "var(--accent)", color: "#fff" }}>
-                ดูผลงาน <span className="transition-transform group-hover:translate-x-0.5">→</span>
+                ดูผลงาน <span className="transition-transform group-hover:translate-x-0.5"><ArrowRight size={16} strokeWidth={1.5} /></span>
               </a>
               <a href="https://github.com/phumitchreal" target="_blank" rel="noopener" className="inline-flex h-10 items-center gap-2 rounded-full border px-5 text-sm font-medium hover:opacity-90" style={{ background: "var(--surface)", borderColor: "var(--border)", color: "var(--text)" }}>
-                GitHub @phumitchreal →
+                <span className="inline-flex items-center gap-2">GitHub @phumitchreal<ArrowRight size={16} strokeWidth={1.5} /></span>
               </a>
             </motion.div>
 

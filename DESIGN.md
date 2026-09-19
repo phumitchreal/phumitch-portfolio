@@ -18,6 +18,7 @@
 
 - `/` — Homepage: Hero rise, animated brand ticker, quick action pills (`/portfolio`, `/about`, Discord).
 - `/about` — About Page: Ambient burgundy glow, 2-column personal info grid, 3-card "What I Do", glassmorphism toolkit ticker & badges, monochrome social contact cards.
+- `/birthday` — Birthday Countdown (วันเกิด): the ported Framer `Count_Down` component **only** — same props/defaults and motion as the original, nothing else on the page besides the shared navbar/footer.
 - `/portfolio` — Selected Work Gallery (`1–2` featured pieces, Isaeva style).
 - `/privacy` — Privacy Policy (นโยบายความเป็นส่วนตัว).
 - `/terms` — Terms of Service (ข้อกำหนดการให้บริการ).
@@ -74,10 +75,11 @@
 
 ## 5. Component Inventory & Sources
 
-- **`src/components/IsaevaNav.astro`** — Top navigation bar for static subpages (`/about`, `/portfolio`, `/privacy`, `/terms`, `/acceptable-use`) with logo & language selector.
-- **`src/components/Nav.tsx`** — Interactive floating navigation bar for homepage with smooth scroll & language toggle.
-- **`src/components/HeroMotion.tsx`** — Homepage motion hero island (`Framer Motion`), ghost wordmark, and footer legal/about links.
+- **`src/components/SiteNav.astro`** — **Single source of truth for the site navbar**, used on every page (`/`, `/about`, `/portfolio`, `/privacy`, `/terms`, `/acceptable-use`). Same markup everywhere: `ZTIcon size={32}` logo → `/`, then `LangToggle` + GitHub pill. Rendered on `/` by `index.astro` above the hero island. Never fork this markup per page — extend the shared component instead.
+- **`src/components/Nav.tsx`** — Legacy/standalone floating nav (kept for the theme-toggle experiment, currently not routed).
+- **`src/components/HeroMotion.tsx`** — Homepage motion hero island (`Framer Motion`), ghost wordmark, and footer legal/about links. Contains no navbar — the shared `SiteNav.astro` sits above it.
 - **`src/components/AboutPage.tsx`** — Main React motion island for `/about` containing personal info grid, numbered service cards, toolkit pill grid, and monochrome social links.
+- **`src/components/BirthdayCountdown.tsx`** — Port of Framer `Count_Down` (`framer.com/m/Count-Down-yIqNhX`), the *only* content of `/birthday`. Framer's props and defaults are kept 1:1 (`targetDate`, `fontSize` 60, `gap` 30, `fontFamily` `"Inter"`, `fontWeight` 700, `tint` `#FFFFFF`, `labelColor` `#888888`, `showSeparators` off, `labels` `DAYS/HOURS/MINUTES/SECONDS`) along with its 0.65em×1.1em digit slots, spring roll-over and blur+y entrance. Only three differences: `addPropertyControls` (Framer runtime API) → typed props, the runtime Google-Fonts injection → Inter loaded once in `Base.astro`, and em-based sizing so the default resolves to Framer's 60px on desktop while still fitting a phone. Doesn't render any facts/banner/caption — that is the point.
 - **`src/components/WorkGallery.tsx`** — Interactive project gallery for `/portfolio`.
 - **`src/components/LogoBlurRow.tsx`** — Infinite horizontal tech logo blur ticker.
 

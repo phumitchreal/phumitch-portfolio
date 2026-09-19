@@ -38,18 +38,24 @@ public/
   35070.gif           # banner (kept per user choice)
   favicon.svg
 src/
-  layouts/Base.astro  # <html lang="th">, SEO, theme script, nav, footer
+  layouts/Base.astro  # <html lang="th">, SEO, theme script, ClientRouter
   pages/
-    index.astro       # Hero → AboutBrief → Work → Contact
-    about.astro       # full info-grid + countdown + skills detail
+    index.astro       # homepage → SiteNav + HeroMotion
+    about.astro       # full info-grid + skills detail
+    birthday.astro    # /birthday → SiteNav + Count_Down port (component only)
+    portfolio.astro   # selected work gallery
+    privacy.astro / terms.astro / acceptable-use.astro  # legal, same shell
   components/
-    Hero.tsx          # client:load — motion island
-    Nav.tsx           # client:load — minimal pill nav
-    ThemeToggle.tsx   # client:load — dark/light toggle (localStorage + prefers-color-scheme)
-    AboutBrief.astro  # static
-    WorkCard.astro    # static
-    Skills.astro      # static pills
-    Contact.astro     # static links
+    SiteNav.astro     # THE navbar — shared by all pages (ZTIcon + LangToggle + GitHub pill)
+    ZTIcon.tsx        # logo asset render (zt-icon.png, mix-blend lighten)
+    HeroMotion.tsx    # client:load — homepage hero island (no navbar inside)
+    Nav.tsx           # legacy floating nav + ThemeToggle.tsx — not routed
+    AboutPage.tsx     # client:load — /about island
+    BirthdayCountdown.tsx  # client:load — Framer Count_Down port (targets next 11 Aug)
+    WorkGallery.tsx   # client:load — /portfolio island
+    LangToggle.tsx    # client:load — EN/ไทย switch (localStorage → html[lang])
+    Preloader.tsx     # client:load — first-visit preloader
+    LanguageGate.tsx  # client:load — first-visit language gate
   styles/
     tokens.css        # CSS vars: colors, type scale, easing
   content/
@@ -63,6 +69,7 @@ DESIGN.md             # design system source of truth
 
 - **Conventional Commits** — `feat:`, `fix:`, `chore:`, `docs:`.
 - **Islands rule:** Only add `client:load` when motion/interactivity requires JS. Prefer `.astro` otherwise.
+- **Navbar rule:** `src/components/SiteNav.astro` is the single navbar for **every** page (`/`, `/about`, `/portfolio`, `/privacy`, `/terms`, `/acceptable-use`). Never inline a second nav bar in a page or island — edit `SiteNav.astro` once and all pages follow.
 - **No `any`, no `// @ts-ignore`.** Use `type`/`interface`.
 - **Copy:** Thai primary (`สวัสดีครับ`, `ข้อมูล`, `ผลงาน`). Keep English for tech terms (`Vibe Coding`, `Full-stack`). `lang="th"` on `<html>`.
 - **Assets:** Optimize with `astro:assets` (`Image` component). Keep originals in `public/` for direct link compatibility with `phumitch.space`.

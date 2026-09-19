@@ -28,10 +28,14 @@ body {
   overflow-wrap: break-word;
 }
 
-/* Language switching — static content carries both scripts, CSS shows the active one */
-[data-lang] { display: none; }
-html[lang="en"] [data-lang="en"],
-html[lang="th"] [data-lang="th"] { display: revert; }
+/* Language switching — static content carries both scripts, CSS shows the active one.
+   Declared inside @layer base so Tailwind utilities (e.g. `hidden` / `md:block`)
+   in the later utilities layer can override it (e.g. ghost wordmarks on mobile). */
+@layer base {
+  [data-lang] { display: none; }
+  html[lang="en"] [data-lang="en"],
+  html[lang="th"] [data-lang="th"] { display: revert; }
+}
 
 /* LangToggle active state — pure CSS, no React state involved */
 html[lang="en"] [data-act="en"],
@@ -57,6 +61,10 @@ html[lang="th"] [data-act="th"] {
   pointer-events: none;
   text-transform: uppercase;
   opacity: 0.9;
+}
+/* Smaller ghost variant (birthday page) — sits behind content, no layout height */
+.hero-ghost-sm {
+  font-size: clamp(4.5rem, 22vw, 13rem);
 }
 /* Hero title — Anuphan Heavy, tight */
 .hero-title {

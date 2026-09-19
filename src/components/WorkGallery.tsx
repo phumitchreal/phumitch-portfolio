@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 import { works } from "../content/work.ts";
 import { L, dicts } from "../i18n.ts";
 
@@ -82,7 +83,7 @@ export default function WorkGallery() {
           <p className="text-sm font-medium text-white" style={{ fontFamily: "var(--font-body)" }}><L en={dicts.en.work.moreProjects} th={dicts.th.work.moreProjects} /></p>
           <p className="mt-0.5 text-xs text-white/35" style={{ fontFamily: "var(--font-mono)" }}>zexta.xyz</p>
         </div>
-        <span className="text-lg text-white/30 transition-all duration-300 group-hover:translate-x-1 group-hover:text-white">→</span>
+        <span className="text-white/30 transition-all duration-300 group-hover:translate-x-1 group-hover:text-white"><ArrowRight size={18} strokeWidth={1.5} /></span>
       </motion.a>
     </div>
   );

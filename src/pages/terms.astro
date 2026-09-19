@@ -1,13 +1,11 @@
 ---
 import Base from "../layouts/Base.astro";
-import IsaevaNav from "../components/IsaevaNav.astro";
+import SiteNav from "../components/SiteNav.astro";
 ---
 
 <Base title="Terms of Service · phumitch.space" description="Terms of Service for Phumitch Somsri's portfolio and Zexta Studio services">
   <div class="relative min-h-screen bg-[#0a0a0a] text-white selection:bg-[#722f38] selection:text-white">
-    <div class="pointer-events-none absolute inset-x-0 top-0 h-96 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(114,47,56,0.12),transparent)]"></div>
-
-    <IsaevaNav />
+    <SiteNav />
 
     <div class="relative mx-auto max-w-[800px] px-6 py-10 md:py-16">
       <div class="fade-up space-y-3">
@@ -84,14 +82,16 @@ import IsaevaNav from "../components/IsaevaNav.astro";
 
       <div class="mt-14 flex items-center justify-between border-t border-white/[0.06] pt-8">
         <a href="/" class="inline-flex h-9 items-center gap-2 rounded-lg border border-white/10 bg-white/[0.02] px-4 text-xs font-medium text-white/50 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.06] hover:text-white">
-          <span data-lang="en">← Back to Home</span>
-          <span data-lang="th">← กลับหน้าแรก</span>
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-3.5 w-3.5 shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/></svg>
+          <span data-lang="en">Back to Home</span>
+          <span data-lang="th">กลับหน้าแรก</span>
         </a>
       </div>
     </div>
 
     <div class="mx-auto flex w-full max-w-[800px] flex-wrap items-center justify-center gap-6 border-t border-white/[0.06] px-6 py-8 text-xs text-white/30">
       <a href="/about" class="transition-colors hover:text-white"><span data-lang="en">About</span><span data-lang="th">เกี่ยวกับ</span></a>
+      <a href="/birthday" class="transition-colors hover:text-white"><span data-lang="en">Birthday</span><span data-lang="th">วันเกิด</span></a>
       <a href="/privacy" class="transition-colors hover:text-white"><span data-lang="en">Privacy</span><span data-lang="th">ความเป็นส่วนตัว</span></a>
       <a href="/terms" class="transition-colors hover:text-white text-white/80"><span data-lang="en">Terms</span><span data-lang="th">ข้อกำหนด</span></a>
       <a href="/acceptable-use" class="transition-colors hover:text-white"><span data-lang="en">Acceptable Use</span><span data-lang="th">การใช้งานที่เหมาะสม</span></a>

@@ -1,12 +1,12 @@
 ---
 import Base from "../layouts/Base.astro";
-import IsaevaNav from "../components/IsaevaNav.astro";
+import SiteNav from "../components/SiteNav.astro";
 import WorkGallery from "../components/WorkGallery.tsx";
 ---
 
 <Base title="Work · Guitar | phumitch.space" description="Selected work of Guitar · Zexta Studio and other projects">
   <div class="min-h-screen bg-[#0a0a0a]">
-    <IsaevaNav />
+    <SiteNav />
 
     <div class="mx-auto max-w-[800px] px-6 py-8 md:py-12">
       <div class="fade-up">
@@ -33,14 +33,16 @@ import WorkGallery from "../components/WorkGallery.tsx";
 
       <div class="mt-8 flex flex-wrap gap-2.5">
         <a href="/" class="inline-flex h-8 items-center gap-1.5 rounded-md border border-white/10 px-3.5 text-xs font-medium text-white/40 hover:text-white hover:border-white/20 transition-colors">
-          <span data-lang="en">← Back to Home</span
-          ><span data-lang="th">← กลับหน้าแรก</span>
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-3.5 w-3.5 shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"/></svg>
+          <span data-lang="en">Back to Home</span
+          ><span data-lang="th">กลับหน้าแรก</span>
         </a>
       </div>
     </div>
 
     <div class="mx-auto flex w-full max-w-[800px] flex-wrap items-center justify-center gap-6 border-t border-white/[0.06] px-6 py-8 text-xs text-white/30">
       <a href="/about" class="transition-colors hover:text-white"><span data-lang="en">About</span><span data-lang="th">เกี่ยวกับ</span></a>
+      <a href="/birthday" class="transition-colors hover:text-white"><span data-lang="en">Birthday</span><span data-lang="th">วันเกิด</span></a>
       <a href="/privacy" class="transition-colors hover:text-white"><span data-lang="en">Privacy</span><span data-lang="th">ความเป็นส่วนตัว</span></a>
       <a href="/terms" class="transition-colors hover:text-white"><span data-lang="en">Terms</span><span data-lang="th">ข้อกำหนด</span></a>
       <a href="/acceptable-use" class="transition-colors hover:text-white"><span data-lang="en">Acceptable Use</span><span data-lang="th">การใช้งานที่เหมาะสม</span></a>

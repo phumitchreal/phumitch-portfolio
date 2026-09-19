@@ -1,0 +1,22 @@
+---
+import ZTIcon from "./ZTIcon.tsx";
+import LangToggle from "./LangToggle.tsx";
+---
+
+<div class="mx-auto flex w-full max-w-[1200px] items-center justify-between px-6 py-5">
+  <a href="/" class="flex items-center" aria-label="Phumitch · Home">
+    <ZTIcon size={32} />
+  </a>
+  <div class="flex items-center gap-2">
+    <LangToggle client:load />
+    <a
+      href="https://github.com/phumitchreal"
+      target="_blank"
+      rel="noopener"
+      class="inline-flex h-7 items-center gap-1.5 rounded-md bg-[#1a1a1a] px-3 text-xs font-medium text-white/80 hover:bg-[#242424] hover:text-white transition-colors"
+    >
+      <span class="flex h-3 w-3 items-center justify-center rounded-[2px] bg-white/20"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="h-2 w-2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h10v10M7 7l10 10"/></svg></span>
+      GitHub
+    </a>
+  </div>
+</div>

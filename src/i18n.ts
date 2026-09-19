@@ -18,6 +18,7 @@ const en = {
     agents: "AI Agents in Use",
     work: "Work",
     about: "About",
+    birthday: "Birthday",
   },
   about: {
     eyebrow: "About",
@@ -32,6 +33,7 @@ const en = {
     terms: "Terms",
     acceptableUse: "Acceptable Use",
     status: "Status",
+    birthday: "Birthday",
   },
   personalTitle: "Personal Info",
   personal: {
@@ -64,6 +66,7 @@ const th: typeof en = {
     agents: "AI Agents ที่ใช้",
     work: "ผลงาน",
     about: "เกี่ยวกับ",
+    birthday: "วันเกิด",
   },
   about: {
     eyebrow: "เกี่ยวกับ",
@@ -78,12 +81,13 @@ const th: typeof en = {
     terms: "ข้อกำหนด",
     acceptableUse: "การใช้งานที่เหมาะสม",
     status: "สถานะ",
+    birthday: "วันเกิด",
   },
   personalTitle: "ข้อมูลส่วนตัว",
   personal: {
     fullName: ["ชื่อ-นามสกุล", "นาย ภูมิทัศน์ สมศรี"],
     nickname: ["ชื่อเล่น", "กีต้า"],
-    birthday: ["วันเกิด", "11 ส.ค. 2008"],
+    birthday: ["วันเกิด", "11 ส.ค. 2551"],
     location: ["ที่อยู่", "นครปฐม, ประเทศไทย"],
     status: ["สถานะ", "โสด"],
     education: ["การศึกษา", "ประกาศนียบัตรวิชาชีพ"],
