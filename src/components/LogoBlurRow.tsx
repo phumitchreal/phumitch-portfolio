@@ -30,6 +30,15 @@ const iconMap: Record<string, React.ComponentType<{ size?: number; className?: s
   Tools: Wrench,
 };
 
+const agentLinks: Record<string, string> = {
+  Cursor: "https://cursor.com",
+  Claude: "https://claude.ai",
+  Copilot: "https://github.com/features/copilot",
+  Antigravity: "https://antigravity.google",
+  opencode: "https://opencode.ai",
+  OpenCode: "https://opencode.ai",
+};
+
 interface Props {
   logos: { name: string }[] | string[];
   desktopCount?: number;
@@ -107,8 +116,13 @@ export default function LogoBlurRow({ logos: rawLogos, desktopCount = 3, mobileC
         return (
           <div key={i} className="group flex flex-1 items-center justify-center min-w-0">
             <AnimatePresence mode="popLayout" initial={false}>
-              <motion.div
+              <motion.a
                 key={name}
+                href={agentLinks[name]}
+                target={agentLinks[name] ? "_blank" : undefined}
+                rel={agentLinks[name] ? "noopener noreferrer" : undefined}
+                aria-label={agentLinks[name] ? `${name} — visit website` : undefined}
+                title={agentLinks[name] ? `${name} — visit website` : undefined}
                 initial={{ y: "24%", opacity: 0, filter: "blur(6px)" }}
                 animate={{ y: "0%", opacity: 1, filter: "blur(0px)" }}
                 exit={{ y: "-24%", opacity: 0, filter: "blur(6px)" }}
@@ -118,7 +132,7 @@ export default function LogoBlurRow({ logos: rawLogos, desktopCount = 3, mobileC
                   <Icon className="h-7 w-7 shrink-0 text-white" />
                   <span className="text-[16px] font-semibold tracking-[-0.01em] text-white whitespace-nowrap" style={{ fontFamily: "var(--font-body)" }}>{name}</span>
                 </div>
-              </motion.div>
+              </motion.a>
             </AnimatePresence>
           </div>
         );
