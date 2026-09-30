@@ -1,0 +1,21 @@
+---
+import FramerHomeIcon from "./FramerHomeIcon.astro";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<a
+  href="/"
+  class:list={[
+    "inline-flex h-9 items-center gap-2 rounded-lg border border-line bg-fg/[0.02] px-4 text-xs font-medium text-fg/50 transition-all duration-300 hover:border-line-strong hover:bg-fg/[0.06] hover:text-fg",
+    className,
+  ]}
+>
+  <FramerHomeIcon class="h-3.5 w-3.5 shrink-0" />
+  <span data-lang="en">Back to Home</span>
+  <span data-lang="th">กลับหน้าแรก</span>
+</a>

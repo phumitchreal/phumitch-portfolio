@@ -1,0 +1,35 @@
+---
+interface Props {
+  active?: "about" | "birthday" | "privacy" | "terms" | "acceptable-use" | "portfolio" | "studio";
+}
+
+const { active } = Astro.props;
+
+const links = [
+  { href: "/portfolio", key: "portfolio", en: "Work", th: "ผลงาน" },
+  { href: "/about", key: "about", en: "About", th: "เกี่ยวกับ" },
+  { href: "/birthday", key: "birthday", en: "Birthday", th: "วันเกิด" },
+  { href: "/privacy", key: "privacy", en: "Privacy", th: "ความเป็นส่วนตัว" },
+  { href: "/terms", key: "terms", en: "Terms", th: "ข้อกำหนด" },
+  { href: "/acceptable-use", key: "acceptable-use", en: "Acceptable Use", th: "การใช้งานที่เหมาะสม" },
+];
+---
+
+<footer
+  class="relative z-10 mx-auto flex w-full max-w-shell flex-wrap items-center justify-center gap-x-6 gap-y-3 border-t border-line px-6 py-8 text-xs"
+>
+  {
+    links.map((l) => (
+      <a
+        href={l.href}
+        class:list={[
+          "transition-colors duration-300",
+          active === l.key ? "text-fg/80 hover:text-fg" : "text-fg/30 hover:text-fg",
+        ]}
+      >
+        <span data-lang="en">{l.en}</span>
+        <span data-lang="th">{l.th}</span>
+      </a>
+    ))
+  }
+</footer>

@@ -1,0 +1,44 @@
+---
+import Base from "./Base.astro";
+import SiteNav from "../components/SiteNav.astro";
+import PageHero from "../components/PageHero.astro";
+import BackHome from "../components/BackHome.astro";
+import Footer from "../components/Footer.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  eyebrow: { en: string; th: string };
+  heading: { en: string; th: string };
+  updated: { en: string; th: string };
+  active: "privacy" | "terms" | "acceptable-use";
+}
+
+const { title, description, eyebrow, heading, updated, active } = Astro.props;
+---
+
+<Base title={title} description={description}>
+  <div class="relative flex min-h-screen flex-col bg-bg text-fg-body">
+    <SiteNav />
+
+    <main id="main" class="relative mx-auto w-full max-w-page flex-1 px-6 py-10 md:py-16">
+      <PageHero eyebrow={eyebrow}>
+        <span data-lang="en">{heading.en}</span><span data-lang="th">{heading.th}</span>
+      </PageHero>
+
+      <p class="mt-3 font-mono text-[11px] tracking-wide text-fg-dim">
+        <span data-lang="en">{updated.en}</span><span data-lang="th">{updated.th}</span>
+      </p>
+
+      <div class="prose-editorial mt-10">
+        <slot />
+      </div>
+
+      <div class="mt-14 border-t border-line pt-8">
+        <BackHome />
+      </div>
+    </main>
+
+    <Footer active={active} />
+  </div>
+</Base>

@@ -1,11 +1,11 @@
-import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import { ArrowRight } from "./FramerIcons.tsx";
 import { works } from "../content/work.ts";
 import { L, dicts } from "../i18n.ts";
-
-const ease = [0.16, 1, 0.3, 1] as const;
+import { revealProps } from "../lib/motion.ts";
 
 export default function WorkGallery() {
+  const reduced = useReducedMotion();
   return (
     <div className="mt-2">
       {works.map((w, i) => (
@@ -14,45 +14,32 @@ export default function WorkGallery() {
           href={w.href}
           target="_blank"
           rel="noopener"
-          initial={{ opacity: 0, y: 24, filter: "blur(8px)" }}
-          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.7, ease, delay: i * 0.12 }}
-          className="group -mx-4 flex items-center gap-4 rounded-xl border-t border-white/[0.06] px-4 py-7 transition-colors duration-300 hover:bg-[#141414] last:border-b md:gap-8 md:py-8"
+          {...revealProps(i, !!reduced, { y: 24, blur: 8 })}
+          className="group -mx-4 flex items-center gap-4 rounded-xl border-t border-line px-4 py-7 transition-colors duration-300 last:border-b hover:bg-fg/[0.03] md:gap-8 md:py-8"
         >
-          <span
-            className="w-7 shrink-0 text-xs tabular-nums text-white/25 transition-colors duration-300 group-hover:text-white/50"
-            style={{ fontFamily: "var(--font-mono)" }}
-          >
+          <span className="w-7 shrink-0 font-mono text-xs tabular-nums text-fg/25 transition-colors duration-300 group-hover:text-fg/50">
             {String(i + 1).padStart(2, "0")}
           </span>
 
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-3">
-              <h3
-                className="text-xl font-semibold tracking-[-0.02em] text-white/85 transition-all duration-300 group-hover:translate-x-1 group-hover:text-white md:text-[26px]"
-                style={{ fontFamily: "var(--font-body)" }}
-              >
+              <h3 className="text-xl font-semibold tracking-[-0.01em] text-fg/85 transition-all duration-300 group-hover:translate-x-1 group-hover:text-fg md:text-[26px]">
                 {w.title}
               </h3>
               {w.featured ? (
-                <span
-                  className="rounded-full border border-white/10 px-2.5 py-0.5 text-[10px] uppercase tracking-[0.14em] text-white/30"
-                  style={{ fontFamily: "var(--font-mono)" }}
-                >
+                <span className="rounded-full border border-line px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-fg/30">
                   <L en={dicts.en.work.featured} th={dicts.th.work.featured} />
                 </span>
               ) : null}
             </div>
-            <p className="mt-1.5 max-w-[520px] text-sm leading-6 text-white/35">
+            <p className="mt-1.5 max-w-[520px] text-sm leading-6 text-fg/40">
               <L en={w.desc} th={w.descTh} />
             </p>
             <div className="mt-3 flex flex-wrap gap-1.5">
               {w.tags.map((t) => (
                 <span
                   key={t}
-                  className="rounded-md border border-white/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.08em] text-white/30 transition-colors duration-300 group-hover:text-white/45"
-                  style={{ fontFamily: "var(--font-mono)" }}
+                  className="rounded-md border border-line px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-fg/30 transition-colors duration-300 group-hover:text-fg/45"
                 >
                   {t}
                 </span>
@@ -60,11 +47,8 @@ export default function WorkGallery() {
             </div>
           </div>
 
-          <span className="flex h-10 w-10 shrink-0 -translate-x-1 items-center justify-center rounded-full border border-white/10 text-white/40 transition-all duration-300 group-hover:translate-x-0 group-hover:border-white group-hover:bg-white group-hover:text-black">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M5 12h14" />
-              <path d="m12 5 7 7-7 7" />
-            </svg>
+          <span className="flex h-10 w-10 shrink-0 -translate-x-1 items-center justify-center rounded-full border border-line text-fg/40 transition-all duration-300 group-hover:translate-x-0 group-hover:border-fg group-hover:bg-fg group-hover:text-bg">
+            <ArrowRight size={16} />
           </span>
         </motion.a>
       ))}
@@ -73,17 +57,18 @@ export default function WorkGallery() {
         href="https://zexta.xyz"
         target="_blank"
         rel="noopener"
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-40px" }}
-        transition={{ duration: 0.6, ease, delay: 0.1 }}
-        className="group mt-8 flex items-center justify-between rounded-xl border border-white/[0.06] bg-[#111111] px-6 py-5 transition-colors duration-300 hover:border-white/[0.12] hover:bg-[#161616]"
+        {...revealProps(0, !!reduced, { y: 16 })}
+        className="group mt-8 flex items-center justify-between rounded-xl border border-line bg-surface px-6 py-5 transition-colors duration-300 hover:border-line-strong hover:bg-surface-hover"
       >
         <div>
-          <p className="text-sm font-medium text-white" style={{ fontFamily: "var(--font-body)" }}><L en={dicts.en.work.moreProjects} th={dicts.th.work.moreProjects} /></p>
-          <p className="mt-0.5 text-xs text-white/35" style={{ fontFamily: "var(--font-mono)" }}>zexta.xyz</p>
+          <p className="text-sm font-medium text-fg">
+            <L en={dicts.en.work.moreProjects} th={dicts.th.work.moreProjects} />
+          </p>
+          <p className="mt-0.5 font-mono text-xs text-fg/35">zexta.xyz</p>
         </div>
-        <span className="text-white/30 transition-all duration-300 group-hover:translate-x-1 group-hover:text-white"><ArrowRight size={18} strokeWidth={1.5} /></span>
+        <span className="text-fg/30 transition-all duration-300 group-hover:translate-x-1 group-hover:text-fg">
+          <ArrowRight size={18} />
+        </span>
       </motion.a>
     </div>
   );

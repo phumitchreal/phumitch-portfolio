@@ -1,0 +1,25 @@
+---
+interface Props {
+  eyebrow: { en: string; th: string };
+  lede?: { en: string; th: string };
+  class?: string;
+}
+
+const { eyebrow, lede, class: className = "" } = Astro.props;
+---
+
+<header class:list={["fade-up", className]}>
+  <p class="eyebrow">
+    <span data-lang="en">{eyebrow.en}</span><span data-lang="th">{eyebrow.th}</span>
+  </p>
+  <h1 class="page-title mt-3 text-fg">
+    <slot />
+  </h1>
+  {
+    lede ? (
+      <p class="lede mt-4">
+        <span data-lang="en">{lede.en}</span><span data-lang="th">{lede.th}</span>
+      </p>
+    ) : null
+  }
+</header>

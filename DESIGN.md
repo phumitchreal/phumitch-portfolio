@@ -1,99 +1,95 @@
-# DESIGN.md — crinoid Design System
+# DESIGN.md — crinoid Design System (Editorial v2)
 
-> Source of truth for `crinoid` portfolio. Inspired by `isaeva.xyz` editorial minimalism — content from `phumitch.space`.
-> Choices locked 2026-09-17/18: **Both+toggle (dark default) · Burgundy #722f38 accent · Editorial Glass Cards · Monochrome Vector Icons · Thai+Vercel**.
+> Source of truth for the `crinoid` portfolio. Editorial minimalism inspired by `isaeva.xyz`; content from `phumitch.space`.
+> Locked choices: **dark-first + working light toggle · Burgundy `#722f38` accent · ghost wordmark · mono micro-labels · Thai-first type**.
 
 ---
 
 ## 1. Principles
 
 1. **Editorial restraint** — one hero gesture, then stillness. Whitespace > decoration.
-2. **Ghost + pill** — giant watermark wordmark (`color: ghost`) + expanding pill CTAs are the signature. Everything else is quiet.
-3. **Motion is physics** — `cubic-bezier(.16,1,.3,1)` everywhere. Respect `prefers-reduced-motion`.
-4. **Natural Thai typography** — headings and body in Thai preserve natural letter-spacing (no heavy uppercase or cramped `tracking-tight` forced on Thai script).
+2. **Ghost + pill** — giant watermark wordmark (`--bg-ghost`) + pill CTAs are the signature. Everything else is quiet.
+3. **Motion is physics** — `cubic-bezier(.16,1,.3,1)` everywhere; every island guards `useReducedMotion()` and CSS honors `prefers-reduced-motion`.
+4. **Tokens only** — no hardcoded colors in pages/components. Missing a color? Add a token.
+5. **Thai-first typography** — natural tracking for Thai script (never forced `tracking-tight` or uppercasing).
 
 ---
 
-## 2. Pages & Routing
+## 2. Theme
 
-- `/` — Homepage: Hero rise, animated brand ticker, quick action pills (`/portfolio`, `/about`, Discord).
-- `/about` — About Page: Ambient burgundy glow, 2-column personal info grid, 3-card "What I Do", glassmorphism toolkit ticker & badges, monochrome social contact cards.
-- `/birthday` — Birthday Countdown (วันเกิด): the ported Framer `Count_Down` component **only** — same props/defaults and motion as the original, nothing else on the page besides the shared navbar/footer.
-- `/portfolio` — Selected Work Gallery (`1–2` featured pieces, Isaeva style).
-- `/privacy` — Privacy Policy (นโยบายความเป็นส่วนตัว).
-- `/terms` — Terms of Service (ข้อกำหนดการให้บริการ).
-- `/acceptable-use` — Acceptable Use Policy (นโยบายการใช้งานที่เหมาะสม).
+- **Dark (default):** `#0a0a0a` background · white foreground · burgundy accent.
+- **Light:** `#fafbfc` background · slate-900 foreground · same burgundy accent.
+- The toggle lives in `SiteNav` (`ThemeToggle.tsx`); it writes `localStorage["theme"]` and the inline `<head>` script applies it before first paint (no FOUC). The sun/moon icon swap is pure CSS on `html[data-theme]` — no hydration flash.
 
----
+### Token table (`src/styles/tokens.css`)
 
-## 3. Theme & Styling System
+| Token | Dark | Light | Use |
+|---|---|---|---|
+| `--bg` | `#0a0a0a` | `#fafbfc` | page background |
+| `--bg-ghost` | `#141414` | `#e9edf2` | ghost wordmark |
+| `--surface` | `#111111` | `#ffffff` | cards / pills |
+| `--surface-hover` | `#1a1a1a` | `#f3f6f9` | hover surface |
+| `--surface-muted` | `#0f0f0f` | `#f1f5f9` | subtle wells (code) |
+| `--line` / `--line-strong` | white 8% / 14% | slate 9% / 16% | hairlines |
+| `--text` | `#ffffff` | `#0f172a` | primary fg |
+| `--text-body` | `#e8e8e8` | `#334155` | body text |
+| `--text-muted` | `#8a8a8a` | `#64748b` | secondary text |
+| `--text-dim` | `#6a6a6a` | `#94a3b8` | tertiary / micro labels |
+| `--accent` | `#722f38` | `#722f38` | burgundy accent (selection glow, ambient) |
+| `--accent-hover` | `#8a3a44` | `#8a3a44` | accent hover · focus ring |
+| `--accent-glow` | burgundy 14% | burgundy 10% | ambient radial glow |
+| `--selection-bg` / `--selection-color` | burgundy 60% / white | burgundy 18% / deep maroon | `::selection` |
+| `--shadow-card` / `--shadow-panel` | dark elevation | soft slate elevation | cards / panels |
 
-### Theme Colors
+Type tokens: `--ff-display` (Anton), `--ff-body` (Anuphan → LINE Seed Sans TH), `--ff-mono` (JetBrains Mono).
+Fluid sizes: `--type-ghost`, `--type-ghost-sm`, `--type-hero`, `--type-page`, `--type-h2`.
+Motion tokens: `--ease`, `--ease-soft`, `--dur-fast`, `--dur`, `--dur-slow`.
 
-- **Primary Background:** `#0a0a0a` (Dark mode default)
-- **Accent Color:** `#722f38` (Burgundy glow & selection highlight)
-- **Glassmorphism Panels:** `border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05]`
-- **Text Palette:** Pure white (`#ffffff`), `text-white/70`, muted `text-white/40`, dim `text-white/30`
+### Tailwind map (in `global.css` `@theme`)
 
-### Color Tokens (`src/styles/tokens.css`)
-
-```css
---bg: #0a0a0a;
---bg-ghost: #0c0c0c;        /* hero-bg watermark */
---surface: #1a1a1a;          /* pills/cards */
---surface-hover: #242424;
---surface-muted: #161616;
---border: rgba(255,255,255,0.06);
---border-strong: rgba(255,255,255,0.12);
---text: #ffffff;
---text-body: #e0e0e0;
---text-muted: #858585;
---text-dim: #6a6a6a;
---accent: #722f38;           /* burgundy */
---accent-hover: #8a3a44;
-```
-
-### Ambient Glow
-
-```html
-<div class="pointer-events-none absolute inset-x-0 top-0 h-96 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(114,47,56,0.12),transparent)]"></div>
-```
+- Colors → utilities: `--color-bg`, `--color-surface*`, `--color-line*`, `--color-fg*`, `--color-accent*` → `bg-surface`, `text-fg/40`, `border-line`, `bg-accent`, …
+- Containers → `max-w-shell` (1200px), `max-w-page` (800px), `max-w-hero` (640px).
+- Fonts → `font-display` / `font-body` / `font-mono`.
 
 ---
 
-## 4. Icon & Vector Sources
+## 3. Pages & Routing
 
-- **UI & System Icons:** `lucide-react` (`Globe`, `ChevronRight`, `Sparkles`, `ExternalLink`, etc.).
-- **Social & Brand Vectors:** Custom solid monochrome SVG paths embedded directly in components with `fill="currentColor"`.
-  - **GitHub:** Official monochrome cat vector path (`fill="currentColor"`).
-  - **Instagram:** Solid camera glyph (`fill="currentColor"`).
-  - **Discord:** Solid Clyde logo (`fill="currentColor"`).
-  - **Website / Link:** Lucide `Globe` icon (`stroke="currentColor"`).
-- **Rule:** No raw multi-colored SVGs with hardcoded RGB fills in dark containers. Icons inherit text opacity (`text-white/40`) and hover states (`group-hover:text-white/80`).
-
----
-
-## 5. Component Inventory & Sources
-
-- **`src/components/SiteNav.astro`** — **Single source of truth for the site navbar**, used on every page (`/`, `/about`, `/portfolio`, `/privacy`, `/terms`, `/acceptable-use`). Same markup everywhere: `ZTIcon size={32}` logo → `/`, then `LangToggle` + GitHub pill. Rendered on `/` by `index.astro` above the hero island. Never fork this markup per page — extend the shared component instead.
-- **`src/components/Nav.tsx`** — Legacy/standalone floating nav (kept for the theme-toggle experiment, currently not routed).
-- **`src/components/HeroMotion.tsx`** — Homepage motion hero island (`Framer Motion`), ghost wordmark, and footer legal/about links. Contains no navbar — the shared `SiteNav.astro` sits above it.
-- **`src/components/AboutPage.tsx`** — Main React motion island for `/about` containing personal info grid, numbered service cards, toolkit pill grid, and monochrome social links.
-- **`src/components/BirthdayCountdown.tsx`** — Port of Framer `Count_Down` (`framer.com/m/Count-Down-yIqNhX`), the *only* content of `/birthday`. Framer's props and defaults are kept 1:1 (`targetDate`, `fontSize` 60, `gap` 30, `fontFamily` `"Inter"`, `fontWeight` 700, `tint` `#FFFFFF`, `labelColor` `#888888`, `showSeparators` off, `labels` `DAYS/HOURS/MINUTES/SECONDS`) along with its 0.65em×1.1em digit slots, spring roll-over and blur+y entrance. Only three differences: `addPropertyControls` (Framer runtime API) → typed props, the runtime Google-Fonts injection → Inter loaded once in `Base.astro`, and em-based sizing so the default resolves to Framer's 60px on desktop while still fitting a phone. Doesn't render any facts/banner/caption — that is the point.
-- **`src/components/WorkGallery.tsx`** — Interactive project gallery for `/portfolio`.
-- **`src/components/LogoBlurRow.tsx`** — Infinite horizontal tech logo blur ticker.
+- `/` — homepage: ghost wordmark (scroll parallax) + avatar/ticker + tagline + quick pills + AI-agent ticker + shared footer.
+- `/about` — profile grid, What I Do (3 cards), toolkit ticker + grouped badges, contact cards; ambient burgundy glow (`--accent-glow`).
+- `/portfolio` — editorial work list (numbered rows, featured badge, more-projects card).
+- `/birthday` — Framer Count_Down port (behavior 1:1); the caption date is computed at build time from the same `nextBirthday()` helper the island counts to.
+- `/privacy` `/terms` `/acceptable-use` — shared `Legal.astro` shell + `.prose-editorial` typography.
+- `/studio_lol` — hidden immersive splash (video scrim). **Deliberate exception:** fixed-dark styling, not tokenized. Trigger: double-click the hero avatar.
 
 ---
 
-## 6. Typography
+## 4. Component Inventory
 
-- **Display:** `Anton` 400 for `hero-bg`/`hero-title`.
-- **Body/UI:** `Anuphan` / `Satoshi` / `Noto Sans Thai` for glyphs.
-- **Thai Typography:** Keep tracking normal (`tracking-normal` / `tracking-wider` max). Never use `tracking-tight` or heavy uppercase transforms on Thai headings.
+| Component | Role |
+|---|---|
+| `layouts/Base.astro` | `<html>` shell: SEO + OG + Twitter meta, theme/lang inline script, `ClientRouter`, skip-link, Preloader, LanguageGate |
+| `layouts/Legal.astro` | shared legal shell (nav + PageHero + `.prose-editorial` slot + BackHome + footer) |
+| `components/SiteNav.astro` | **THE navbar** — logo → `/`, primary links, LangToggle, ThemeToggle, GitHub pill |
+| `components/Footer.astro` | shared footer link row (`active` prop highlights the current page) |
+| `components/PageHero.astro` | eyebrow + page title + optional lede (`{en,th}` props) |
+| `components/BackHome.astro` | "กลับหน้าแรก / Back to Home" pill |
+| `components/HeroMotion.tsx` | homepage island: ghost parallax, avatar (2-click easter egg → `/studio_lol`), tickers, pills |
+| `components/AboutPage.tsx` | about island (4 scroll-reveal sections) |
+| `components/WorkGallery.tsx` | portfolio island |
+| `components/BirthdayCountdown.tsx` | Framer Count_Down port; exports `nextBirthday()` |
+| `components/BlurredTicker.tsx` · `LogoBlurRow.tsx` | motion tickers (pause out of view) |
+| `components/ThemeToggle.tsx` · `LangToggle.tsx` | CSS-driven toggles (no hydration flash) |
+| `components/Preloader.tsx` · `LanguageGate.tsx` | first-visit overlays |
+| `components/ZTIcon.tsx` | sticker avatar; `.zt-icon` swaps blend mode per theme |
+| `lib/motion.ts` | `EASE`, `EASE_OUT`, `DUR`, `revealProps(i, reduced, opts)` |
+
+**Rules:** `SiteNav` / `Footer` are single sources — never inline a second nav or footer. Every island spreads `revealProps(i, reduced)` with `useReducedMotion()`.
 
 ---
 
-## 7. Workflow & Verification
+## 5. Verification
 
-1. Build & Typecheck: `pnpm build` (runs `astro check && astro build`).
-2. Deploy: `git push` → Vercel static deployment.
+1. `pnpm astro check` — types must pass.
+2. `pnpm build` — static build must pass.
+3. Smoke test: `pnpm astro dev --background` → every route in TH + EN, light + dark.

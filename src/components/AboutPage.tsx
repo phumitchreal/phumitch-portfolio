@@ -1,5 +1,22 @@
-import { motion } from "framer-motion";
-import { type LucideIcon, ArrowUpRight, Bot, Boxes, Cake, Code2, Globe, GraduationCap, Heart, Layers, Mail, MapPin, Sparkles, Tag, User, Wrench, Zap } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import {
+  ArrowUpRight,
+  Bot,
+  Boxes,
+  Cake,
+  Code,
+  Globe,
+  GraduationCap,
+  Heart,
+  Layers,
+  Mail,
+  MapPin,
+  Tag,
+  User,
+  Wrench,
+  Zap,
+  type FramerIcon,
+} from "./FramerIcons.tsx";
 import {
   Astro as TheAstro,
   Claude as TheClaude,
@@ -17,33 +34,21 @@ import {
 } from "@thesvg/react";
 import LogoBlurRow from "./LogoBlurRow.tsx";
 import { L, dicts } from "../i18n.ts";
+import { revealProps } from "../lib/motion.ts";
 
-const ease = [0.16, 1, 0.3, 1] as const;
-
-function reveal(i: number = 0) {
-  return {
-    initial: { opacity: 0, y: 20, filter: "blur(6px)" },
-    whileInView: { opacity: 1, y: 0, filter: "blur(0px)" },
-    viewport: { once: true, margin: "-40px" },
-    transition: { duration: 0.6, ease, delay: i * 0.06 },
-  };
-}
-
-function SectionHeader({ icon, title }: { icon: LucideIcon; title: React.ReactNode }) {
+function SectionHeader({ icon, title }: { icon: FramerIcon; title: React.ReactNode }) {
   const IconCmp = icon;
   return (
     <div className="flex items-center gap-2">
-      <span className="text-white/40">
-        <IconCmp size={15} strokeWidth={1.5} />
+      <span className="text-fg/40">
+        <IconCmp size={15} />
       </span>
-      <h2 className="text-xs font-semibold tracking-wider text-white/40">
-        {title}
-      </h2>
+      <h2 className="text-xs font-semibold tracking-wider text-fg/40">{title}</h2>
     </div>
   );
 }
 
-const personal: [keyof typeof dicts.en.personal, LucideIcon][] = [
+const personal: [keyof typeof dicts.en.personal, FramerIcon][] = [
   ["fullName", User],
   ["nickname", Tag],
   ["birthday", Cake],
@@ -52,11 +57,11 @@ const personal: [keyof typeof dicts.en.personal, LucideIcon][] = [
   ["education", GraduationCap],
 ];
 
-const workIcons = [Code2, Bot, Layers] as const;
+const workIcons = [Code, Bot, Layers] as const;
 
 type BrandIcon = React.ComponentType<{ className?: string }>;
 
-const stacks: [keyof typeof dicts.en.toolkit, [string, BrandIcon][], LucideIcon][] = [
+const stacks: [keyof typeof dicts.en.toolkit, [string, BrandIcon][], FramerIcon][] = [
   [
     "languages",
     [
@@ -64,7 +69,7 @@ const stacks: [keyof typeof dicts.en.toolkit, [string, BrandIcon][], LucideIcon]
       ["JavaScript", TheJavascript],
       ["Python", ThePython],
     ],
-    Code2,
+    Code,
   ],
   [
     "frameworks",
@@ -109,7 +114,7 @@ function InstagramIcon({ className }: { className?: string }) {
 function DiscordIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
+      <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" />
     </svg>
   );
 }
@@ -123,26 +128,28 @@ const socials: [string, string, string, BrandIcon][] = [
 
 export default function AboutPage() {
   const { en: enD, th: thD } = dicts;
+  const reduced = !!useReducedMotion();
+
   return (
     <div className="mt-12 space-y-16">
       {/* Personal Info Grid */}
-      <motion.section {...reveal(0)}>
+      <motion.section {...revealProps(0, reduced)}>
         <SectionHeader icon={User} title={<L en={enD.personalTitle} th={thD.personalTitle} />} />
         <div className="mt-4 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
           {personal.map(([key, IconCmp]) => (
             <div
               key={key}
-              className="group flex items-center justify-between gap-4 rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 transition-all duration-300 hover:border-white/15 hover:bg-white/[0.05]"
+              className="group flex items-center justify-between gap-4 rounded-xl border border-line bg-fg/[0.02] p-4 transition-all duration-300 hover:border-line-strong hover:bg-fg/[0.05]"
             >
               <div className="flex items-center gap-3">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] text-white/40 transition-colors duration-300 group-hover:border-white/20 group-hover:text-white/70">
-                  <IconCmp size={14} strokeWidth={1.5} />
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-line bg-fg/[0.04] text-fg/40 transition-colors duration-300 group-hover:border-line-strong group-hover:text-fg/70">
+                  <IconCmp size={14} />
                 </span>
-                <span className="text-xs font-medium text-white/40 transition-colors duration-300 group-hover:text-white/60">
+                <span className="text-xs font-medium text-fg/40 transition-colors duration-300 group-hover:text-fg/60">
                   <L en={enD.personal[key][0]} th={thD.personal[key][0]} />
                 </span>
               </div>
-              <span className="text-right text-xs font-medium text-white/85 transition-colors duration-300 group-hover:text-white">
+              <span className="text-right text-xs font-medium text-fg/85 transition-colors duration-300 group-hover:text-fg">
                 <L en={enD.personal[key][1]} th={thD.personal[key][1]} />
               </span>
             </div>
@@ -151,7 +158,7 @@ export default function AboutPage() {
       </motion.section>
 
       {/* What I Do */}
-      <motion.section {...reveal(1)}>
+      <motion.section {...revealProps(1, reduced)}>
         <SectionHeader icon={Zap} title={<L en={enD.doTitle} th={thD.doTitle} />} />
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
           {enD.do.map((_, i) => {
@@ -159,20 +166,17 @@ export default function AboutPage() {
             return (
               <div
                 key={i}
-                className="group relative flex flex-col justify-between rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.05]"
+                className="group relative flex flex-col justify-between rounded-xl border border-line bg-fg/[0.02] p-5 transition-all duration-300 hover:border-line-strong hover:bg-fg/[0.05]"
               >
                 <div className="flex items-center justify-between">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] text-white/40 transition-colors duration-300 group-hover:border-white/25 group-hover:text-white">
-                    <IconCmp size={16} strokeWidth={1.5} />
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-line bg-fg/[0.04] text-fg/40 transition-colors duration-300 group-hover:border-line-strong group-hover:text-fg">
+                    <IconCmp size={16} />
                   </span>
-                  <span
-                    className="text-xs font-bold text-white/20 transition-colors duration-300 group-hover:text-white/40"
-                    style={{ fontFamily: "var(--font-mono)" }}
-                  >
+                  <span className="font-mono text-xs font-bold text-fg/20 transition-colors duration-300 group-hover:text-fg/40">
                     0{i + 1}
                   </span>
                 </div>
-                <p className="mt-5 text-xs leading-relaxed text-white/65 transition-colors duration-300 group-hover:text-white/90">
+                <p className="mt-5 text-xs leading-relaxed text-fg/65 transition-colors duration-300 group-hover:text-fg/90">
                   <L en={enD.do[i]} th={thD.do[i]} />
                 </p>
               </div>
@@ -182,30 +186,27 @@ export default function AboutPage() {
       </motion.section>
 
       {/* Toolkit */}
-      <motion.section {...reveal(2)}>
+      <motion.section {...revealProps(2, reduced)}>
         <SectionHeader icon={Wrench} title={<L en={enD.toolkitTitle} th={thD.toolkitTitle} />} />
 
-        {/* Animated Brand Ticker Banner */}
-        <div className="mt-4 overflow-hidden rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.03] to-transparent p-2 backdrop-blur-sm">
+        <div className="mt-4 overflow-hidden rounded-2xl border border-line bg-gradient-to-b from-fg/[0.03] to-transparent p-2 backdrop-blur-sm">
           <LogoBlurRow logos={["Cursor", "Claude", "Copilot", "Antigravity", "opencode"]} desktopCount={5} mobileCount={3} />
         </div>
 
-        {/* Categorized Tech Badges */}
         <div className="mt-6 space-y-5">
           {stacks.map(([cat, tags, IconCmp]) => (
-            <div key={cat} className="rounded-xl border border-white/[0.05] bg-white/[0.01] p-4">
-              <p className="flex items-center gap-2 text-xs font-semibold tracking-wider text-white/40">
-                <IconCmp size={13} strokeWidth={1.5} className="text-white/40" />
+            <div key={cat} className="rounded-xl border border-line bg-fg/[0.01] p-4">
+              <p className="flex items-center gap-2 text-xs font-semibold tracking-wider text-fg/40">
+                <IconCmp size={13} className="text-fg/40" />
                 <L en={enD.toolkit[cat]} th={thD.toolkit[cat]} />
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
                 {tags.map(([tag, TagIcon]) => (
                   <span
                     key={tag}
-                    className="group flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-medium text-white/60 transition-all duration-300 hover:border-white/25 hover:bg-white/[0.08] hover:text-white"
-                    style={{ fontFamily: "var(--font-mono)" }}
+                    className="group flex items-center gap-2 rounded-lg border border-line bg-fg/[0.03] px-3 py-1.5 font-mono text-xs font-medium text-fg/60 transition-all duration-300 hover:border-line-strong hover:bg-fg/[0.08] hover:text-fg"
                   >
-                    <TagIcon className="h-4 w-4 shrink-0 transition-all duration-300 grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110" />
+                    <TagIcon className="h-4 w-4 shrink-0 opacity-60 grayscale transition-all duration-300 group-hover:scale-110 group-hover:opacity-100 group-hover:grayscale-0" />
                     {tag}
                   </span>
                 ))}
@@ -216,7 +217,7 @@ export default function AboutPage() {
       </motion.section>
 
       {/* Social / Contact Links */}
-      <motion.section {...reveal(3)}>
+      <motion.section {...revealProps(3, reduced)}>
         <SectionHeader icon={Mail} title={<L en={enD.contactTitle} th={thD.contactTitle} />} />
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {socials.map(([label, handle, href, IconCmp]) => (
@@ -225,28 +226,28 @@ export default function AboutPage() {
               href={href}
               target={href.startsWith("http") ? "_blank" : undefined}
               rel={href.startsWith("http") ? "noopener" : undefined}
-              className="group flex items-center justify-between gap-4 rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.06] hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)] focus-visible:outline focus-visible:outline-white/30"
-              {...reveal(0)}
+              className="group flex items-center justify-between gap-4 rounded-xl border border-line bg-fg/[0.02] p-4 transition-all duration-300 hover:border-line-strong hover:bg-fg/[0.06] hover:shadow-[var(--shadow-card)]"
+              {...revealProps(0, reduced)}
             >
               <div className="flex items-center gap-3.5">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-white/50 transition-all duration-300 group-hover:border-white/25 group-hover:bg-white/[0.1] group-hover:text-white">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-line bg-fg/[0.04] text-fg/50 transition-all duration-300 group-hover:border-line-strong group-hover:bg-fg/10 group-hover:text-fg">
                   <IconCmp className="h-4 w-4" />
                 </span>
                 <div>
-                  <p className="text-sm font-semibold text-white/90 transition-colors duration-300 group-hover:text-white">
+                  <p className="text-sm font-semibold text-fg/90 transition-colors duration-300 group-hover:text-fg">
                     {label}
                   </p>
-                  <p
-                    className="mt-0.5 text-xs text-white/40 transition-colors duration-300 group-hover:text-white/60"
-                    style={{ fontFamily: "var(--font-mono)" }}
-                  >
+                  <p className="mt-0.5 font-mono text-xs text-fg/40 transition-colors duration-300 group-hover:text-fg/60">
                     {handle}
                   </p>
                 </div>
               </div>
 
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.02] text-white/40 transition-all duration-300 group-hover:border-white group-hover:bg-white group-hover:text-black">
-                <ArrowUpRight size={15} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-line bg-fg/[0.02] text-fg/40 transition-all duration-300 group-hover:border-fg group-hover:bg-fg group-hover:text-bg">
+                <ArrowUpRight
+                  size={15}
+                  className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                />
               </span>
             </motion.a>
           ))}
@@ -255,3 +256,5 @@ export default function AboutPage() {
     </div>
   );
 }
+
+

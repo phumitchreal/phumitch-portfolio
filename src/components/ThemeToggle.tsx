@@ -1,36 +1,35 @@
-import { Moon, Sun } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Moon, Sun } from "./FramerIcons.tsx";
 
-export default function ThemeToggle() {
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
-
-  useEffect(() => {
-    const stored = localStorage.getItem("theme") as "dark" | "light" | null;
-    const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
-    const initial = stored || (prefersLight ? "light" : "dark");
-    setTheme(initial);
-    document.documentElement.setAttribute("data-theme", initial);
-  }, []);
-
+/**
+ * Light/dark switch. The icon is pure CSS (html[data-theme] selectors in
+ * global.css), so there is no hydration flash; the handler only flips the
+ * attribute + localStorage — the exact contract the inline head script reads.
+ */
+export default function ThemeToggle({ className = "" }: { className?: string }) {
   const toggle = () => {
-    const next = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    document.documentElement.setAttribute("data-theme", next);
-    localStorage.setItem("theme", next);
+    const root = document.documentElement;
+    const next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
+    root.setAttribute("data-theme", next);
+    try {
+      localStorage.setItem("theme", next);
+    } catch {}
   };
 
   return (
     <button
+      type="button"
       onClick={toggle}
-      aria-label="Toggle theme"
-      className="inline-flex h-9 w-9 items-center justify-center rounded-full border text-sm transition-colors hover:opacity-80"
-      style={{
-        background: "var(--surface)",
-        borderColor: "var(--border)",
-        color: "var(--text-muted)",
-      }}
+      aria-label="Toggle theme / สลับธีม"
+      title="Theme / ธีม"
+      className={`theme-toggle flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border border-line bg-surface text-fg/60 transition-colors duration-300 hover:bg-surface-hover hover:text-fg ${className}`}
     >
-      {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+      <span className="theme-icon theme-icon--sun">
+        <Sun size={13} />
+      </span>
+      <span className="theme-icon theme-icon--moon">
+        <Moon size={13} />
+      </span>
     </button>
   );
 }
+

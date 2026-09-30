@@ -6,7 +6,7 @@ export default function LangToggle({ className = "" }: { className?: string }) {
       key={lang}
       onClick={() => setLang(lang)}
       data-act={lang}
-      className={`cursor-pointer px-2.5 py-1.5 text-white/40 transition-colors duration-300 hover:text-white ${className}`}
+      className={`cursor-pointer px-2.5 py-1.5 text-fg/40 transition-colors duration-300 hover:text-fg ${className}`}
       style={{ fontFamily: "var(--font-mono)" }}
     >
       {label}
@@ -15,7 +15,7 @@ export default function LangToggle({ className = "" }: { className?: string }) {
 
   return (
     <div
-      className={`flex items-center overflow-hidden rounded-md border border-white/10 text-[11px] font-medium ${className}`}
+      className={`flex items-center overflow-hidden rounded-md border border-line text-[11px] font-medium ${className}`}
       style={{ fontFamily: "var(--font-mono)" }}
     >
       {btn("en", "EN")}

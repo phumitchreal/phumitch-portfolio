@@ -67,7 +67,7 @@ export default function Preloader() {
         animate={{ opacity: fading ? 0 : 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#0a0a0a]"
+        className="fixed inset-0 z-[9999] flex items-center justify-center bg-bg"
         style={{ pointerEvents: fading ? "none" : "auto" }}
       >
         <motion.div
@@ -75,7 +75,7 @@ export default function Preloader() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
-          <ZTIcon size={44} className="text-white" />
+          <ZTIcon size={56} />
         </motion.div>
       </motion.div>
     </AnimatePresence>

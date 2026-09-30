@@ -24,14 +24,14 @@ export default function LanguageGate() {
 
   if (!show) return null;
 
-  const Btn = `inline-flex h-10 cursor-pointer items-center justify-center rounded-full border border-white/15 bg-transparent px-7 text-sm font-medium text-white/80 transition-colors duration-300 hover:border-white/40 hover:bg-white/[0.04] hover:text-white focus-visible:outline focus-visible:outline-white/30`;
+  const Btn = `inline-flex h-10 cursor-pointer items-center justify-center rounded-full border border-line-strong bg-transparent px-7 text-sm font-medium text-fg/80 transition-colors duration-300 hover:border-fg/40 hover:bg-fg/[0.04] hover:text-fg`;
 
   return (
     <motion.div
       initial={{ opacity: 1 }}
       animate={{ opacity: fading ? 0 : 1 }}
       transition={{ duration: 0.45, ease: EASE }}
-      className="fixed inset-0 z-[10000] flex flex-col items-center justify-center bg-[#0a0a0a] px-6"
+      className="fixed inset-0 z-[10000] flex flex-col items-center justify-center bg-bg px-6"
       style={{ pointerEvents: fading ? "none" : "auto" }}
     >
       <motion.div
@@ -40,15 +40,15 @@ export default function LanguageGate() {
         transition={{ duration: 0.7, ease: EASE }}
         className="flex flex-col items-center text-center"
       >
-        <ZTIcon size={28} className="mb-8 text-white" />
+        <ZTIcon size={40} className="mb-8" />
 
         <h1
-          className="text-[17px] font-medium tracking-[-0.01em] text-white"
+          className="text-[17px] font-medium tracking-[-0.01em] text-fg"
           style={{ fontFamily: "var(--font-body)" }}
         >
           Choose a language
         </h1>
-        <p className="mt-1.5 text-[13px] text-white/40">เลือกภาษาเพื่อเข้าสู่เว็บไซต์</p>
+        <p className="mt-1.5 text-[13px] text-fg-muted">เลือกภาษาเพื่อเข้าสู่เว็บไซต์</p>
 
         <div className="mt-8 flex items-center gap-3">
           <button onClick={() => choose("th")} className={Btn}>
@@ -59,7 +59,7 @@ export default function LanguageGate() {
           </button>
         </div>
 
-        <p className="mt-9 font-mono text-[10px] uppercase tracking-[0.25em] text-white/20">
+        <p className="mt-9 font-mono text-[10px] uppercase tracking-[0.25em] text-fg-dim">
           Saved on this device
         </p>
       </motion.div>

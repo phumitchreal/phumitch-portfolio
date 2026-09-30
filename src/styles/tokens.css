@@ -1,39 +1,79 @@
+/* tokens.css — crinoid design system · single source of truth (Editorial v2)
+   Dark is the default theme; [data-theme="light"] overrides the same token set.
+   Everything else (@theme map, components, pages) reads ONLY these tokens. */
+
 :root {
+  /* surfaces */
   --bg: #0a0a0a;
   --bg-ghost: #141414;
   --surface: #111111;
   --surface-hover: #1a1a1a;
   --surface-muted: #0f0f0f;
-  --border: rgba(255,255,255,0.08);
-  --border-strong: rgba(255,255,255,0.14);
+
+  /* hairlines */
+  --line: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.14);
+
+  /* text scale */
   --text: #ffffff;
   --text-body: #e8e8e8;
   --text-muted: #8a8a8a;
   --text-dim: #6a6a6a;
-  --accent: #ffffff;
-  --accent-hover: #e8e8e8;
-  --selection-bg: rgba(255, 255, 255, 0.18);
+
+  /* accent — burgundy (locked 2026-09-17, restored from DESIGN.md) */
+  --accent: #722f38;
+  --accent-hover: #8a3a44;
+  --accent-glow: rgba(114, 47, 56, 0.14);
+  --selection-bg: rgba(114, 47, 56, 0.6);
   --selection-color: #ffffff;
+
+  /* elevation */
+  --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.45);
+  --shadow-panel: 0 20px 60px -20px rgba(0, 0, 0, 0.6);
+
+  /* typography */
+  --ff-display: "Anton", "Anuphan", "LINE Seed Sans TH", system-ui, sans-serif;
+  --ff-body: "Anuphan", "LINE Seed Sans TH", system-ui, sans-serif;
+  --ff-mono: "JetBrains Mono", ui-monospace, monospace;
+  --type-ghost: clamp(7rem, 36vw, 26rem);
+  --type-ghost-sm: clamp(4.5rem, 22vw, 13rem);
+  --type-hero: clamp(2.6rem, 9vw, 5.8rem);
+  --type-page: clamp(2rem, 6vw, 3.5rem);
+  --type-h2: clamp(1.6rem, 3.5vw, 2.2rem);
+
+  /* motion */
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
-  --font-display: "Anton", "Anuphan", "LINE Seed Sans TH", system-ui, sans-serif;
-  --font-body: "Anuphan", "LINE Seed Sans TH", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 160ms;
+  --dur: 300ms;
+  --dur-slow: 600ms;
+
+  color-scheme: dark;
 }
 
 [data-theme="light"] {
   --bg: #fafbfc;
-  --bg-ghost: #eef2f7;
+  --bg-ghost: #e9edf2;
   --surface: #ffffff;
-  --surface-hover: #f8fafc;
+  --surface-hover: #f3f6f9;
   --surface-muted: #f1f5f9;
-  --border: rgba(15, 23, 42, 0.08);
-  --border-strong: rgba(15, 23, 42, 0.14);
+
+  --line: rgba(15, 23, 42, 0.09);
+  --line-strong: rgba(15, 23, 42, 0.16);
+
   --text: #0f172a;
   --text-body: #334155;
-  --text-muted: #8a8a8a;
-  --text-dim: #6a6a6a;
-  --accent: #0f172a;
-  --accent-hover: #1e293b;
-  --selection-bg: rgba(15, 23, 42, 0.15);
-  --selection-color: #0f172a;
+  --text-muted: #64748b;
+  --text-dim: #94a3b8;
+
+  --accent: #722f38;
+  --accent-hover: #8a3a44;
+  --accent-glow: rgba(114, 47, 56, 0.1);
+  --selection-bg: rgba(114, 47, 56, 0.18);
+  --selection-color: #47141d;
+
+  --shadow-card: 0 8px 30px rgba(15, 23, 42, 0.08);
+  --shadow-panel: 0 20px 60px -24px rgba(15, 23, 42, 0.18);
+
+  color-scheme: light;
 }

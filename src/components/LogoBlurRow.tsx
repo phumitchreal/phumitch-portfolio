@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { Bot, Code, Cpu, Rocket, Sparkles, User, Smile, Calendar, MapPin, Heart, GraduationCap, Layers, Wrench } from "lucide-react";
+import { Bot, Code, Sparkles, User, Smile, Calendar, MapPin, Heart, GraduationCap, Layers, Wrench } from "lucide-react";
 import { Claude as ClaudeSvg, Cursor as CursorSvg, GithubCopilot, GoogleAntigravity } from "@thesvg/react";
 import OpencodeIcon from "./OpencodeIcon.tsx";
 
@@ -129,8 +129,8 @@ export default function LogoBlurRow({ logos: rawLogos, desktopCount = 3, mobileC
                 transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
               >
                 <div className="flex items-center gap-3 grayscale-[80%] opacity-85 transition-all duration-300 ease-in-out group-hover:grayscale-0 group-hover:opacity-100">
-                  <Icon className="h-7 w-7 shrink-0 text-white" />
-                  <span className="text-[16px] font-semibold tracking-[-0.01em] text-white whitespace-nowrap" style={{ fontFamily: "var(--font-body)" }}>{name}</span>
+                  <Icon className="h-7 w-7 shrink-0 text-fg" />
+                  <span className="text-[16px] font-semibold tracking-[-0.01em] text-fg whitespace-nowrap" style={{ fontFamily: "var(--font-body)" }}>{name}</span>
                 </div>
               </motion.a>
             </AnimatePresence>

@@ -1,22 +1,53 @@
 ---
 import ZTIcon from "./ZTIcon.tsx";
 import LangToggle from "./LangToggle.tsx";
+import ThemeToggle from "./ThemeToggle.tsx";
+
+const links = [
+  { href: "/portfolio", en: "Work", th: "ผลงาน" },
+  { href: "/about", en: "About", th: "เกี่ยวกับ" },
+  { href: "/birthday", en: "Birthday", th: "วันเกิด" },
+];
 ---
 
-<div class="mx-auto flex w-full max-w-[1200px] items-center justify-between px-6 py-5">
+<header class="relative z-20 mx-auto flex w-full max-w-shell items-center justify-between gap-4 px-6 py-5">
   <a href="/" class="flex items-center" aria-label="Phumitch · Home">
     <ZTIcon size={32} />
   </a>
   <div class="flex items-center gap-2">
+    <nav aria-label="Primary" class="mr-1 hidden items-center gap-0.5 md:flex">
+      {
+        links.map((l) => (
+          <a
+            href={l.href}
+            class="rounded-md px-2.5 py-1.5 text-xs font-medium text-fg/50 transition-colors duration-300 hover:text-fg"
+          >
+            <span data-lang="en">{l.en}</span><span data-lang="th">{l.th}</span>
+          </a>
+        ))
+      }
+    </nav>
     <LangToggle client:load />
+    <ThemeToggle client:load />
     <a
       href="https://github.com/phumitchreal"
       target="_blank"
       rel="noopener"
-      class="inline-flex h-7 items-center gap-1.5 rounded-md bg-[#1a1a1a] px-3 text-xs font-medium text-white/80 hover:bg-[#242424] hover:text-white transition-colors"
+      class="inline-flex h-7 items-center gap-1.5 rounded-md border border-line bg-surface px-3 text-xs font-medium text-fg/80 transition-colors duration-300 hover:bg-surface-hover hover:text-fg"
     >
-      <span class="flex h-3 w-3 items-center justify-center rounded-[2px] bg-white/20"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="h-2 w-2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h10v10M7 7l10 10"/></svg></span>
+      <span class="flex h-3 w-3 items-center justify-center rounded-[2px] bg-fg/20"
+        ><svg
+          aria-hidden="true"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="3"
+          class="h-2 w-2"
+          ><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h10v10"></path><path d="M7 17 17 7"
+          ></path></svg
+        ></span
+      >
       GitHub
     </a>
   </div>
-</div>
+</header>

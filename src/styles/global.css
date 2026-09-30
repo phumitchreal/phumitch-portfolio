@@ -2,58 +2,91 @@
 @import "./line-seed.css";
 @import "./tokens.css";
 
+/* Tailwind 4 theme map — utilities resolve to the runtime tokens above,
+   so one `data-theme` flip repaints the entire site. */
 @theme {
   --color-bg: var(--bg);
+  --color-ghost: var(--bg-ghost);
   --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-surface-muted: var(--surface-muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--text);
+  --color-fg-body: var(--text-body);
+  --color-fg-muted: var(--text-muted);
+  --color-fg-dim: var(--text-dim);
   --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+
+  --font-display: var(--ff-display);
+  --font-body: var(--ff-body);
+  --font-mono: var(--ff-mono);
+
+  --container-shell: 1200px;
+  --container-page: 800px;
+  --container-hero: 640px;
+
+  --ease-editorial: var(--ease);
 }
 
-* { scrollbar-width: thin; scrollbar-color: var(--border-strong) transparent; }
-html { scroll-behavior: smooth; }
-body {
-  background: var(--bg);
-  color: var(--text-body);
-  font-family: var(--font-body);
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  font-feature-settings: "kern" 1, "liga" 1;
-  line-height: 1.75;
-}
-::selection { background: var(--selection-bg); color: var(--selection-color); }
-
-/* Thai typography tuning */
-:lang(th) {
-  line-height: 1.85;
-  word-break: keep-all;
-  overflow-wrap: break-word;
-}
-
-/* Language switching — static content carries both scripts, CSS shows the active one.
-   Declared inside @layer base so Tailwind utilities (e.g. `hidden` / `md:block`)
-   in the later utilities layer can override it (e.g. ghost wordmarks on mobile). */
 @layer base {
+  html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
+  body {
+    background: var(--bg);
+    color: var(--text-body);
+    font-family: var(--ff-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "kern" 1, "liga" 1;
+    line-height: 1.75;
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
+  }
+
+  /* Thai typography tuning */
+  :lang(th) {
+    line-height: 1.85;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+
+  ::selection { background: var(--selection-bg); color: var(--selection-color); }
+
+  /* Language switching — static content carries both scripts, CSS shows the active one.
+     Inside @layer base so Tailwind utilities (e.g. `hidden` / `md:block`) can override it. */
   [data-lang] { display: none; }
   html[lang="en"] [data-lang="en"],
   html[lang="th"] [data-lang="th"] { display: revert; }
+
+  /* Keyboard focus — burgundy ring, visible in both themes */
+  :focus-visible { outline: 2px solid var(--accent-hover); outline-offset: 2px; }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 999px; }
 }
 
 /* LangToggle active state — pure CSS, no React state involved */
 html[lang="en"] [data-act="en"],
 html[lang="th"] [data-act="th"] {
-  background: #fff;
-  color: #000;
+  background: var(--text);
+  color: var(--bg);
   text-decoration: none;
 }
 
-/* Isaeva-style scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 999px; }
-
-/* Utility for ghost wordmark — Anton, ultra-condensed editorial, isaeva bleed */
+/* ---- Editorial type system ---- */
+.eyebrow {
+  font-family: var(--ff-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+/* Ghost wordmark — Anton, ultra-condensed editorial, isaeva bleed */
 .hero-ghost {
-  font-family: "Anton", var(--font-display);
+  font-family: var(--ff-display);
   font-weight: 400;
-  font-size: clamp(7rem, 36vw, 26rem);
+  font-size: var(--type-ghost);
   line-height: 0.8;
   letter-spacing: -0.04em;
   color: var(--bg-ghost);
@@ -63,63 +96,133 @@ html[lang="th"] [data-act="th"] {
   opacity: 0.9;
 }
 /* Smaller ghost variant (birthday page) — sits behind content, no layout height */
-.hero-ghost-sm {
-  font-size: clamp(4.5rem, 22vw, 13rem);
-}
-/* Hero title — Anuphan Heavy, tight */
+.hero-ghost-sm { font-size: var(--type-ghost-sm); }
+/* Hero title — Anuphan Bold, Thai-natural tracking */
 .hero-title {
-  font-family: var(--font-body);
+  font-family: var(--ff-body);
   font-weight: 700;
-  font-size: clamp(2.6rem, 9vw, 5.8rem);
-  line-height: 0.9;
-  letter-spacing: -0.02em;
+  font-size: var(--type-hero);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
   font-optical-sizing: auto;
+}
+/* Page title — shared by about / portfolio / legal pages */
+.page-title {
+  font-family: var(--ff-body);
+  font-weight: 600;
+  font-size: var(--type-page);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
 }
 /* Section titles — lighter than hero, more air */
 .section-title {
-  font-family: var(--font-body);
+  font-family: var(--ff-body);
   font-weight: 700;
-  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+  font-size: var(--type-h2);
   line-height: 1.1;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
+/* Page lede paragraph */
+.lede {
+  max-width: 620px;
+  font-size: clamp(0.875rem, 1.6vw, 1rem);
+  line-height: 1.8;
+  color: var(--text-muted);
+}
+
+/* ---- Ambient accent glow (about page) ---- */
+.ambient-glow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 24rem;
+  pointer-events: none;
+  background: radial-gradient(ellipse 60% 50% at 50% 0%, var(--accent-glow), transparent);
+}
+
+/* ---- Legal prose ---- */
+.prose-editorial {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  font-size: 0.875rem;
+  line-height: 1.85;
+  color: var(--text-body);
+}
+.prose-editorial section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--text) 2%, transparent);
+  padding: 1.25rem;
+}
+.prose-editorial h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.prose-editorial code {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--surface-muted);
+  padding: 0.1em 0.4em;
+  font-family: var(--ff-mono);
+  font-size: 0.85em;
+  color: var(--text);
+}
+
+/* ---- Skip link ---- */
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 10001;
+  padding: 0.5rem 0.9rem;
+  border-radius: 8px;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 0.75rem;
+  font-weight: 600;
+  transform: translateY(calc(-100% - 1.75rem));
+  transition: transform var(--dur-fast) var(--ease);
+}
+.skip-link:focus-visible { transform: translateY(0); }
+
+/* ---- ZT sticker (avatar) — lighten blend reads as a ghost sticker on dark ---- */
+.zt-icon { mix-blend-mode: lighten; }
+html[data-theme="light"] .zt-icon { mix-blend-mode: normal; }
+
+/* ---- Theme toggle icon swap — driven by data-theme, no hydration flash ---- */
+.theme-toggle .theme-icon { display: none; }
+html[data-theme="dark"] .theme-toggle .theme-icon--sun { display: block; }
+html[data-theme="light"] .theme-toggle .theme-icon--moon { display: block; }
 
 /* Fallback: if JS fails, astro-island ssr content should still be visible */
 astro-island[ssr] { display: contents; }
 
-/* Hero entrances — force visible animation even with reduced-motion (user wants to see) */
+/* Entrance — respects reduced motion below */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(30px) scale(0.98); }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
-@keyframes scaleIn {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
-}
 .fade-up {
   opacity: 0;
-  animation: fadeUp 1s cubic-bezier(.16,1,.3,1) forwards;
-}
-/* keep ghost parallax even with reduced-motion, just no transition */
-@media (prefers-reduced-motion: reduce) {
-  .hero-ghost { transition: none !important; }
-}
-
-/* Marquee */
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-.marquee-track {
-  animation: marquee 22s linear infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .marquee-track { animation: none; }
+  animation: fadeUp 1s var(--ease) forwards;
 }
 
 /* View transitions — soft crossfade with the site's easing */
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-timing-function: var(--ease);
   animation-duration: 0.35s;
+}
+
+/* Reduced motion — respect it everywhere */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .fade-up { animation: none; opacity: 1; }
+  .hero-ghost { transition: none !important; }
 }

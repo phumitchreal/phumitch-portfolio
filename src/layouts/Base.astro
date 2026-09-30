@@ -7,33 +7,50 @@ import { ClientRouter } from "astro:transitions";
 interface Props {
   title?: string;
   description?: string;
+  ogImage?: string;
 }
 const {
   title = "Phumitch Somsri · Guitar | Vibe Coding Full-stack",
   description = "Expert in prompting AI to build production websites · Vibe Coding ◆ Full-stack · Zexta Studio",
+  ogImage = "/zt-icon.png",
 } = Astro.props;
 ---
 
-<html lang="en" data-theme="dark">
+<html lang="th" data-theme="dark">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
+
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#fafbfc" media="(prefers-color-scheme: light)" />
+
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&family=Anton&family=Inter:wght@100..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&family=Anton&family=Inter:wght@100..900&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
     <title>{title}</title>
+
     <script is:inline data-astro-rerun>
       (function () {
         try {
+          // Dark is the default theme (DESIGN.md); a stored choice always wins.
           var stored = localStorage.getItem("theme");
-          var prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
-          var theme = stored || (prefersLight ? "light" : "dark");
+          var theme = stored === "light" ? "light" : "dark";
           document.documentElement.setAttribute("data-theme", theme);
 
           var lang = localStorage.getItem("crinoid_lang");
@@ -41,9 +58,11 @@ const {
         } catch (_) {}
       })();
     </script>
+
     <ClientRouter />
   </head>
   <body>
+    <a class="skip-link" href="#main">ข้ามไปที่เนื้อหา / Skip to content</a>
     <Preloader client:load />
     <LanguageGate client:load />
     <slot />

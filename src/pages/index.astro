@@ -2,11 +2,15 @@
 import Base from "../layouts/Base.astro";
 import SiteNav from "../components/SiteNav.astro";
 import HeroMotion from "../components/HeroMotion.tsx";
+import Footer from "../components/Footer.astro";
 ---
 
 <Base>
-  <div class="relative flex min-h-[100dvh] flex-col bg-[#0a0a0a]">
+  <div class="relative flex min-h-[100dvh] flex-col bg-bg text-fg-body">
     <SiteNav />
-    <HeroMotion client:load />
+    <main id="main" class="flex flex-1 flex-col">
+      <HeroMotion client:load />
+    </main>
+    <Footer />
   </div>
 </Base>
