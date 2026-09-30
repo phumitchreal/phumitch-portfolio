@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { Bot, Code, Sparkles, User, Smile, Calendar, MapPin, Heart, GraduationCap, Layers, Wrench } from "lucide-react";
+import { CalendarBlankIcon as CalendarBlank, CodeIcon as Code, GraduationCapIcon as GraduationCap, HeartIcon as Heart, MapPinIcon as MapPin, RobotIcon as Robot, SmileyIcon as Smiley, SparkleIcon as Sparkle, StackIcon as Stack, UserIcon as User, WrenchIcon as Wrench } from "@phosphor-icons/react";
 import { Claude as ClaudeSvg, Cursor as CursorSvg, GithubCopilot, GoogleAntigravity } from "@thesvg/react";
 import OpencodeIcon from "./OpencodeIcon.tsx";
 
@@ -11,22 +11,22 @@ const iconMap: Record<string, React.ComponentType<{ size?: number; className?: s
   opencode: OpencodeIcon,
   OpenCode: OpencodeIcon,
   Antigravity: GoogleAntigravity as any,
-  Vibe: Sparkles,
+  Vibe: Sparkle,
   "ชื่อจริง": User,
-  "ชื่อเล่น": Smile,
-  "วันเกิด": Calendar,
+  "ชื่อเล่น": Smiley,
+  "วันเกิด": CalendarBlank,
   "ที่อยู่": MapPin,
   "สถานะ": Heart,
   "การศึกษา": GraduationCap,
   "Full Name": User,
-  Nickname: Smile,
-  Birthday: Calendar,
+  Nickname: Smiley,
+  Birthday: CalendarBlank,
   Location: MapPin,
   Status: Heart,
   Education: GraduationCap,
-  AI: Bot,
+  AI: Robot,
   Lang: Code,
-  FW: Layers,
+  FW: Stack,
   Tools: Wrench,
 };
 

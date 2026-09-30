@@ -1,4 +1,4 @@
-import { Book, Cake, Chat, Bag } from "./FramerIcons.tsx";
+import { BookOpenIcon as BookOpen, BriefcaseIcon as Briefcase, CakeIcon as Cake, DiscordLogoIcon as DiscordLogo } from "@phosphor-icons/react";
 import { motion, AnimatePresence, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { useState, useRef } from "react";
 import ZTIcon from "./ZTIcon.tsx";
@@ -113,16 +113,16 @@ export default function HeroMotion() {
           className="mt-8 flex flex-wrap items-center justify-center gap-2.5"
         >
           <a href="/portfolio" className="inline-flex h-8 items-center gap-1.5 rounded-md border border-line bg-surface px-3.5 text-xs font-medium text-fg/80 transition-colors duration-300 hover:bg-surface-hover hover:text-fg">
-            <Bag size={12} className="opacity-60" /> <L en={enD.home.work} th={thD.home.work} />
+            <Briefcase size={14} weight="bold" className="opacity-60" /> <L en={enD.home.work} th={thD.home.work} />
           </a>
           <a href="/about" className="inline-flex h-8 items-center gap-1.5 rounded-md border border-line bg-surface px-3.5 text-xs font-medium text-fg/80 transition-colors duration-300 hover:bg-surface-hover hover:text-fg">
-            <Book size={12} className="opacity-60" /> <L en={enD.home.about} th={thD.home.about} />
+            <BookOpen size={14} weight="bold" className="opacity-60" /> <L en={enD.home.about} th={thD.home.about} />
           </a>
           <a href="/birthday" className="inline-flex h-8 items-center gap-1.5 rounded-md border border-line bg-surface px-3.5 text-xs font-medium text-fg/80 transition-colors duration-300 hover:bg-surface-hover hover:text-fg">
-            <Cake size={12} className="opacity-60" /> <L en={enD.home.birthday} th={thD.home.birthday} />
+            <Cake size={14} weight="bold" className="opacity-60" /> <L en={enD.home.birthday} th={thD.home.birthday} />
           </a>
           <a href="https://discord.com/users/919878532228841532" target="_blank" rel="noopener" className="inline-flex h-8 items-center gap-1.5 rounded-md border border-line bg-surface px-3.5 text-xs font-medium text-fg/80 transition-colors duration-300 hover:bg-surface-hover hover:text-fg">
-            <Chat size={12} className="opacity-60" /> Discord
+            <DiscordLogo size={14} weight="bold" className="opacity-60" /> Discord
           </a>
         </motion.div>
 

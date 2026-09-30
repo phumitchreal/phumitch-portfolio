@@ -88,7 +88,15 @@ Motion tokens: `--ease`, `--ease-soft`, `--dur-fast`, `--dur`, `--dur-slow`.
 
 ---
 
-## 5. Verification
+## 5. Icons & Vectors
+
+- **UI icons — `@phosphor-icons/react`** (single family, `currentColor`): weight rule **`bold` at ≤14px, `regular` at ≥15px**. Works in islands *and* server-rendered `.astro` (no hydration cost).
+- **Brand / tech logos — `@thesvg/react`** (colored; grayscale → color on hover) plus solid custom marks for GitHub / Instagram / Discord / opencode.
+- Never mix in other icon sets or hand-drawn chunky strokes.
+
+---
+
+## 6. Verification
 
 1. `pnpm astro check` — types must pass.
 2. `pnpm build` — static build must pass.

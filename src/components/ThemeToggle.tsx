@@ -1,4 +1,4 @@
-import { Moon, Sun } from "./FramerIcons.tsx";
+import { MoonIcon as Moon, SunIcon as Sun } from "@phosphor-icons/react";
 
 /**
  * Light/dark switch. The icon is pure CSS (html[data-theme] selectors in
@@ -24,10 +24,10 @@ export default function ThemeToggle({ className = "" }: { className?: string }) 
       className={`theme-toggle flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border border-line bg-surface text-fg/60 transition-colors duration-300 hover:bg-surface-hover hover:text-fg ${className}`}
     >
       <span className="theme-icon theme-icon--sun">
-        <Sun size={13} />
+        <Sun size={14} weight="bold" />
       </span>
       <span className="theme-icon theme-icon--moon">
-        <Moon size={13} />
+        <Moon size={14} weight="bold" />
       </span>
     </button>
   );

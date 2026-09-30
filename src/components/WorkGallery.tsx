@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight } from "./FramerIcons.tsx";
+import { ArrowRightIcon as ArrowRight } from "@phosphor-icons/react";
 import { works } from "../content/work.ts";
 import { L, dicts } from "../i18n.ts";
 import { revealProps } from "../lib/motion.ts";
@@ -48,7 +48,7 @@ export default function WorkGallery() {
           </div>
 
           <span className="flex h-10 w-10 shrink-0 -translate-x-1 items-center justify-center rounded-full border border-line text-fg/40 transition-all duration-300 group-hover:translate-x-0 group-hover:border-fg group-hover:bg-fg group-hover:text-bg">
-            <ArrowRight size={16} />
+            <ArrowRight size={16} weight="bold" />
           </span>
         </motion.a>
       ))}
@@ -67,7 +67,7 @@ export default function WorkGallery() {
           <p className="mt-0.5 font-mono text-xs text-fg/35">zexta.xyz</p>
         </div>
         <span className="text-fg/30 transition-all duration-300 group-hover:translate-x-1 group-hover:text-fg">
-          <ArrowRight size={18} />
+          <ArrowRight size={18} weight="bold" />
         </span>
       </motion.a>
     </div>

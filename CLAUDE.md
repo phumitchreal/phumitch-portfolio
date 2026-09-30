@@ -43,7 +43,7 @@ src/
     BirthdayCountdown.tsx # Framer Count_Down port + nextBirthday()
     BlurredTicker.tsx · LogoBlurRow.tsx · ZTIcon.tsx
     ThemeToggle.tsx · LangToggle.tsx · Preloader.tsx · LanguageGate.tsx
-    FramerIcons.tsx · FramerHomeIcon.astro · OpencodeIcon.tsx
+    OpencodeIcon.tsx
   lib/motion.ts           # EASE / DUR / revealProps(i, reduced) — all islands use these
   styles/tokens.css       # design tokens — SINGLE SOURCE (see DESIGN.md §2)
   styles/global.css       # tailwind import + @theme map + editorial classes + prose + skip link
@@ -53,6 +53,7 @@ src/
 ## Conventions
 
 - **Tokens only.** Style via the Tailwind map (`bg-surface`, `text-fg/40`, `border-line`, `max-w-page`…). Never hardcode hexes in pages/components — if a value is missing, add it to `tokens.css` + the `@theme` map.
+- **Icons:** UI icons — `@phosphor-icons/react` (one family; weight **`bold` at ≤14px, `regular` at ≥15px**; color via `currentColor`). Brand/tech logos — `@thesvg/react` + solid custom marks (GitHub / Instagram / Discord / opencode). Never mix other icon sets.
 - **Islands rule:** `client:load` only when motion/interactivity requires JS; otherwise plain `.astro`.
 - **Motion guard:** every island uses `useReducedMotion()` and spreads `revealProps(i, reduced)` from `lib/motion.ts`. CSS honors `prefers-reduced-motion` globally.
 - **Navbar/footer rule:** `SiteNav.astro` and `Footer.astro` are single sources shared by every page. Never inline a second nav/footer — extend the shared components.

@@ -1,22 +1,28 @@
 import { motion, useReducedMotion } from "framer-motion";
 import {
-  ArrowUpRight,
-  Bot,
-  Boxes,
-  Cake,
-  Code,
-  Globe,
-  GraduationCap,
-  Heart,
-  Layers,
-  Mail,
-  MapPin,
-  Tag,
-  User,
-  Wrench,
-  Zap,
-  type FramerIcon,
-} from "./FramerIcons.tsx";
+  ArrowUpRightIcon as ArrowUpRight,
+  CakeIcon as Cake,
+  CodeIcon as Code,
+  EnvelopeSimpleIcon as EnvelopeSimple,
+  GlobeSimpleIcon as GlobeSimple,
+  GraduationCapIcon as GraduationCap,
+  HeartIcon as Heart,
+  LightningIcon as Lightning,
+  MapPinIcon as MapPin,
+  RobotIcon as Robot,
+  SquaresFourIcon as SquaresFour,
+  StackIcon as Stack,
+  TagIcon as Tag,
+  UserIcon as User,
+  WrenchIcon as Wrench,
+} from "@phosphor-icons/react";
+
+/** Any Phosphor icon component — keeps section/prop types readable. */
+type UIcon = React.ComponentType<{
+  size?: number | string;
+  weight?: "thin" | "light" | "regular" | "bold" | "fill" | "duotone";
+  className?: string;
+}>;
 import {
   Astro as TheAstro,
   Claude as TheClaude,
@@ -36,19 +42,19 @@ import LogoBlurRow from "./LogoBlurRow.tsx";
 import { L, dicts } from "../i18n.ts";
 import { revealProps } from "../lib/motion.ts";
 
-function SectionHeader({ icon, title }: { icon: FramerIcon; title: React.ReactNode }) {
+function SectionHeader({ icon, title }: { icon: UIcon; title: React.ReactNode }) {
   const IconCmp = icon;
   return (
     <div className="flex items-center gap-2">
       <span className="text-fg/40">
-        <IconCmp size={15} />
+        <IconCmp size={16} weight="regular" />
       </span>
       <h2 className="text-xs font-semibold tracking-wider text-fg/40">{title}</h2>
     </div>
   );
 }
 
-const personal: [keyof typeof dicts.en.personal, FramerIcon][] = [
+const personal: [keyof typeof dicts.en.personal, UIcon][] = [
   ["fullName", User],
   ["nickname", Tag],
   ["birthday", Cake],
@@ -57,11 +63,11 @@ const personal: [keyof typeof dicts.en.personal, FramerIcon][] = [
   ["education", GraduationCap],
 ];
 
-const workIcons = [Code, Bot, Layers] as const;
+const workIcons = [Code, Robot, Stack] as const;
 
 type BrandIcon = React.ComponentType<{ className?: string }>;
 
-const stacks: [keyof typeof dicts.en.toolkit, [string, BrandIcon][], FramerIcon][] = [
+const stacks: [keyof typeof dicts.en.toolkit, [string, BrandIcon][], UIcon][] = [
   [
     "languages",
     [
@@ -80,7 +86,7 @@ const stacks: [keyof typeof dicts.en.toolkit, [string, BrandIcon][], FramerIcon]
       ["Tailwind", TheTailwind],
       ["Node.js", TheNode],
     ],
-    Boxes,
+    SquaresFour,
   ],
   [
     "tools",
@@ -123,7 +129,7 @@ const socials: [string, string, string, BrandIcon][] = [
   ["GitHub", "@phumitchreal", "https://github.com/phumitchreal", GithubIcon],
   ["Instagram", "@null_phumitch", "https://instagram.com/null_phumitch", InstagramIcon],
   ["Discord", "@phumitch.exe", "https://discord.com/users/919878532228841532", DiscordIcon],
-  ["Website", "phumitch.space", "https://phumitch.space", Globe as unknown as BrandIcon],
+  ["Website", "phumitch.space", "https://phumitch.space", GlobeSimple as unknown as BrandIcon],
 ];
 
 export default function AboutPage() {
@@ -143,7 +149,7 @@ export default function AboutPage() {
             >
               <div className="flex items-center gap-3">
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-line bg-fg/[0.04] text-fg/40 transition-colors duration-300 group-hover:border-line-strong group-hover:text-fg/70">
-                  <IconCmp size={14} />
+                  <IconCmp size={16} weight="regular" />
                 </span>
                 <span className="text-xs font-medium text-fg/40 transition-colors duration-300 group-hover:text-fg/60">
                   <L en={enD.personal[key][0]} th={thD.personal[key][0]} />
@@ -159,7 +165,7 @@ export default function AboutPage() {
 
       {/* What I Do */}
       <motion.section {...revealProps(1, reduced)}>
-        <SectionHeader icon={Zap} title={<L en={enD.doTitle} th={thD.doTitle} />} />
+        <SectionHeader icon={Lightning} title={<L en={enD.doTitle} th={thD.doTitle} />} />
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
           {enD.do.map((_, i) => {
             const IconCmp = workIcons[i];
@@ -170,7 +176,7 @@ export default function AboutPage() {
               >
                 <div className="flex items-center justify-between">
                   <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-line bg-fg/[0.04] text-fg/40 transition-colors duration-300 group-hover:border-line-strong group-hover:text-fg">
-                    <IconCmp size={16} />
+                    <IconCmp size={17} weight="regular" />
                   </span>
                   <span className="font-mono text-xs font-bold text-fg/20 transition-colors duration-300 group-hover:text-fg/40">
                     0{i + 1}
@@ -197,7 +203,7 @@ export default function AboutPage() {
           {stacks.map(([cat, tags, IconCmp]) => (
             <div key={cat} className="rounded-xl border border-line bg-fg/[0.01] p-4">
               <p className="flex items-center gap-2 text-xs font-semibold tracking-wider text-fg/40">
-                <IconCmp size={13} className="text-fg/40" />
+                <IconCmp size={14} weight="bold" className="text-fg/40" />
                 <L en={enD.toolkit[cat]} th={thD.toolkit[cat]} />
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
@@ -218,7 +224,7 @@ export default function AboutPage() {
 
       {/* Social / Contact Links */}
       <motion.section {...revealProps(3, reduced)}>
-        <SectionHeader icon={Mail} title={<L en={enD.contactTitle} th={thD.contactTitle} />} />
+        <SectionHeader icon={EnvelopeSimple} title={<L en={enD.contactTitle} th={thD.contactTitle} />} />
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {socials.map(([label, handle, href, IconCmp]) => (
             <motion.a
@@ -245,6 +251,7 @@ export default function AboutPage() {
 
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-line bg-fg/[0.02] text-fg/40 transition-all duration-300 group-hover:border-fg group-hover:bg-fg group-hover:text-bg">
                 <ArrowUpRight
+                  weight="bold"
                   size={15}
                   className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                 />

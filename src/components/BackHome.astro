@@ -1,5 +1,5 @@
 ---
-import FramerHomeIcon from "./FramerHomeIcon.astro";
+import { HouseIcon as House } from "@phosphor-icons/react";
 
 interface Props {
   class?: string;
@@ -15,7 +15,7 @@ const { class: className = "" } = Astro.props;
     className,
   ]}
 >
-  <FramerHomeIcon class="h-3.5 w-3.5 shrink-0" />
+  <House size={14} weight="bold" className="shrink-0" />
   <span data-lang="en">Back to Home</span>
   <span data-lang="th">กลับหน้าแรก</span>
 </a>
