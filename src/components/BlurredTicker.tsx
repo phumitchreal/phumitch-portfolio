@@ -131,7 +131,7 @@ export default function BlurredTicker({
                   color: active ? activeColor : inactiveColor,
                   fontSize: responsiveSize,
                   fontFamily: "var(--font-body)",
-                  fontWeight: 600,
+                  fontWeight: 800,
                   letterSpacing: "-0.04em",
                   lineHeight: "1em",
                   textAlign: "center",

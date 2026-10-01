@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "./line-seed.css";
+@import "./fonts.css";
 @import "./tokens.css";
 
 /* Tailwind 4 theme map — utilities resolve to the runtime tokens above,
@@ -18,7 +18,6 @@
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
 
-  --font-display: var(--ff-display);
   --font-body: var(--ff-body);
   --font-mono: var(--ff-mono);
 
@@ -93,7 +92,7 @@ html[lang="th"] [data-act="th"] {
 /* Page title — shared by about / portfolio / legal pages */
 .page-title {
   font-family: var(--ff-body);
-  font-weight: 600;
+  font-weight: 700;
   font-size: var(--type-page);
   line-height: 1.05;
   letter-spacing: -0.01em;

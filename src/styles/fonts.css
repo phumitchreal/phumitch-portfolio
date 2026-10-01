@@ -1,0 +1,30 @@
+/* fonts.css — RABBIT · self-hosted, Thai + Latin
+   4 static weights as OTF (CFF): 181 KB total, zero external requests. */
+@font-face {
+  font-family: "RABBIT";
+  src: url("/fonts/rabbit-thin.otf") format("opentype");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "RABBIT";
+  src: url("/fonts/rabbit-regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "RABBIT";
+  src: url("/fonts/rabbit-bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "RABBIT";
+  src: url("/fonts/rabbit-extrabold.otf") format("opentype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}

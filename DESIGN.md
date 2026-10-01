@@ -39,7 +39,7 @@
 | `--selection-bg` / `--selection-color` | burgundy 60% / white | burgundy 18% / deep maroon | `::selection` |
 | `--shadow-card` / `--shadow-panel` | dark elevation | soft slate elevation | cards / panels |
 
-Type tokens: `--ff-display` (Anton), `--ff-body` (Anuphan → LINE Seed Sans TH), `--ff-mono` (JetBrains Mono).
+Type tokens: `--ff-body` (RABBIT — self-hosted OTF, Thai + Latin, weights 100/400/700/800 in `src/styles/fonts.css`), `--ff-mono` (system mono stack). No third-party font requests.
 Fluid sizes: `--type-hero`, `--type-page`, `--type-h2`.
 Motion tokens: `--ease`, `--ease-soft`, `--dur-fast`, `--dur`, `--dur-slow`.
 
@@ -47,7 +47,7 @@ Motion tokens: `--ease`, `--ease-soft`, `--dur-fast`, `--dur`, `--dur-slow`.
 
 - Colors → utilities: `--color-bg`, `--color-surface*`, `--color-line*`, `--color-fg*`, `--color-accent*` → `bg-surface`, `text-fg/40`, `border-line`, `bg-accent`, …
 - Containers → `max-w-shell` (1200px), `max-w-page` (800px), `max-w-hero` (640px).
-- Fonts → `font-display` / `font-body` / `font-mono`.
+- Fonts → `font-body` (RABBIT) / `font-mono` (system stack).
 
 ---
 

@@ -29,10 +29,10 @@
   --shadow-card: 0 8px 30px rgba(0, 0, 0, 0.45);
   --shadow-panel: 0 20px 60px -20px rgba(0, 0, 0, 0.6);
 
-  /* typography */
-  --ff-display: "Anton", "Anuphan", "LINE Seed Sans TH", system-ui, sans-serif;
-  --ff-body: "Anuphan", "LINE Seed Sans TH", system-ui, sans-serif;
-  --ff-mono: "JetBrains Mono", ui-monospace, monospace;
+  /* typography — RABBIT is self-hosted (Thai + Latin, weights 100/400/700/800);
+     mono uses the system stack so no font is fetched from a third party */
+  --ff-body: "RABBIT", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ff-mono: ui-monospace, "SF Mono", "Cascadia Mono", "Segoe UI Mono", "Roboto Mono", Menlo, Consolas, monospace;
   --type-hero: clamp(2.6rem, 9vw, 5.8rem);
   --type-page: clamp(2rem, 6vw, 3.5rem);
   --type-h2: clamp(1.6rem, 3.5vw, 2.2rem);
