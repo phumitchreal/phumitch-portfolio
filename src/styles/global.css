@@ -6,7 +6,6 @@
    so one `data-theme` flip repaints the entire site. */
 @theme {
   --color-bg: var(--bg);
-  --color-ghost: var(--bg-ghost);
   --color-surface: var(--surface);
   --color-surface-hover: var(--surface-hover);
   --color-surface-muted: var(--surface-muted);
@@ -82,21 +81,6 @@ html[lang="th"] [data-act="th"] {
   text-transform: uppercase;
   color: var(--text-dim);
 }
-/* Ghost wordmark — Anton, ultra-condensed editorial, isaeva bleed */
-.hero-ghost {
-  font-family: var(--ff-display);
-  font-weight: 400;
-  font-size: var(--type-ghost);
-  line-height: 0.8;
-  letter-spacing: -0.04em;
-  color: var(--bg-ghost);
-  user-select: none;
-  pointer-events: none;
-  text-transform: uppercase;
-  opacity: 0.9;
-}
-/* Smaller ghost variant (birthday page) — sits behind content, no layout height */
-.hero-ghost-sm { font-size: var(--type-ghost-sm); }
 /* Hero title — Anuphan Bold, Thai-natural tracking */
 .hero-title {
   font-family: var(--ff-body);
@@ -128,17 +112,6 @@ html[lang="th"] [data-act="th"] {
   font-size: clamp(0.875rem, 1.6vw, 1rem);
   line-height: 1.8;
   color: var(--text-muted);
-}
-
-/* ---- Ambient accent glow (about page) ---- */
-.ambient-glow {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 24rem;
-  pointer-events: none;
-  background: radial-gradient(ellipse 60% 50% at 50% 0%, var(--accent-glow), transparent);
 }
 
 /* ---- Legal prose ---- */
@@ -224,5 +197,4 @@ astro-island[ssr] { display: contents; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .fade-up { animation: none; opacity: 1; }
-  .hero-ghost { transition: none !important; }
 }

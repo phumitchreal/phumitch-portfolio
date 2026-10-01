@@ -1,5 +1,5 @@
 import { BookOpenIcon as BookOpen, BriefcaseIcon as Briefcase, CakeIcon as Cake, DiscordLogoIcon as DiscordLogo } from "@phosphor-icons/react";
-import { motion, AnimatePresence, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { useState, useRef } from "react";
 import ZTIcon from "./ZTIcon.tsx";
 import BlurredTicker from "./BlurredTicker.tsx";
@@ -13,9 +13,6 @@ export default function HeroMotion() {
   const [logoClicks, setLogoClicks] = useState(0);
   const [unlocking, setUnlocking] = useState(false);
   const clickedRef = useRef(false);
-
-  const { scrollY } = useScroll();
-  const ghostY = useTransform(scrollY, [0, 520], [0, reduced ? 0 : 90]);
 
   const handleLogoClick = () => {
     if (unlocking) return;
@@ -34,17 +31,6 @@ export default function HeroMotion() {
 
   return (
     <section className="relative flex flex-1 flex-col overflow-x-clip">
-      {/* ghost wordmark — the isaeva signature, parallax on scroll */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 flex select-none items-center justify-center overflow-hidden"
-      >
-        <motion.span style={{ y: ghostY }} className="hero-ghost whitespace-nowrap">
-          <span data-lang="en">GUITA</span>
-          <span data-lang="th">กีต้า</span>
-        </motion.span>
-      </div>
-
       {/* unlock flash overlay */}
       <AnimatePresence>
         {unlocking && (

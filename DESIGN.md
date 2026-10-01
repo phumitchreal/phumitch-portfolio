@@ -1,14 +1,14 @@
 # DESIGN.md — crinoid Design System (Editorial v2)
 
 > Source of truth for the `crinoid` portfolio. Editorial minimalism inspired by `isaeva.xyz`; content from `phumitch.space`.
-> Locked choices: **dark-first + working light toggle · Burgundy `#722f38` accent · ghost wordmark · mono micro-labels · Thai-first type**.
+> Locked choices: **dark-first + working light toggle · Burgundy `#722f38` accent · clean flat canvas · mono micro-labels · Thai-first type**.
 
 ---
 
 ## 1. Principles
 
 1. **Editorial restraint** — one hero gesture, then stillness. Whitespace > decoration.
-2. **Ghost + pill** — giant watermark wordmark (`--bg-ghost`) + pill CTAs are the signature. Everything else is quiet.
+2. **Clean canvas + pill** — the background stays flat (no watermark, no glow); expanding pill CTAs are the only signature. Everything else is quiet.
 3. **Motion is physics** — `cubic-bezier(.16,1,.3,1)` everywhere; every island guards `useReducedMotion()` and CSS honors `prefers-reduced-motion`.
 4. **Tokens only** — no hardcoded colors in pages/components. Missing a color? Add a token.
 5. **Thai-first typography** — natural tracking for Thai script (never forced `tracking-tight` or uppercasing).
@@ -26,7 +26,6 @@
 | Token | Dark | Light | Use |
 |---|---|---|---|
 | `--bg` | `#0a0a0a` | `#fafbfc` | page background |
-| `--bg-ghost` | `#141414` | `#e9edf2` | ghost wordmark |
 | `--surface` | `#111111` | `#ffffff` | cards / pills |
 | `--surface-hover` | `#1a1a1a` | `#f3f6f9` | hover surface |
 | `--surface-muted` | `#0f0f0f` | `#f1f5f9` | subtle wells (code) |
@@ -35,14 +34,13 @@
 | `--text-body` | `#e8e8e8` | `#334155` | body text |
 | `--text-muted` | `#8a8a8a` | `#64748b` | secondary text |
 | `--text-dim` | `#6a6a6a` | `#94a3b8` | tertiary / micro labels |
-| `--accent` | `#722f38` | `#722f38` | burgundy accent (selection glow, ambient) |
+| `--accent` | `#722f38` | `#722f38` | burgundy accent (selection) |
 | `--accent-hover` | `#8a3a44` | `#8a3a44` | accent hover · focus ring |
-| `--accent-glow` | burgundy 14% | burgundy 10% | ambient radial glow |
 | `--selection-bg` / `--selection-color` | burgundy 60% / white | burgundy 18% / deep maroon | `::selection` |
 | `--shadow-card` / `--shadow-panel` | dark elevation | soft slate elevation | cards / panels |
 
 Type tokens: `--ff-display` (Anton), `--ff-body` (Anuphan → LINE Seed Sans TH), `--ff-mono` (JetBrains Mono).
-Fluid sizes: `--type-ghost`, `--type-ghost-sm`, `--type-hero`, `--type-page`, `--type-h2`.
+Fluid sizes: `--type-hero`, `--type-page`, `--type-h2`.
 Motion tokens: `--ease`, `--ease-soft`, `--dur-fast`, `--dur`, `--dur-slow`.
 
 ### Tailwind map (in `global.css` `@theme`)
@@ -55,8 +53,8 @@ Motion tokens: `--ease`, `--ease-soft`, `--dur-fast`, `--dur`, `--dur-slow`.
 
 ## 3. Pages & Routing
 
-- `/` — homepage: ghost wordmark (scroll parallax) + avatar/ticker + tagline + quick pills + AI-agent ticker + shared footer.
-- `/about` — profile grid, What I Do (3 cards), toolkit ticker + grouped badges, contact cards; ambient burgundy glow (`--accent-glow`).
+- `/` — homepage: avatar/ticker + tagline + quick pills + AI-agent ticker + shared footer.
+- `/about` — profile grid, What I Do (3 cards), toolkit ticker + grouped badges, contact cards.
 - `/portfolio` — editorial work list (numbered rows, featured badge, more-projects card).
 - `/birthday` — Framer Count_Down port (behavior 1:1); the caption date is computed at build time from the same `nextBirthday()` helper the island counts to.
 - `/privacy` `/terms` `/acceptable-use` — shared `Legal.astro` shell + `.prose-editorial` typography.
@@ -74,7 +72,7 @@ Motion tokens: `--ease`, `--ease-soft`, `--dur-fast`, `--dur`, `--dur-slow`.
 | `components/Footer.astro` | shared footer link row (`active` prop highlights the current page) |
 | `components/PageHero.astro` | eyebrow + page title + optional lede (`{en,th}` props) |
 | `components/BackHome.astro` | "กลับหน้าแรก / Back to Home" pill |
-| `components/HeroMotion.tsx` | homepage island: ghost parallax, avatar (2-click easter egg → `/studio_lol`), tickers, pills |
+| `components/HeroMotion.tsx` | homepage island: avatar (2-click easter egg → `/studio_lol`), tickers, pills |
 | `components/AboutPage.tsx` | about island (4 scroll-reveal sections) |
 | `components/WorkGallery.tsx` | portfolio island |
 | `components/BirthdayCountdown.tsx` | Framer Count_Down port; exports `nextBirthday()` |

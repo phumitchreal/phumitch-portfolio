@@ -37,7 +37,7 @@ src/
     Footer.astro          # shared footer (active prop)
     PageHero.astro        # eyebrow + title + lede ({en,th} props)
     BackHome.astro        # back-home pill
-    HeroMotion.tsx        # homepage island — ghost wordmark parallax, avatar easter egg, tickers, pills
+    HeroMotion.tsx        # homepage island — avatar easter egg, tickers, pills
     AboutPage.tsx         # /about island (4 reveal sections)
     WorkGallery.tsx       # /portfolio island
     BirthdayCountdown.tsx # Framer Count_Down port + nextBirthday()

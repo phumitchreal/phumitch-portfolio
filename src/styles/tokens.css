@@ -5,7 +5,6 @@
 :root {
   /* surfaces */
   --bg: #0a0a0a;
-  --bg-ghost: #141414;
   --surface: #111111;
   --surface-hover: #1a1a1a;
   --surface-muted: #0f0f0f;
@@ -23,7 +22,6 @@
   /* accent — burgundy (locked 2026-09-17, restored from DESIGN.md) */
   --accent: #722f38;
   --accent-hover: #8a3a44;
-  --accent-glow: rgba(114, 47, 56, 0.14);
   --selection-bg: rgba(114, 47, 56, 0.6);
   --selection-color: #ffffff;
 
@@ -35,8 +33,6 @@
   --ff-display: "Anton", "Anuphan", "LINE Seed Sans TH", system-ui, sans-serif;
   --ff-body: "Anuphan", "LINE Seed Sans TH", system-ui, sans-serif;
   --ff-mono: "JetBrains Mono", ui-monospace, monospace;
-  --type-ghost: clamp(7rem, 36vw, 26rem);
-  --type-ghost-sm: clamp(4.5rem, 22vw, 13rem);
   --type-hero: clamp(2.6rem, 9vw, 5.8rem);
   --type-page: clamp(2rem, 6vw, 3.5rem);
   --type-h2: clamp(1.6rem, 3.5vw, 2.2rem);
@@ -53,7 +49,6 @@
 
 [data-theme="light"] {
   --bg: #fafbfc;
-  --bg-ghost: #e9edf2;
   --surface: #ffffff;
   --surface-hover: #f3f6f9;
   --surface-muted: #f1f5f9;
@@ -68,7 +63,6 @@
 
   --accent: #722f38;
   --accent-hover: #8a3a44;
-  --accent-glow: rgba(114, 47, 56, 0.1);
   --selection-bg: rgba(114, 47, 56, 0.18);
   --selection-color: #47141d;
 
