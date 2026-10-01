@@ -8,7 +8,7 @@ interface Props {
 const { eyebrow, lede, class: className = "" } = Astro.props;
 ---
 
-<header class:list={["fade-up", className]}>
+<header class:list={["page-hero", className]}>
   <p class="eyebrow">
     <span data-lang="en">{eyebrow.en}</span><span data-lang="th">{eyebrow.th}</span>
   </p>

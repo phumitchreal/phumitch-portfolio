@@ -146,6 +146,26 @@ html[lang="th"] [data-act="th"] {
   color: var(--text);
 }
 
+/* ---- Now playing equalizer (song card) ---- */
+.eq {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 10px;
+}
+.eq span {
+  width: 2px;
+  border-radius: 1px;
+  background: currentColor;
+  animation: eq 900ms var(--ease) infinite;
+}
+.eq span:nth-child(2) { animation-delay: 150ms; }
+.eq span:nth-child(3) { animation-delay: 300ms; }
+@keyframes eq {
+  0%, 100% { height: 30%; }
+  50% { height: 100%; }
+}
+
 /* ---- Skip link ---- */
 .skip-link {
   position: fixed;
@@ -185,6 +205,32 @@ astro-island[ssr] { display: contents; }
   animation: fadeUp 1s var(--ease) forwards;
 }
 
+/* ---- Entrance animations (load-in) ---- */
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(18px); filter: blur(6px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+.reveal { animation: riseIn 0.7s var(--ease) both; }
+.reveal-1 { animation-delay: 0.07s; }
+.reveal-2 { animation-delay: 0.14s; }
+.reveal-3 { animation-delay: 0.21s; }
+.reveal-4 { animation-delay: 0.28s; }
+.reveal-5 { animation-delay: 0.35s; }
+
+/* Page hero — eyebrow → title → lede */
+.page-hero .eyebrow { animation: riseIn 0.6s var(--ease) both 0.02s; }
+.page-hero h1 { animation: riseIn 0.7s var(--ease) both 0.08s; }
+.page-hero .lede { animation: riseIn 0.7s var(--ease) both 0.15s; }
+
+/* Legal prose — staggered on load */
+.prose-editorial > section { animation: riseIn 0.65s var(--ease) both; }
+.prose-editorial > section:nth-child(1) { animation-delay: 0.05s; }
+.prose-editorial > section:nth-child(2) { animation-delay: 0.12s; }
+.prose-editorial > section:nth-child(3) { animation-delay: 0.19s; }
+.prose-editorial > section:nth-child(4) { animation-delay: 0.26s; }
+.prose-editorial > section:nth-child(5) { animation-delay: 0.33s; }
+.prose-editorial > section:nth-child(6) { animation-delay: 0.4s; }
+
 /* View transitions — soft crossfade with the site's easing */
 ::view-transition-old(root),
 ::view-transition-new(root) {
@@ -196,4 +242,15 @@ astro-island[ssr] { display: contents; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .fade-up { animation: none; opacity: 1; }
+  .eq span { animation: none; height: 60%; }
+  .reveal,
+  .page-hero .eyebrow,
+  .page-hero h1,
+  .page-hero .lede,
+  .prose-editorial > section {
+    animation: none;
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
 }

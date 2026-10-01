@@ -37,6 +37,7 @@ src/
     Footer.astro          # shared footer (active prop)
     PageHero.astro        # eyebrow + title + lede ({en,th} props)
     BackHome.astro        # back-home pill
+    SongCard.astro         # homepage "now playing" card — paste lyrics in content/song.ts
     HeroMotion.tsx        # homepage island — avatar easter egg, tickers, pills
     AboutPage.tsx         # /about island (4 reveal sections)
     WorkGallery.tsx       # /portfolio island
@@ -47,7 +48,7 @@ src/
   lib/motion.ts           # EASE / DUR / revealProps(i, reduced) — all islands use these
   styles/tokens.css       # design tokens — SINGLE SOURCE (see DESIGN.md §2)
   styles/global.css       # tailwind import + @theme map + editorial classes + prose + skip link
-  content/work.ts · i18n.ts
+  content/work.ts · content/song.ts · i18n.ts
 ```
 
 ## Conventions
@@ -56,6 +57,7 @@ src/
 - **Icons:** UI icons — `@phosphor-icons/react` (one family; weight **`bold` at ≤14px, `regular` at ≥15px**; color via `currentColor`). Brand/tech logos — `@thesvg/react` + solid custom marks (GitHub / Instagram / Discord / opencode). Never mix other icon sets.
 - **Islands rule:** `client:load` only when motion/interactivity requires JS; otherwise plain `.astro`.
 - **Motion guard:** every island uses `useReducedMotion()` and spreads `revealProps(i, reduced)` from `lib/motion.ts`. CSS honors `prefers-reduced-motion` globally.
+- **Load-in animation:** static markup gets `.reveal` (add `.reveal-1…5` to stagger); page heroes (`PageHero`) and legal prose sections animate automatically — don't hand-roll animation in markup.
 - **Navbar/footer rule:** `SiteNav.astro` and `Footer.astro` are single sources shared by every page. Never inline a second nav/footer — extend the shared components.
 - **Theme:** dark is the default (DESIGN.md); `ThemeToggle` only writes `localStorage["theme"]` + `data-theme`; the inline head script reads it (no FOUC). Everything repaints from tokens.
 - **Language:** `<html lang="th">` default; bilingual content via `data-lang` spans in `.astro` and the `L()` helper in islands (`i18n.ts`); `LangToggle` writes `localStorage["crinoid_lang"]`.

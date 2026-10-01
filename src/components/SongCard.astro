@@ -1,0 +1,73 @@
+---
+import { DiscIcon as Disc, MusicNotesIcon as MusicNotes } from "@phosphor-icons/react";
+import { song } from "../content/song.ts";
+
+const hasLyrics = Boolean(song.lyrics?.trim());
+const slug = song.title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+---
+
+<section aria-label="Now playing / กำลังฟัง" class="reveal mx-auto w-full max-w-[340px] px-6 pb-10">
+  <div class="flex items-center gap-2.5 rounded-full border border-line bg-fg/[0.02] py-1.5 pr-2 pl-1.5">
+    <div
+      class="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border border-line bg-fg/[0.05] text-fg/40"
+    >
+      {
+        song.cover ? (
+          <img
+            src={song.cover}
+            alt=""
+            class="h-full w-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <MusicNotes size={12} weight="bold" />
+        )
+      }
+    </div>
+
+    <p class="min-w-0 flex-1 truncate text-[12px] leading-tight">
+      <span id={`song-${slug}`} class="font-medium text-fg/70">{song.title}</span>
+      {
+        song.artist ? (
+          <>
+            <span class="text-fg/25"> · </span>
+            <span class="text-fg/35">{song.artist}{song.duration ? ` · ${song.duration}` : ""}</span>
+          </>
+        ) : song.duration ? (
+          <span class="text-fg/35"> · {song.duration}</span>
+        ) : null
+      }
+    </p>
+
+    <span class="eq shrink-0" aria-hidden="true"><span></span><span></span><span></span></span>
+
+    {
+      song.url && (
+        <a
+          href={song.url}
+          target="_blank"
+          rel="noopener"
+          aria-label="Listen / ฟังเพลง"
+          title="Listen / ฟังเพลง"
+          class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-fg/40 transition-colors duration-300 hover:text-fg"
+        >
+          <Disc size={12} weight="fill" />
+        </a>
+      )
+    }
+  </div>
+
+  {
+    hasLyrics && (
+      <div class="mt-2.5 rounded-lg border border-line bg-fg/[0.02] p-3">
+        <div
+          class="max-h-36 overflow-y-auto text-[12px] leading-relaxed whitespace-pre-line text-fg/55"
+          tabindex="0"
+        >
+          {song.lyrics}
+        </div>
+      </div>
+    )
+  }
+</section>

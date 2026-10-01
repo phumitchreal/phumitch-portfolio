@@ -24,21 +24,21 @@ const dateTh = `${WEEKDAYS_TH[target.getDay()]}ที่ ${target.getDate()} ${M
     <SiteNav />
 
     <main id="main" class="relative isolate flex flex-1 flex-col items-center px-4 py-12 text-center md:px-6 md:py-16">
-      <div class="mb-14 md:mb-18">
+      <div class="reveal mb-14 md:mb-18">
         <BackHome />
       </div>
 
-      <h1 class="mt-4 text-3xl font-semibold tracking-normal text-fg md:text-5xl">
+      <h1 class="reveal reveal-1 mt-4 text-3xl font-semibold tracking-normal text-fg md:text-5xl">
         <span data-lang="en">11 August 2008 <span class="font-normal text-fg/40">· Guitar</span></span>
         <span data-lang="th">11 สิงหาคม 2551 <span class="font-normal text-fg/40">· กีต้า</span></span>
       </h1>
-      <p class="mt-3 max-w-[620px] text-sm leading-relaxed text-fg/55 md:text-base">
+      <p class="reveal reveal-2 mt-3 max-w-[620px] text-sm leading-relaxed text-fg/55 md:text-base">
         <span data-lang="en">Counting down to the next birthday — {dateEn} (live, second by second).</span>
         <span data-lang="th">นับถอยหลังสู่วันเกิดครั้งถัดไป — {dateTh} (เรียลไทม์ทุกวินาที)</span>
       </p>
 
       <div
-        class="mt-8 max-w-full rounded-2xl border border-line bg-fg/[0.02] px-4 py-8 shadow-[var(--shadow-panel)] backdrop-blur-sm sm:mt-10 sm:px-6 sm:py-11 md:mt-12 md:px-8 md:py-14"
+        class="reveal reveal-3 mt-8 max-w-full rounded-2xl border border-line bg-fg/[0.02] px-4 py-8 shadow-[var(--shadow-panel)] backdrop-blur-sm sm:mt-10 sm:px-6 sm:py-11 md:mt-12 md:px-8 md:py-14"
       >
         <BirthdayCountdown
           client:load
@@ -57,7 +57,7 @@ const dateTh = `${WEEKDAYS_TH[target.getDay()]}ที่ ${target.getDate()} ${M
         />
       </div>
 
-      <p class="mt-4 font-mono text-[11px] uppercase tracking-[0.14em] text-fg/25 md:mt-5">
+      <p class="reveal reveal-4 mt-4 font-mono text-[11px] uppercase tracking-[0.14em] text-fg/25 md:mt-5">
         <span data-lang="en">Until {dateEn}</span>
         <span data-lang="th">จนถึง{dateTh}</span>
       </p>

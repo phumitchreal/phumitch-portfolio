@@ -9,7 +9,7 @@
 
 1. **Editorial restraint** — one hero gesture, then stillness. Whitespace > decoration.
 2. **Clean canvas + pill** — the background stays flat (no watermark, no glow); expanding pill CTAs are the only signature. Everything else is quiet.
-3. **Motion is physics** — `cubic-bezier(.16,1,.3,1)` everywhere; every island guards `useReducedMotion()` and CSS honors `prefers-reduced-motion`.
+3. **Motion is physics** — `cubic-bezier(.16,1,.3,1)` everywhere; every island guards `useReducedMotion()` and CSS honors `prefers-reduced-motion`. Load-in entrances use the CSS reveal system (`.reveal` + `.reveal-1…5` delays); page heroes stagger eyebrow → title → lede on their own, and legal prose sections stagger automatically.
 4. **Tokens only** — no hardcoded colors in pages/components. Missing a color? Add a token.
 5. **Thai-first typography** — natural tracking for Thai script (never forced `tracking-tight` or uppercasing).
 
@@ -53,7 +53,7 @@ Motion tokens: `--ease`, `--ease-soft`, `--dur-fast`, `--dur`, `--dur-slow`.
 
 ## 3. Pages & Routing
 
-- `/` — homepage: avatar/ticker + tagline + quick pills + AI-agent ticker + shared footer.
+- `/` — homepage: avatar/ticker + tagline + quick pills + AI-agent ticker, then a "now playing" song card (`components/SongCard.astro`, content lives in `content/song.ts`) + shared footer.
 - `/about` — profile grid, What I Do (3 cards), toolkit ticker + grouped badges, contact cards.
 - `/portfolio` — editorial work list (numbered rows, featured badge, more-projects card).
 - `/birthday` — Framer Count_Down port (behavior 1:1); the caption date is computed at build time from the same `nextBirthday()` helper the island counts to.
