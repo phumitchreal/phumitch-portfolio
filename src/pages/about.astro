@@ -1,8 +1,9 @@
 ---
+import { Image } from "astro:assets";
+import aboutPhoto from "../assets/about-photo.jpg";
 import Base from "../layouts/Base.astro";
 import SiteNav from "../components/SiteNav.astro";
 import AboutPage from "../components/AboutPage.tsx";
-import PageHero from "../components/PageHero.astro";
 import BackHome from "../components/BackHome.astro";
 import Footer from "../components/Footer.astro";
 ---
@@ -15,19 +16,41 @@ import Footer from "../components/Footer.astro";
     <SiteNav />
 
     <main id="main" class="relative z-10 mx-auto w-full max-w-page flex-1 px-6 py-10 md:py-16">
-      <PageHero
-        eyebrow={{ en: "About", th: "เกี่ยวกับ" }}
-        lede={{
-          en: "Vibe Coding · Prompting AI to architect and build production-grade web applications. Focused on Full-stack development, modern UI & AI tooling.",
-          th: "Vibe Coding · สั่ง AI เขียนโค้ดสถาปัตยกรรมเว็บระดับ Production ไม่ใช่แค่เดโม่ โฟกัสการพัฒนา Full-stack, Modern UI และ AI tooling",
-        }}
-      >
+      <!-- Profile hero (reference-style): circle avatar + name + nickname pill + bio -->
+      <div class="reveal flex items-center gap-3 sm:gap-5">
+        <Image
+          src={aboutPhoto}
+          alt="ภูมิทัศน์ สมศรี (กีต้า) — Phumitch Somsri"
+          widths={[96, 128, 192]}
+          sizes="80px"
+          class="h-12 w-12 shrink-0 rounded-full border border-line object-cover sm:h-20 sm:w-20"
+          style="object-position: center 30%"
+          loading="eager"
+        />
+        <div class="min-w-0">
+          <h1 class="truncate text-lg font-bold tracking-[-0.01em] text-fg sm:text-3xl">
+            <span data-lang="en">Phumitch Somsri</span><span data-lang="th">ภูมิทัศน์ สมศรี</span>
+          </h1>
+          <p class="mt-2 flex flex-wrap items-center gap-2">
+            <span
+              class="inline-flex items-center rounded-full border border-line-strong bg-fg/[0.04] px-2.5 py-0.5 font-mono text-[11px] font-medium text-fg/85"
+              ><span data-lang="en">Nickname: Guitar</span><span data-lang="th">ชื่อเล่น: กีต้า</span></span
+            >
+            <span class="text-xs text-fg/50"
+              ><span data-lang="en">Vibe Coding · Full-stack Developer</span
+              ><span data-lang="th">Vibe Coding · นักพัฒนา Full-stack</span></span
+            >
+          </p>
+        </div>
+      </div>
+
+      <p class="reveal reveal-1 lede mt-5">
         <span data-lang="en"
-          >Phumitch Somsri <span class="font-normal text-fg/40">· Guitar</span></span
+          >Vibe Coding · Prompting AI to architect and build production-grade web applications. Focused on Full-stack development, modern UI &amp; AI tooling.</span
         ><span data-lang="th"
-          >ภูมิทัศน์ สมศรี <span class="font-normal text-fg/40">· กีต้า</span></span
+          >Vibe Coding · สั่ง AI เขียนโค้ดสถาปัตยกรรมเว็บระดับ Production ไม่ใช่แค่เดโม่ โฟกัสการพัฒนา Full-stack, Modern UI และ AI tooling</span
         >
-      </PageHero>
+      </p>
 
       <AboutPage client:load />
 

@@ -195,22 +195,16 @@ html[data-theme="light"] .theme-toggle .theme-icon--moon { display: block; }
 /* Fallback: if JS fails, astro-island ssr content should still be visible */
 astro-island[ssr] { display: contents; }
 
-/* Entrance — respects reduced motion below */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(30px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-.fade-up {
-  opacity: 0;
-  animation: fadeUp 1s var(--ease) forwards;
-}
-
-/* ---- Entrance animations (load-in) ---- */
+/* ---- Entrance animations (load-in) ----
+   No `filter` here on purpose: minifiers rewrite `blur(0)` into invalid `blur()`,
+   which can drop the keyframe. Opacity + transform is safe and faster.
+   `backwards` (not `both`) means content is visible by default — the hidden state
+   only exists while the entrance delay runs. */
 @keyframes riseIn {
-  from { opacity: 0; transform: translateY(18px); filter: blur(6px); }
-  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-.reveal { animation: riseIn 0.7s var(--ease) both; }
+.reveal { animation: riseIn 0.7s var(--ease) backwards; }
 .reveal-1 { animation-delay: 0.07s; }
 .reveal-2 { animation-delay: 0.14s; }
 .reveal-3 { animation-delay: 0.21s; }
@@ -218,12 +212,12 @@ astro-island[ssr] { display: contents; }
 .reveal-5 { animation-delay: 0.35s; }
 
 /* Page hero — eyebrow → title → lede */
-.page-hero .eyebrow { animation: riseIn 0.6s var(--ease) both 0.02s; }
-.page-hero h1 { animation: riseIn 0.7s var(--ease) both 0.08s; }
-.page-hero .lede { animation: riseIn 0.7s var(--ease) both 0.15s; }
+.page-hero .eyebrow { animation: riseIn 0.6s var(--ease) backwards 0.02s; }
+.page-hero h1 { animation: riseIn 0.7s var(--ease) backwards 0.08s; }
+.page-hero .lede { animation: riseIn 0.7s var(--ease) backwards 0.15s; }
 
 /* Legal prose — staggered on load */
-.prose-editorial > section { animation: riseIn 0.65s var(--ease) both; }
+.prose-editorial > section { animation: riseIn 0.65s var(--ease) backwards; }
 .prose-editorial > section:nth-child(1) { animation-delay: 0.05s; }
 .prose-editorial > section:nth-child(2) { animation-delay: 0.12s; }
 .prose-editorial > section:nth-child(3) { animation-delay: 0.19s; }
@@ -241,7 +235,6 @@ astro-island[ssr] { display: contents; }
 /* Reduced motion — respect it everywhere */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .fade-up { animation: none; opacity: 1; }
   .eq span { animation: none; height: 60%; }
   .reveal,
   .page-hero .eyebrow,

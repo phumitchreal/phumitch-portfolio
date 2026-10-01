@@ -54,7 +54,7 @@ Motion tokens: `--ease`, `--ease-soft`, `--dur-fast`, `--dur`, `--dur-slow`.
 ## 3. Pages & Routing
 
 - `/` — homepage: avatar/ticker + tagline + quick pills + AI-agent ticker, then a "now playing" song card (`components/SongCard.astro`, content lives in `content/song.ts`) + shared footer.
-- `/about` — profile grid, What I Do (3 cards), toolkit ticker + grouped badges, contact cards.
+- `/about` — profile header (circle avatar + nickname pill + bio), profile grid, What I Do (3 cards), toolkit ticker + grouped badges, contact cards.
 - `/portfolio` — editorial work list (numbered rows, featured badge, more-projects card).
 - `/birthday` — Framer Count_Down port (behavior 1:1); the caption date is computed at build time from the same `nextBirthday()` helper the island counts to.
 - `/privacy` `/terms` `/acceptable-use` — shared `Legal.astro` shell + `.prose-editorial` typography.
