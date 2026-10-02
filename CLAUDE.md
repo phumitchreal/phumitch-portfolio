@@ -12,9 +12,10 @@
 ## Commands
 
 ```bash
-pnpm dev          # astro dev (http://localhost:4321)
-pnpm build        # astro build
-pnpm astro check  # type check
+pnpm dev              # astro dev (http://localhost:4321)
+pnpm build            # astro build
+pnpm astro check      # type check
+pnpm test:turnstile   # Turnstile endpoint suite (reads .env.local, needs network)
 ```
 
 Dev server in background: `astro dev --background` → manage with `astro dev status|stop|logs`.
@@ -44,11 +45,17 @@ src/
     BirthdayCountdown.tsx # Framer Count_Down port + nextBirthday()
     BlurredTicker.tsx · LogoBlurRow.tsx · ZTIcon.tsx
     ThemeToggle.tsx · LangToggle.tsx · Preloader.tsx · LanguageGate.tsx
+    TurnstileGate.tsx     # Cloudflare verify overlay — fails open, see DESIGN.md §6
     OpencodeIcon.tsx
   lib/motion.ts           # EASE / DUR / revealProps(i, reduced) — all islands use these
   styles/tokens.css       # design tokens — SINGLE SOURCE (see DESIGN.md §2)
   styles/global.css       # tailwind import + @theme map + editorial classes + prose + skip link
   content/work.ts · content/song.ts · i18n.ts
+api/                      # Vercel functions — NOT Astro SSR (the build is static)
+  _turnstile.js           # shared Siteverify + signed-cookie helpers (leading _ = not a route)
+  verify-turnstile.js     # POST token → sets pv_verified · GET → { enforced, verified }
+  studio-lol-counts.js    # Discord numbers, returns 401 without the cookie
+scripts/test-turnstile.mjs  # `pnpm test:turnstile` — 19-check endpoint suite
 ```
 
 ## Conventions
@@ -63,6 +70,10 @@ src/
 - **Language:** `<html lang="th">` default; bilingual content via `data-lang` spans in `.astro` and the `L()` helper in islands (`i18n.ts`); `LangToggle` writes `localStorage["crinoid_lang"]`.
 - **Copy:** Thai primary (สวัสดีครับ, ข้อมูล, ผลงาน). Keep English for tech terms (Vibe Coding, Full-stack).
 - **studio_lol exception:** fixed-dark immersive page — do not tokenize its colors.
+- **Security (`api/` + `TurnstileGate`):** env-gated and **fail-open** — never let a missing
+  key, a blocked script, or an unreachable API lock a visitor out of static content. Overlays
+  announce `crinoid:preloader-done` / `crinoid:lang-chosen`; the gate queues behind them.
+  Secrets live in `.env.local` + Vercel env only (`.env.example` documents every name).
 - **No `any`, no `@ts-ignore`.** Use `type`/`interface`.
 - Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`). Run `pnpm astro check && pnpm build` before committing.
 

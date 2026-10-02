@@ -98,7 +98,8 @@ const description = "Check out the 𝕾tudio.lol community on Discord — hang o
         const iconEl = document.getElementById("solo-icon") as HTMLImageElement | null;
         const nameEl = document.getElementById("solo-name");
         try {
-          const res = await fetch("/api/studio-lol-counts");
+          // The verification cookie must ride along when Turnstile enforcement is on.
+          const res = await fetch("/api/studio-lol-counts", { credentials: "same-origin" });
           if (!res.ok) throw new Error(String(res.status));
           const data = await res.json();
           if (onlineEl && data.online != null) onlineEl.textContent = data.online;

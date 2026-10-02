@@ -18,6 +18,8 @@ export default function LanguageGate() {
 
   const choose = (lang: string) => {
     setLang(lang === "th" ? "th" : "en");
+    // The Turnstile gate queues behind this overlay — see TurnstileGate.tsx.
+    window.dispatchEvent(new CustomEvent("crinoid:lang-chosen", { detail: { lang } }));
     setFading(true);
     window.setTimeout(() => setShow(false), 450);
   };

@@ -14,7 +14,12 @@ export default function Preloader() {
       already = sessionStorage.getItem(DONE_KEY) === "1";
       sessionStorage.setItem(DONE_KEY, "1");
     } catch {}
-    if (already) return;
+    if (already) {
+      // Announce completion on the next tick so listeners registered during this
+      // same commit (the Turnstile gate) still receive it.
+      window.setTimeout(() => window.dispatchEvent(new CustomEvent("crinoid:preloader-done")), 0);
+      return;
+    }
 
     setActive(true);
     const start = performance.now();
@@ -23,6 +28,7 @@ export default function Preloader() {
       if (done) return;
       done = true;
       setFading(true);
+      window.dispatchEvent(new CustomEvent("crinoid:preloader-done"));
       window.setTimeout(() => setActive(false), 600);
     };
 

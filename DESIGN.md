@@ -66,7 +66,7 @@ Motion tokens: `--ease`, `--ease-soft`, `--dur-fast`, `--dur`, `--dur-slow`.
 
 | Component | Role |
 |---|---|
-| `layouts/Base.astro` | `<html>` shell: SEO + OG + Twitter meta, theme/lang inline script, `ClientRouter`, skip-link, Preloader, LanguageGate |
+| `layouts/Base.astro` | `<html>` shell: SEO + OG + Twitter meta, theme/lang inline script, `ClientRouter`, skip-link, Preloader, LanguageGate, TurnstileGate |
 | `layouts/Legal.astro` | shared legal shell (nav + PageHero + `.prose-editorial` slot + BackHome + footer) |
 | `components/SiteNav.astro` | **THE navbar** — logo → `/`, primary links, LangToggle, ThemeToggle, GitHub pill |
 | `components/Footer.astro` | shared footer link row (`active` prop highlights the current page) |
@@ -78,7 +78,8 @@ Motion tokens: `--ease`, `--ease-soft`, `--dur-fast`, `--dur`, `--dur-slow`.
 | `components/BirthdayCountdown.tsx` | Framer Count_Down port; exports `nextBirthday()` |
 | `components/BlurredTicker.tsx` · `LogoBlurRow.tsx` | motion tickers (pause out of view) |
 | `components/ThemeToggle.tsx` · `LangToggle.tsx` | CSS-driven toggles (no hydration flash) |
-| `components/Preloader.tsx` · `LanguageGate.tsx` | first-visit overlays |
+| `components/Preloader.tsx` · `LanguageGate.tsx` | first-visit overlays (both announce a `crinoid:*` event when done) |
+| `components/TurnstileGate.tsx` | Cloudflare "verify you are human" overlay — only shows when the API says it must (§6) |
 | `components/ZTIcon.tsx` | sticker avatar; `.zt-icon` swaps blend mode per theme |
 | `lib/motion.ts` | `EASE`, `EASE_OUT`, `DUR`, `revealProps(i, reduced, opts)` |
 
@@ -94,7 +95,43 @@ Motion tokens: `--ease`, `--ease-soft`, `--dur-fast`, `--dur`, `--dur-slow`.
 
 ---
 
-## 6. Verification
+## 6. Security — Cloudflare Turnstile
+
+A "verify you are human" gate **plus** a signed session, so bots never reach the
+endpoints and humans never see it twice.
+
+**Overlay order:** `Preloader` (z-9999) → `LanguageGate` (z-10000) → `TurnstileGate` (z-10000).
+The gate waits for the other two via the `crinoid:preloader-done` / `crinoid:lang-chosen`
+events (with timeouts as a backstop), then asks `GET /api/verify-turnstile` what to do.
+It is **fail-open by design**: no keys, unreachable API, blocked script, or a
+non-JSON answer (that is what `astro dev` returns) all mean "render nothing".
+After 15s a *ข้ามไปก่อน / Skip for now* button appears so nobody is ever trapped.
+
+**Server side (`api/`):**
+
+| File | Role |
+|---|---|
+| `_turnstile.js` | shared helpers: Siteverify call (5s timeout), hostname/action checks, HMAC-SHA256 cookie sign/verify, client IP, enforcement switch |
+| `verify-turnstile.js` | `POST { token }` → 200 + `pv_verified` cookie · `GET` → `{ enforced, verified }` probe · 400/403/405/429/502 for the rest |
+| `studio-lol-counts.js` | Discord numbers — `401` without a valid cookie; `Cache-Control: private` when gated |
+
+**Cookie:** `pv_verified`, `HttpOnly; Secure; SameSite=Lax; Path=/`, 12h. The expiry is
+inside the signed payload, so a forged or expired value is rejected by `timingSafeEqual`.
+Cache: rejections are `no-store`; verified responses are `private` — never CDN-cached.
+
+**Env** (`TURNSTILE_SECRET_KEY`, `PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SESSION_SECRET`,
+optional `TURNSTILE_ALLOWED_HOSTS`) — see `.env.example`. Enforcement turns on only when
+the secret *and* a 16+ char session secret exist; otherwise the site behaves exactly as
+before. `pnpm test:turnstile` exercises all of it (dummy Cloudflare keys included).
+
+**Edge layer:** Cloudflare's DNS is already in front of `phumitch.space`, but DDoS
+protection is *not* the app gate — it lives at Vercel's platform firewall (free on every
+plan) or behind Cloudflare's orange cloud. Vercel explicitly discourages proxying through
+Cloudflare because it blinds Vercel's own firewall; pick one deliberately.
+
+---
+
+## 7. Verification
 
 1. `pnpm astro check` — types must pass.
 2. `pnpm build` — static build must pass.

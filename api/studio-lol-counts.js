@@ -1,3 +1,12 @@
+/**
+ * GET /api/studio-lol-counts — Discord guild numbers for the /studio_lol splash.
+ *
+ * Gated by the Turnstile session cookie (see api/_turnstile.js): when verification
+ * is enforced, only visitors who passed the challenge get live numbers. Without it
+ * the page keeps its static fallback text, so the easter egg never looks broken.
+ */
+import { isEnforced, isSessionValid } from "./_turnstile.js";
+
 const GUILD_ID = "1551900946211147827";
 
 async function fetchJson(url, headers = {}) {
@@ -6,8 +15,21 @@ async function fetchJson(url, headers = {}) {
   return res.json();
 }
 
-export default async function handler(_req, res) {
-  res.setHeader("Cache-Control", "public, s-maxage=60, stale-while-revalidate=120");
+export default async function handler(req, res) {
+  const enforced = isEnforced();
+
+  if (enforced && !isSessionValid(req)) {
+    // Never CDN-cache a rejection, or a stored copy would leak to unverified visitors.
+    res.setHeader("Cache-Control", "private, no-store");
+    res.setHeader("Content-Type", "application/json");
+    return res.status(401).json({ error: "verification_required" });
+  }
+
+  // Verified visitors only → the shared edge cache is off, the browser cache stays.
+  res.setHeader(
+    "Cache-Control",
+    enforced ? "private, max-age=60, stale-while-revalidate=120" : "public, s-maxage=60, stale-while-revalidate=120"
+  );
   res.setHeader("Content-Type", "application/json");
 
   const token = process.env.DISCORD_BOT_TOKEN;
