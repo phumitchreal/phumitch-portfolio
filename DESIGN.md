@@ -119,8 +119,9 @@ After 15s a *ข้ามไปก่อน / Skip for now* button appears so no
 inside the signed payload, so a forged or expired value is rejected by `timingSafeEqual`.
 Cache: rejections are `no-store`; verified responses are `private` — never CDN-cached.
 
-**Env** (`TURNSTILE_SECRET_KEY`, `PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SESSION_SECRET`,
-optional `TURNSTILE_ALLOWED_HOSTS`) — see `.env.example`. Enforcement turns on only when
+**Env** (`TURNSTILE_SECRET` — canonical, `TURNSTILE_SECRET_KEY` accepted as an alias ·
+`PUBLIC_TURNSTILE_SITE_KEY` · `TURNSTILE_SESSION_SECRET` · optional `TURNSTILE_ALLOWED_HOSTS`
+and `TURNSTILE_EXPECTED_HOSTNAME`) — see `.env.example`. Enforcement turns on only when
 the secret *and* a 16+ char session secret exist; otherwise the site behaves exactly as
 before. `pnpm test:turnstile` exercises all of it (dummy Cloudflare keys included).
 

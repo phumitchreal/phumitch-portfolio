@@ -10,10 +10,12 @@
  * worst case is a 404 instead of a broken build.
  *
  * Env (see .env.example):
- *   TURNSTILE_SECRET_KEY       — widget secret (server only, never public)
+ *   TURNSTILE_SECRET           — widget secret (server only, never public).
+ *                                `TURNSTILE_SECRET_KEY` is accepted as an alias.
  *   PUBLIC_TURNSTILE_SITE_KEY  — the same widget's sitekey (public)
  *   TURNSTILE_SESSION_SECRET   — 32+ byte random string used to sign the cookie
  *   TURNSTILE_ALLOWED_HOSTS    — optional comma-separated override of the allowlist
+ *   TURNSTILE_EXPECTED_HOSTNAME— optional single host added to the allowlist
  */
 import { createHmac, timingSafeEqual } from "node:crypto";
 
@@ -29,8 +31,9 @@ const DEFAULT_ALLOWED_HOSTS = ["phumitch.space", "www.phumitch.space", "localhos
 
 /* ------------------------------------------------------------------ config */
 
+/** Canonical `TURNSTILE_SECRET` first; `TURNSTILE_SECRET_KEY` kept as an alias. */
 function secretKey() {
-  return process.env.TURNSTILE_SECRET_KEY || "";
+  return process.env.TURNSTILE_SECRET || process.env.TURNSTILE_SECRET_KEY || "";
 }
 
 function sessionSecret() {
@@ -58,7 +61,9 @@ export function isAllowedHostname(hostname) {
     .split(",")
     .map((h) => h.trim().toLowerCase())
     .filter(Boolean);
-  const allowed = configured.length ? configured : DEFAULT_ALLOWED_HOSTS;
+  const expected = (process.env.TURNSTILE_EXPECTED_HOSTNAME || "").trim().toLowerCase();
+  const allowed = configured.length ? configured : [...DEFAULT_ALLOWED_HOSTS];
+  if (expected) allowed.push(expected);
   const host = hostname.toLowerCase();
   return allowed.includes(host) || host.endsWith(".vercel.app");
 }

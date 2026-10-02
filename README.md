@@ -30,7 +30,7 @@ Development.
 |---|---|
 | `DISCORD_BOT_TOKEN` | live numbers on the `/studio_lol` easter egg |
 | `PUBLIC_TURNSTILE_SITE_KEY` | Turnstile widget sitekey (public, inlined into the page) |
-| `TURNSTILE_SECRET_KEY` | Turnstile widget secret — **server only** |
+| `TURNSTILE_SECRET` | Turnstile widget secret — **server only** (`TURNSTILE_SECRET_KEY` also works) |
 | `TURNSTILE_SESSION_SECRET` | 32+ byte random string that HMAC-signs the `pv_verified` cookie |
 
 Without the Turnstile keys the gate simply stays off and the site behaves as before —
