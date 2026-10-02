@@ -46,6 +46,9 @@ const ACTION = "site-gate";
 const SCRIPT_ID = "cf-turnstile-script";
 const SCRIPT_URL = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
 const SCRIPT_TIMEOUT_MS = 8000;
+/** If the widget never hands back a token (blocked storage, adblock, network),
+ *  surface the error state so the continue button is always reachable. */
+const WIDGET_TIMEOUT_MS = 15000;
 /** Session-scoped bypass so a blocked widget can never trap the visitor.
  *  Must match PASS_KEY in TurnstileGuard.tsx. */
 const PASS_KEY = "crinoid_turnstile_passed";
@@ -108,6 +111,7 @@ export default function TurnstileChallenge({
   const hostRef = useRef<HTMLDivElement | null>(null);
   const widgetRef = useRef<string | null>(null);
   const apiRef = useRef<TurnstileApi | null>(null);
+  const solvedRef = useRef(false);
 
   const finish = useCallback(() => {
     window.location.assign(target);
@@ -126,6 +130,7 @@ export default function TurnstileChallenge({
 
   const submit = useCallback(
     async (token: string) => {
+      solvedRef.current = true;
       setPhase("verifying");
       try {
         const res = await fetch("/api/verify-turnstile", {
@@ -201,6 +206,7 @@ export default function TurnstileChallenge({
     if (!host || widgetRef.current) return;
 
     let cancelled = false;
+    let watchdog: number | undefined;
     loadTurnstile()
       .then((api) => {
         if (cancelled || widgetRef.current) return;
@@ -214,6 +220,11 @@ export default function TurnstileChallenge({
           "error-callback": () => setPhase("error"),
           "expired-callback": () => setPhase("error"),
         });
+        /* Nothing came back — blocked storage, adblock or a silent failure.
+         * Without this the visitor sits on an empty prompt forever. */
+        watchdog = window.setTimeout(() => {
+          if (!cancelled && !solvedRef.current) setPhase("error");
+        }, WIDGET_TIMEOUT_MS);
       })
       .catch(() => {
         if (!cancelled) setPhase("error");
@@ -221,6 +232,7 @@ export default function TurnstileChallenge({
 
     return () => {
       cancelled = true;
+      if (watchdog !== undefined) window.clearTimeout(watchdog);
     };
   }, [phase, siteKey, submit]);
 

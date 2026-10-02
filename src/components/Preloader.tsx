@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 
 const DONE_KEY = "phumitch_preloader_done";
 
-export default function Preloader() {
+export default function Preloader({ enabled = true }: { enabled?: boolean }) {
   const [active, setActive] = useState(false);
   const [fading, setFading] = useState(false);
 
   useEffect(() => {
+    if (!enabled) return;
     let already = false;
     try {
       already = sessionStorage.getItem(DONE_KEY) === "1";

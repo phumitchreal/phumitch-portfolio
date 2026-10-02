@@ -5,11 +5,12 @@ import { setLang } from "../i18n.ts";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-export default function LanguageGate() {
+export default function LanguageGate({ enabled = true }: { enabled?: boolean }) {
   const [show, setShow] = useState(false);
   const [fading, setFading] = useState(false);
 
   useEffect(() => {
+    if (!enabled) return;
     try {
       if (localStorage.getItem("crinoid_lang") !== null) return;
       setShow(true);
