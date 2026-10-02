@@ -2,7 +2,7 @@
 import "../styles/global.css";
 import Preloader from "../components/Preloader.tsx";
 import LanguageGate from "../components/LanguageGate.tsx";
-import TurnstileGate from "../components/TurnstileGate.tsx";
+import TurnstileGuard from "../components/TurnstileGuard.tsx";
 import { ClientRouter } from "astro:transitions";
 
 interface Props {
@@ -45,7 +45,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
     <link rel="preload" href="/fonts/rabbit-regular.otf" as="font" type="font/otf" crossorigin />
     <link rel="preload" href="/fonts/rabbit-bold.otf" as="font" type="font/otf" crossorigin />
 
-    <!-- Turnstile is only fetched when the gate actually shows (see TurnstileGate.tsx) -->
+    <!-- Turnstile is only fetched when the gate actually shows (see TurnstileChallenge.tsx) -->
     <link rel="preconnect" href="https://challenges.cloudflare.com" crossorigin />
 
     <title>{title}</title>
@@ -70,7 +70,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
     <a class="skip-link" href="#main">ข้ามไปที่เนื้อหา / Skip to content</a>
     <Preloader client:load />
     <LanguageGate client:load />
-    <TurnstileGate client:load siteKey={turnstileSiteKey} />
+    <TurnstileGuard client:load />
     <slot />
   </body>
 </html>

@@ -85,19 +85,23 @@ export default async function handler(req, res) {
 
   const result = await siteverify(token, ip);
   if (!result.ok) {
+    console.log("turnstile_verify", JSON.stringify({ outcome: "siteverify_failed", status: result.status, codes: result.codes, test: result.test }));
     return res.status(result.status).json({ error: "verification_failed", codes: result.codes });
   }
 
   /* Dummy test keys report a synthetic hostname/action — skip the extra checks there. */
   if (!result.test) {
     if (!isAllowedHostname(result.hostname)) {
+      console.log("turnstile_verify", JSON.stringify({ outcome: "hostname_mismatch", hostname: result.hostname, action: result.action }));
       return res.status(403).json({ error: "hostname_mismatch" });
     }
     if (result.action && result.action !== EXPECTED_ACTION) {
+      console.log("turnstile_verify", JSON.stringify({ outcome: "action_mismatch", hostname: result.hostname, action: result.action }));
       return res.status(403).json({ error: "action_mismatch" });
     }
   }
 
+  console.log("turnstile_verify", JSON.stringify({ outcome: "ok", test: result.test, hostname: result.hostname, action: result.action }));
   setSessionCookie(res);
   return res.status(200).json({ ok: true, enforced: true, verified: true });
 }

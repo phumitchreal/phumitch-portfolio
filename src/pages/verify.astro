@@ -1,0 +1,12 @@
+---
+import Base from "../layouts/Base.astro";
+import TurnstileChallenge from "../components/TurnstileChallenge.tsx";
+
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
+const next = Astro.url.searchParams.get("next") ?? "/";
+---
+<Base title="Verify — Phumitch" description="Verify you are human to continue.">
+  <main class="flex min-h-screen items-center justify-center px-6">
+    <TurnstileChallenge client:load siteKey={turnstileSiteKey} next={next} />
+  </main>
+</Base>
