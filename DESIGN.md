@@ -55,7 +55,7 @@ Motion tokens: `--ease`, `--ease-soft`, `--dur-fast`, `--dur`, `--dur-slow`.
 
 - `/` — homepage: avatar/ticker + tagline + quick pills + AI-agent ticker, then a "now playing" song card (`components/SongCard.astro`, content lives in `content/song.ts`) + shared footer.
 - `/about` — profile header (circle avatar + nickname pill + bio), profile grid, What I Do (3 cards), toolkit ticker + grouped badges, contact cards.
-- `/portfolio` — editorial work list (numbered rows, featured badge, more-projects card).
+- `/portfolio` — image-forward project grid: a full-width featured tile, a tag-filterable 2-col grid (`All / Bot / Website / Community`), and a more-projects card. Server-rendered `.astro` (no React island) with CSS `.reveal` + a tiny inline filter script.
 - `/birthday` — Framer Count_Down port (behavior 1:1); the caption date is computed at build time from the same `nextBirthday()` helper the island counts to.
 - `/privacy` `/terms` `/acceptable-use` — shared `Legal.astro` shell + `.prose-editorial` typography.
 - `/studio_lol` — hidden immersive splash (video scrim). **Deliberate exception:** fixed-dark styling, not tokenized. Trigger: double-click the hero avatar.
@@ -74,7 +74,9 @@ Motion tokens: `--ease`, `--ease-soft`, `--dur-fast`, `--dur`, `--dur-slow`.
 | `components/BackHome.astro` | "กลับหน้าแรก / Back to Home" pill |
 | `components/HeroMotion.tsx` | homepage island: avatar (2-click easter egg → `/studio_lol`), tickers, pills |
 | `components/AboutPage.tsx` | about island (4 scroll-reveal sections) |
-| `components/WorkGallery.tsx` | portfolio island |
+| `components/WorkGrid.astro` | portfolio grid — filter chips + featured/regular tiles + more-projects card (server-rendered) |
+| `components/WorkTile.astro` | single project card (cover, title, year, role, tags, hover arrow) |
+| `components/WorkCover.astro` | cover — real `astro:assets` `<Image>` when a file exists, else the tokenized CSS cover fallback |
 | `components/BirthdayCountdown.tsx` | Framer Count_Down port; exports `nextBirthday()` |
 | `components/BlurredTicker.tsx` · `LogoBlurRow.tsx` | motion tickers (pause out of view) |
 | `components/ThemeToggle.tsx` · `LangToggle.tsx` | CSS-driven toggles (no hydration flash) |
@@ -83,7 +85,7 @@ Motion tokens: `--ease`, `--ease-soft`, `--dur-fast`, `--dur`, `--dur-slow`.
 | `components/ZTIcon.tsx` | sticker avatar; `.zt-icon` swaps blend mode per theme |
 | `lib/motion.ts` | `EASE`, `EASE_OUT`, `DUR`, `revealProps(i, reduced, opts)` |
 
-**Rules:** `SiteNav` / `Footer` are single sources — never inline a second nav or footer. Every island spreads `revealProps(i, reduced)` with `useReducedMotion()`.
+**Rules:** `SiteNav` / `Footer` are single sources — never inline a second nav or footer. Every island spreads `revealProps(i, reduced)` with `useReducedMotion()`; static `.astro` lists (e.g. `WorkGrid`) use the CSS `.reveal` system instead.
 
 ---
 
