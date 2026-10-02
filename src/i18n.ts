@@ -56,6 +56,11 @@ const en = {
   work: {
     featured: "Featured",
     moreProjects: "More projects",
+    filterAll: "All",
+    filterBot: "Bot",
+    filterWebsite: "Website",
+    filterCommunity: "Community",
+    filterLabel: "Filter projects by category",
   },
 };
 
@@ -104,6 +109,11 @@ const th: typeof en = {
   work: {
     featured: "เด่น",
     moreProjects: "โปรเจกต์เพิ่มเติม",
+    filterAll: "ทั้งหมด",
+    filterBot: "บอท",
+    filterWebsite: "เว็บไซต์",
+    filterCommunity: "คอมมูนิตี้",
+    filterLabel: "กรองผลงานตามหมวดหมู่",
   },
 };
 

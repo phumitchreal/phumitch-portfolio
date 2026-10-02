@@ -1,0 +1,43 @@
+---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  title: string;
+  monogram: string;
+  /** Real cover, if one has been added to src/assets/works/. */
+  cover?: ImageMetadata;
+  /** Accent mix strength for the CSS cover fallback (e.g. "26%"). */
+  accent?: string;
+  sizes?: string;
+}
+
+const {
+  title,
+  monogram,
+  cover,
+  accent = "26%",
+  sizes = "(min-width: 640px) 400px, 100vw",
+} = Astro.props;
+---
+
+<div class="work-cover-media">
+  {
+    cover ? (
+      <Image
+        src={cover}
+        alt={title}
+        widths={[480, 768, 1200]}
+        sizes={sizes}
+        format="webp"
+        loading="lazy"
+        decoding="async"
+        class="h-full w-full object-cover"
+      />
+    ) : (
+      <div class="work-cover" style={`--cover-accent:${accent}`} aria-hidden="true">
+        <span class="work-cover__mono">{monogram}</span>
+      </div>
+    )
+  }
+</div>

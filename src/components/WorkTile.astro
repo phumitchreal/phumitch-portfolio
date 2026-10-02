@@ -1,0 +1,85 @@
+---
+import { ArrowUpRightIcon as ArrowUpRight } from "@phosphor-icons/react";
+import WorkCover from "./WorkCover.astro";
+import { dicts } from "../i18n.ts";
+import type { Work } from "../content/work.ts";
+
+interface Props {
+  work: Work;
+  index?: number;
+  sizes?: string;
+}
+
+const { work: w, index = 0, sizes } = Astro.props;
+
+const en = dicts.en.work;
+const th = dicts.th.work;
+
+const accents = ["26%", "38%", "16%", "44%", "30%"];
+const accent = accents[index % accents.length];
+const delay = `${(index * 0.06 + 0.05).toFixed(2)}s`;
+const isLink = Boolean(w.href);
+---
+
+<a
+  href={w.href}
+  target={isLink ? "_blank" : undefined}
+  rel={isLink ? "noopener" : undefined}
+  class:list={[
+    "work-tile reveal group relative block overflow-hidden rounded-2xl border border-line bg-fg/[0.02] transition-colors duration-300 hover:border-line-strong hover:bg-fg/[0.04]",
+    w.featured && "sm:col-span-2",
+  ]}
+  style={`animation-delay:${delay}`}
+  data-work-tile
+  data-tags={w.categories.join(",")}
+>
+  <div class:list={["work-cover-frame", w.featured ? "aspect-[16/9]" : "aspect-[4/3]"]}>
+    <WorkCover title={w.title} monogram={w.monogram} cover={w.cover} accent={accent} sizes={sizes} />
+
+    {
+      w.featured ? (
+        <span class="absolute left-4 top-4 rounded-full border border-line bg-bg/70 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.14em] text-fg/70 backdrop-blur-sm">
+          <span data-lang="en">{en.featured}</span>
+          <span data-lang="th">{th.featured}</span>
+        </span>
+      ) : null
+    }
+
+    {
+      isLink ? (
+        <span class="pointer-events-none absolute right-4 top-4 flex h-9 w-9 -translate-y-1 items-center justify-center rounded-full border border-line bg-bg/70 text-fg/70 opacity-0 backdrop-blur-sm transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+          <ArrowUpRight size={15} weight="bold" />
+        </span>
+      ) : null
+    }
+  </div>
+
+  <div class="p-5">
+    <div class="flex items-baseline justify-between gap-3">
+      <h3 class="text-lg font-semibold tracking-[-0.01em] text-fg/90 transition-colors duration-300 group-hover:text-fg">
+        {w.title}
+      </h3>
+      <span class="shrink-0 font-mono text-xs tabular-nums text-fg/30">{w.year}</span>
+    </div>
+
+    <p class="mt-1 font-mono text-[11px] uppercase tracking-[0.08em] text-fg/35">
+      <span data-lang="en">{w.role}</span>
+      <span data-lang="th">{w.roleTh}</span>
+    </p>
+
+    <p class="mt-2.5 max-w-[520px] text-sm leading-6 text-fg/45">
+      <span data-lang="en">{w.desc}</span>
+      <span data-lang="th">{w.descTh}</span>
+    </p>
+
+    <div class="mt-3.5 flex flex-wrap gap-1.5">
+      {
+        w.tags.map((t) => (
+          <span class="rounded-md border border-line px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-fg/30 transition-colors duration-300 group-hover:text-fg/50">
+            {t}
+          </span>
+        ))
+      }
+    </div>
+  </div>
+</a>

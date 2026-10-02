@@ -1,0 +1,93 @@
+---
+import { ArrowRightIcon as ArrowRight } from "@phosphor-icons/react";
+import WorkTile from "./WorkTile.astro";
+import { works } from "../content/work.ts";
+import { dicts } from "../i18n.ts";
+
+const en = dicts.en.work;
+const th = dicts.th.work;
+
+const filters = [
+  { id: "all", en: en.filterAll, th: th.filterAll },
+  { id: "bot", en: en.filterBot, th: th.filterBot },
+  { id: "website", en: en.filterWebsite, th: th.filterWebsite },
+  { id: "community", en: en.filterCommunity, th: th.filterCommunity },
+];
+---
+
+<section class="mt-2">
+  <div class="flex flex-wrap items-center gap-2" role="group" aria-label={en.filterLabel}>
+    {
+      filters.map((f, i) => (
+        <button
+          type="button"
+          data-work-filter={f.id}
+          aria-pressed={i === 0 ? "true" : "false"}
+          class="rounded-full border border-line px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.08em] text-fg/40 transition-colors duration-300 hover:border-line-strong hover:text-fg/70 aria-pressed:border-fg aria-pressed:bg-fg aria-pressed:text-bg"
+        >
+          <span data-lang="en">{f.en}</span>
+          <span data-lang="th">{f.th}</span>
+        </button>
+      ))
+    }
+  </div>
+
+  <div data-work-grid class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2">
+    {
+      works.map((w, i) => (
+        <WorkTile
+          work={w}
+          index={i}
+          sizes={w.featured ? "(min-width: 640px) 800px, 100vw" : "(min-width: 640px) 400px, 100vw"}
+        />
+      ))
+    }
+  </div>
+
+  <a
+    href="https://zexta.xyz"
+    target="_blank"
+    rel="noopener"
+    class="group mt-8 flex items-center justify-between rounded-xl border border-line bg-surface px-6 py-5 transition-colors duration-300 hover:border-line-strong hover:bg-surface-hover"
+  >
+    <div>
+      <p class="text-sm font-medium text-fg">
+        <span data-lang="en">{en.moreProjects}</span>
+        <span data-lang="th">{th.moreProjects}</span>
+      </p>
+      <p class="mt-0.5 font-mono text-xs text-fg/35">zexta.xyz</p>
+    </div>
+    <span class="text-fg/30 transition-all duration-300 group-hover:translate-x-1 group-hover:text-fg">
+      <ArrowRight size={18} weight="bold" />
+    </span>
+  </a>
+</section>
+
+<script is:inline data-astro-rerun>
+  (function () {
+    if (window.__crinoidWorkFilter) return;
+    window.__crinoidWorkFilter = true;
+
+    document.addEventListener("click", function (event) {
+      var target = event.target;
+      var btn = target && target.closest ? target.closest("[data-work-filter]") : null;
+      if (!btn) return;
+
+      var grid = document.querySelector("[data-work-grid]");
+      if (!grid) return;
+
+      var value = btn.getAttribute("data-work-filter");
+      var tiles = grid.querySelectorAll("[data-work-tile]");
+      for (var i = 0; i < tiles.length; i++) {
+        var tags = (tiles[i].getAttribute("data-tags") || "").split(",");
+        var show = value === "all" || tags.indexOf(value) !== -1;
+        tiles[i].style.display = show ? "" : "none";
+      }
+
+      var buttons = document.querySelectorAll("[data-work-filter]");
+      for (var j = 0; j < buttons.length; j++) {
+        buttons[j].setAttribute("aria-pressed", buttons[j] === btn ? "true" : "false");
+      }
+    });
+  })();
+</script>

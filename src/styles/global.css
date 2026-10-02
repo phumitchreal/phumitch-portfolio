@@ -225,6 +225,57 @@ astro-island[ssr] { display: contents; }
 .prose-editorial > section:nth-child(5) { animation-delay: 0.33s; }
 .prose-editorial > section:nth-child(6) { animation-delay: 0.4s; }
 
+/* ---- Portfolio work grid ---- */
+.work-cover-frame {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+.work-cover-media {
+  position: absolute;
+  inset: 0;
+  transition: transform var(--dur-slow) var(--ease);
+  will-change: transform;
+}
+.work-tile:hover .work-cover-media,
+.work-tile:focus-visible .work-cover-media { transform: scale(1.045); }
+
+/* Tokenized cover fallback — gradient wash + hairline grid + monogram.
+   Swapped for a real <Image> the moment a cover file lands in work.ts. */
+.work-cover {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background:
+    radial-gradient(130% 120% at 16% 8%, color-mix(in srgb, var(--accent) var(--cover-accent, 26%), transparent) 0%, transparent 58%),
+    linear-gradient(150deg, var(--surface-hover) 0%, var(--surface) 70%);
+}
+.work-cover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 30px 30px;
+  -webkit-mask-image: radial-gradient(120% 120% at 74% 92%, #000 0%, transparent 68%);
+  mask-image: radial-gradient(120% 120% at 74% 92%, #000 0%, transparent 68%);
+  opacity: 0.6;
+}
+.work-cover__mono {
+  position: absolute;
+  right: -0.05em;
+  bottom: -0.24em;
+  font-family: var(--ff-body);
+  font-weight: 800;
+  font-size: clamp(3.5rem, 18vw, 8rem);
+  line-height: 0.8;
+  letter-spacing: -0.05em;
+  color: color-mix(in srgb, var(--text) 9%, transparent);
+  user-select: none;
+  pointer-events: none;
+}
+
 /* View transitions — soft crossfade with the site's easing */
 ::view-transition-old(root),
 ::view-transition-new(root) {
@@ -246,4 +297,7 @@ astro-island[ssr] { display: contents; }
     filter: none;
     transform: none;
   }
+  .work-cover-media { transition: none; }
+  .work-tile:hover .work-cover-media,
+  .work-tile:focus-visible .work-cover-media { transform: none; }
 }
