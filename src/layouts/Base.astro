@@ -3,6 +3,7 @@ import "../styles/global.css";
 import Preloader from "../components/Preloader.tsx";
 import LanguageGate from "../components/LanguageGate.tsx";
 import TurnstileGuard from "../components/TurnstileGuard.tsx";
+import SiteWaves from "../components/SiteWaves.tsx";
 import { ClientRouter } from "astro:transitions";
 
 interface Props {
@@ -74,6 +75,9 @@ const isVerify = /^\/verify\/?$/.test(Astro.url.pathname);
     <Preloader client:load enabled={!isVerify} />
     <LanguageGate client:load enabled={!isVerify} />
     <TurnstileGuard client:load />
-    <slot />
+    <SiteWaves client:load />
+    <div class="relative z-10">
+      <slot />
+    </div>
   </body>
 </html>
