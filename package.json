@@ -35,5 +35,8 @@
     "@astrojs/tailwind": "^6.0.2",
     "sharp": "^0.35.4",
     "typescript": "^5.9.3"
-  }
+  },
+  "description": "Editorial personal portfolio — **Astro 7 + React 19 islands + Framer Motion 12** — dark-first with a working light theme, bilingual TH/EN.",
+  "main": "index.js",
+  "keywords": []
 }
