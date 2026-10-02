@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "test:turnstile": "node scripts/test-turnstile.mjs"
+    "test:turnstile": "node scripts/test-turnstile.mjs",
+    "check:edge": "node scripts/check-edge.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
