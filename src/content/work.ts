@@ -3,6 +3,8 @@ import zextaCover from "../assets/works/zexta.jpg";
 import figurathCover from "../assets/works/figurath.jpg";
 import phumitchCover from "../assets/works/phumitch.jpg";
 import studioLolCover from "../assets/works/studio-lol.jpg";
+import fuyuriCover from "../assets/works/fuyuri.jpg";
+import avenLabsCover from "../assets/works/aven-labs.jpg";
 
 export type WorkCategory = "bot" | "website" | "community";
 
@@ -37,6 +39,32 @@ export const works: Work[] = [
     monogram: "Zx",
     cover: zextaCover,
     featured: true,
+  },
+  {
+    title: "Fuyuri TR",
+    desc: "Full-service dev team site · services, VPS hosting, Discord server setup and smart classroom",
+    descTh: "เว็บทีมพัฒนาครบวงจร · บริการออกแบบระบบ, VPS Hosting, เซ็ตอัปเซิร์ฟเวอร์ Discord และห้องเรียนสมาร์ท",
+    href: "https://fuyuri.net/",
+    tags: ["Website", "Services", "Full-stack"],
+    categories: ["website"],
+    year: "2026",
+    role: "Design + Build",
+    roleTh: "ออกแบบและพัฒนา",
+    monogram: "Fu",
+    cover: fuyuriCover,
+  },
+  {
+    title: "Aven Labs",
+    desc: "Thai Minecraft mod studio · SmoothThai font mod, open-source, weekly playtests and community",
+    descTh: "สตูดิโอม็อด Minecraft ของคนไทย · ม็อดฟอนต์ SmoothThai โอเพ่นซอร์ส ทดสอบเล่นทุกสัปดาห์พร้อมคอมมูนิตี้",
+    href: "https://aven-labs.phumitch.space/",
+    tags: ["Website", "Minecraft", "Open Source"],
+    categories: ["website", "community"],
+    year: "2026",
+    role: "Design + Build",
+    roleTh: "ออกแบบและพัฒนา",
+    monogram: "Av",
+    cover: avenLabsCover,
   },
   {
     title: "FiguraTH",
