@@ -20,10 +20,6 @@ interface Status {
   verified?: boolean;
 }
 
-/** Session-scoped bypass set by /verify when the widget cannot be completed.
- *  Must match PASS_KEY in TurnstileChallenge.tsx. */
-const PASS_KEY = "crinoid_turnstile_passed";
-
 export default function TurnstileGuard({ enabled = true }: { enabled?: boolean }) {
   useEffect(() => {
     if (!enabled) return;
@@ -33,13 +29,6 @@ export default function TurnstileGuard({ enabled = true }: { enabled?: boolean }
     const checkAndRun = async () => {
       const path = window.location.pathname;
       if (path === "/verify" || path.startsWith("/verify/")) return;
-
-      // Visitor tapped "continue" after the widget failed — never bounce them back.
-      try {
-        if (window.sessionStorage.getItem(PASS_KEY) === "1") return;
-      } catch {
-        /* storage blocked — ignore */
-      }
 
       // Workflow sequence: If LanguageGate needs to show (first-time visitor),
       // wait for the user to choose their language first so the overlays don't clash.

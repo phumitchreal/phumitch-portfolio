@@ -36,3 +36,4 @@ pnpm-debug.log*
 # keep the documented template even though .env* is ignored above
 !.env.example
 
+.vercel

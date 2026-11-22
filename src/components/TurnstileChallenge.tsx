@@ -47,11 +47,8 @@ const SCRIPT_ID = "cf-turnstile-script";
 const SCRIPT_URL = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
 const SCRIPT_TIMEOUT_MS = 8000;
 /** If the widget never hands back a token (blocked storage, adblock, network),
- *  surface the error state so the continue button is always reachable. */
+ *  surface the error state so the user can try again. */
 const WIDGET_TIMEOUT_MS = 15000;
-/** Session-scoped bypass so a blocked widget can never trap the visitor.
- *  Must match PASS_KEY in TurnstileGuard.tsx. */
-const PASS_KEY = "crinoid_turnstile_passed";
 
 const BTN =
   "inline-flex h-9 cursor-pointer items-center justify-center rounded-full border border-line-strong bg-transparent px-5 text-[12px] font-medium text-fg/80 transition-colors duration-300 hover:border-fg/40 hover:bg-fg/[0.04] hover:text-fg";
@@ -116,17 +113,6 @@ export default function TurnstileChallenge({
   const finish = useCallback(() => {
     window.location.assign(target);
   }, [target]);
-
-  /** Escape hatch: the widget is broken or blocked, so let the visitor through
-   *  instead of looping them back to /verify forever. */
-  const skip = useCallback(() => {
-    try {
-      window.sessionStorage.setItem(PASS_KEY, "1");
-    } catch {
-      /* storage blocked — the guard may bounce once, but never loop */
-    }
-    finish();
-  }, [finish]);
 
   const submit = useCallback(
     async (token: string) => {
@@ -326,9 +312,6 @@ export default function TurnstileChallenge({
             <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
               <button type="button" onClick={retry} className={BTN}>
                 <L en="Try again" th="ลองอีกครั้ง" />
-              </button>
-              <button type="button" onClick={skip} className={BTN}>
-                <L en="Continue to site" th="เข้าเว็บต่อ" />
               </button>
             </div>
           </>
