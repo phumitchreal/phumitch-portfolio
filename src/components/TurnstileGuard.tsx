@@ -30,7 +30,7 @@ export default function TurnstileGuard({ enabled = true }: { enabled?: boolean }
 
     let cancelled = false;
 
-    const run = async () => {
+    const checkAndRun = async () => {
       const path = window.location.pathname;
       if (path === "/verify" || path.startsWith("/verify/")) return;
 
@@ -40,6 +40,27 @@ export default function TurnstileGuard({ enabled = true }: { enabled?: boolean }
       } catch {
         /* storage blocked — ignore */
       }
+
+      // Workflow sequence: If LanguageGate needs to show (first-time visitor),
+      // wait for the user to choose their language first so the overlays don't clash.
+      let needsLang = false;
+      try {
+        needsLang = localStorage.getItem("crinoid_lang") === null;
+      } catch {}
+
+      if (needsLang) {
+        await new Promise<void>((resolve) => {
+          const onLang = () => {
+            window.removeEventListener("crinoid:lang-chosen", onLang);
+            resolve();
+          };
+          window.addEventListener("crinoid:lang-chosen", onLang, { once: true });
+          // Fallback timeout in case event is missed
+          window.setTimeout(resolve, 8000);
+        });
+      }
+
+      if (cancelled) return;
 
       try {
         const res = await fetch("/api/verify-turnstile", {
@@ -64,7 +85,7 @@ export default function TurnstileGuard({ enabled = true }: { enabled?: boolean }
       }
     };
 
-    void run();
+    void checkAndRun();
     return () => {
       cancelled = true;
     };

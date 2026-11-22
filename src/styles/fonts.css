@@ -1,30 +1,61 @@
-/* fonts.css — RABBIT · self-hosted, Thai + Latin
-   4 static weights as OTF (CFF): 181 KB total, zero external requests. */
+/* fonts.css — Sukhumvit Set (self-hosted woff2) · `--ff-body`.
+   Static faces: Thin 100, Light 300, Text 400, Medium 500, SemiBold 600,
+   Bold 700. The family ships no 800/900 cut, so those requests are mapped to
+   Bold instead of letting the browser synthesize a fake weight. */
 @font-face {
-  font-family: "RABBIT";
-  src: url("/fonts/rabbit-thin.otf") format("opentype");
+  font-family: "Sukhumvit Set";
+  src: url("/fonts/sukhumvit/SukhumvitSet-Thin.woff2") format("woff2");
   font-weight: 100;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "RABBIT";
-  src: url("/fonts/rabbit-regular.otf") format("opentype");
+  font-family: "Sukhumvit Set";
+  src: url("/fonts/sukhumvit/SukhumvitSet-Light.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Sukhumvit Set";
+  src: url("/fonts/sukhumvit/SukhumvitSet-Text.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "RABBIT";
-  src: url("/fonts/rabbit-bold.otf") format("opentype");
-  font-weight: 700;
+  font-family: "Sukhumvit Set";
+  src: url("/fonts/sukhumvit/SukhumvitSet-Medium.woff2") format("woff2");
+  font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "RABBIT";
-  src: url("/fonts/rabbit-extrabold.otf") format("opentype");
+  font-family: "Sukhumvit Set";
+  src: url("/fonts/sukhumvit/SukhumvitSet-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Sukhumvit Set";
+  src: url("/fonts/sukhumvit/SukhumvitSet-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+/* Alias the missing heavy cuts to Bold so 800/900 never get synthesized. */
+@font-face {
+  font-family: "Sukhumvit Set";
+  src: url("/fonts/sukhumvit/SukhumvitSet-Bold.woff2") format("woff2");
   font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Sukhumvit Set";
+  src: url("/fonts/sukhumvit/SukhumvitSet-Bold.woff2") format("woff2");
+  font-weight: 900;
   font-style: normal;
   font-display: swap;
 }

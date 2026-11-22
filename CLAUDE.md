@@ -1,7 +1,7 @@
 # CLAUDE.md — crinoid
 
 > Astro 7 + React 19 islands + Framer Motion 12 + Tailwind 4 portfolio for **ภูมิทัศน์ สมศรี — กีต้า** (Phumitch Somsri / Guitar).
-> Editorial v2 redesign: dark-first + working light toggle, real token system, shared shell components.
+> Apple Editorial v3 redesign: light-first + working dark toggle, Apple-blue token system, glass nav, shared shell components.
 
 ## Stack (verified)
 
@@ -27,7 +27,7 @@ src/
   layouts/Base.astro      # <html> shell: SEO/OG, theme+lang script, ClientRouter, skip-link, overlays
   layouts/Legal.astro     # legal shell (privacy/terms/acceptable-use)
   pages/
-    index.astro           # homepage → SiteNav + HeroMotion + Footer
+    index.astro           # homepage → SiteNav + HeroMotion + HomeWork + HomeAbout + SongCard + Footer
     about.astro           # PageHero + AboutPage + BackHome
     portfolio.astro       # PageHero + WorkGallery + BackHome
     birthday.astro        # Count_Down port; caption date computed via nextBirthday()

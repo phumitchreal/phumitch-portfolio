@@ -1,0 +1,59 @@
+---
+/**
+ * SmoothScroll — Lenis wheel smoothing (desktop trackpad / mouse wheel only).
+ *
+ * - Touch scrolling stays native (`syncTouch: false`), so phones keep the
+ *   platform-feeling scroll and momentum.
+ * - `respectReducedMotion` + the explicit matchMedia guard mean anyone with
+ *   “Reduce motion” gets plain native scrolling and the CSS smooth anchors.
+ * - Clients can pause it while a modal/sheet is open: `window.__lenis?.stop()`
+ *   then `.start()` — SiteNav does exactly that for the mobile menu.
+ */
+import "lenis/dist/lenis.css";
+---
+
+<script>
+  import Lenis from "lenis";
+
+  declare global {
+    interface Window {
+      __lenis?: Lenis;
+    }
+  }
+
+  const win = window;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  function create() {
+    if (win.__lenis || reduceMotion.matches) return;
+    win.__lenis = new Lenis({
+      autoRaf: true,
+      lerp: 0.1,
+      wheelMultiplier: 1,
+      smoothWheel: true,
+      // Phones keep native touch scrolling.
+      syncTouch: false,
+      // Belt and braces: Lenis also steps aside if the preference changes.
+      respectReducedMotion: true,
+    });
+  }
+
+  function destroy() {
+    win.__lenis?.destroy();
+    win.__lenis = undefined;
+  }
+
+  function syncPreference() {
+    if (reduceMotion.matches) destroy();
+    else create();
+  }
+
+  create();
+  reduceMotion.addEventListener("change", syncPreference);
+
+  // ClientRouter swaps the document without re-running layout scripts: the
+  // instance survives, but its cached page height does not.
+  document.addEventListener("astro:page-load", () => {
+    win.__lenis?.resize();
+  });
+</script>

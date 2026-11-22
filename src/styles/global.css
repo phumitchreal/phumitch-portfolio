@@ -9,6 +9,8 @@
   --color-surface: var(--surface);
   --color-surface-hover: var(--surface-hover);
   --color-surface-muted: var(--surface-muted);
+  --color-mist: var(--mist);
+  --color-mist-strong: var(--mist-strong);
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
   --color-fg: var(--text);
@@ -25,41 +27,45 @@
   --container-page: 800px;
   --container-hero: 640px;
 
-  --ease-editorial: var(--ease);
+  --ease-apple: var(--ease);
 }
 
 @layer base {
-  html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
+  html {
+    scroll-behavior: smooth;
+    /* Fixed 48px glass bar — anchor targets stop just below it. */
+    scroll-padding-top: 4.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-strong) transparent;
+  }
   body {
     background: var(--bg);
     color: var(--text-body);
     font-family: var(--ff-body);
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    font-feature-settings: "kern" 1, "liga" 1;
-    line-height: 1.75;
+    font-feature-settings: "kern" 1;
+    line-height: 1.7;
     transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
   }
 
-  /* Thai typography tuning */
   :lang(th) {
-    line-height: 1.85;
+    line-height: 1.75;
     word-break: keep-all;
     overflow-wrap: break-word;
   }
 
   ::selection { background: var(--selection-bg); color: var(--selection-color); }
 
-  /* Language switching — static content carries both scripts, CSS shows the active one.
-     Inside @layer base so Tailwind utilities (e.g. `hidden` / `md:block`) can override it. */
+  /* Language switching — static content carries both scripts, CSS shows the active one. */
   [data-lang] { display: none; }
   html[lang="en"] [data-lang="en"],
   html[lang="th"] [data-lang="th"] { display: revert; }
 
-  /* Keyboard focus — burgundy ring, visible in both themes */
-  :focus-visible { outline: 2px solid var(--accent-hover); outline-offset: 2px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 999px; }
 }
 
@@ -71,45 +77,122 @@ html[lang="th"] [data-act="th"] {
   text-decoration: none;
 }
 
+/* Navbar — current page. Same values as the Tailwind classes on the active
+   link; aria-current is also set by the SiteNav sync script so the active
+   state survives client-side navigation (view transitions persist the layout). */
+a[data-nav-link][aria-current="page"] {
+  background: var(--mist);
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* ---- Layout & surface primitives ---- */
+.container-apple {
+  width: calc(100% - 2rem);
+  max-width: 1200px;
+  margin-inline: auto;
+}
+@media (min-width: 640px) {
+  .container-apple { width: calc(100% - 3rem); }
+}
+
+.glass {
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+}
+
+.headline {
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+  color: var(--text);
+  text-wrap: balance;
+}
+
+/* ---- Buttons ---- */
+.btn-primary,
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  height: 2.75rem;
+  padding-inline: 1.35rem;
+  border-radius: 999px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  transition: background-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease);
+}
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-primary:hover { background: var(--accent-hover); }
+
+/* Site-nav GitHub pill — compact, Apple-like; the defaults above are the
+   hero-scale size used by the big `/portfolio` CTA. */
+header .btn-primary {
+  height: 1.5rem;          /* 24px — same band as the desktop nav pills */
+  padding-inline: 0.5rem;
+  font-size: 0.6875rem;    /* 11px */
+}
+
+/* Sheet button — tighter than the default 2.75rem row height. */
+[data-nav-menu] .btn-primary {
+  height: 2rem;            /* 32px */
+  padding-inline: 1rem;
+  font-size: 0.8125rem;    /* 13px */
+}
+.btn-ghost {
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--text);
+}
+.btn-ghost:hover { background: var(--surface-hover); border-color: var(--line-strong); }
+.btn-primary:active,
+.btn-ghost:active { transform: scale(0.98); }
+
 /* ---- Editorial type system ---- */
 .eyebrow {
-  font-family: var(--ff-mono);
-  font-size: 0.6875rem;
-  font-weight: 500;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--text-dim);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--accent);
 }
-/* Hero title — Anuphan Bold, Thai-natural tracking */
 .hero-title {
   font-family: var(--ff-body);
-  font-weight: 700;
+  font-weight: 600;
   font-size: var(--type-hero);
   line-height: 0.95;
-  letter-spacing: -0.01em;
-  font-optical-sizing: auto;
+  letter-spacing: -0.045em;
+  color: var(--text);
 }
-/* Page title — shared by about / portfolio / legal pages */
 .page-title {
   font-family: var(--ff-body);
-  font-weight: 700;
+  font-weight: 600;
   font-size: var(--type-page);
   line-height: 1.05;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.035em;
+  color: var(--text);
 }
-/* Section titles — lighter than hero, more air */
 .section-title {
   font-family: var(--ff-body);
-  font-weight: 700;
+  font-weight: 600;
   font-size: var(--type-h2);
   line-height: 1.1;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.03em;
+  color: var(--text);
 }
-/* Page lede paragraph */
 .lede {
-  max-width: 620px;
-  font-size: clamp(0.875rem, 1.6vw, 1rem);
-  line-height: 1.8;
+  max-width: 640px;
+  font-size: clamp(1rem, 1.6vw, 1.125rem);
+  line-height: 1.7;
   color: var(--text-muted);
 }
 
@@ -117,29 +200,30 @@ html[lang="th"] [data-act="th"] {
 .prose-editorial {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  font-size: 0.875rem;
-  line-height: 1.85;
+  gap: 0.875rem;
+  font-size: 0.9375rem;
+  line-height: 1.8;
   color: var(--text-body);
 }
 .prose-editorial section {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.6rem;
   border: 1px solid var(--line);
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--text) 2%, transparent);
-  padding: 1.25rem;
+  border-radius: 20px;
+  background: var(--surface);
+  padding: 1.5rem;
 }
 .prose-editorial h2 {
-  font-size: 1rem;
+  font-size: 1.0625rem;
   font-weight: 600;
+  letter-spacing: -0.015em;
   color: var(--text);
 }
 .prose-editorial code {
   border: 1px solid var(--line);
-  border-radius: 4px;
-  background: var(--surface-muted);
+  border-radius: 6px;
+  background: var(--mist);
   padding: 0.1em 0.4em;
   font-family: var(--ff-mono);
   font-size: 0.85em;
@@ -156,7 +240,7 @@ html[lang="th"] [data-act="th"] {
 .eq span {
   width: 2px;
   border-radius: 1px;
-  background: currentColor;
+  background: var(--accent);
   animation: eq 900ms var(--ease) infinite;
 }
 .eq span:nth-child(2) { animation-delay: 150ms; }
@@ -173,7 +257,7 @@ html[lang="th"] [data-act="th"] {
   left: 0.75rem;
   z-index: 10001;
   padding: 0.5rem 0.9rem;
-  border-radius: 8px;
+  border-radius: 999px;
   background: var(--text);
   color: var(--bg);
   font-size: 0.75rem;
@@ -183,11 +267,11 @@ html[lang="th"] [data-act="th"] {
 }
 .skip-link:focus-visible { transform: translateY(0); }
 
-/* ---- ZT sticker (avatar) — lighten blend reads as a ghost sticker on dark ---- */
-.zt-icon { mix-blend-mode: lighten; }
-html[data-theme="light"] .zt-icon { mix-blend-mode: normal; }
+/* ---- ZT sticker (avatar) ---- */
+.zt-icon { mix-blend-mode: normal; }
+html[data-theme="dark"] .zt-icon { mix-blend-mode: lighten; }
 
-/* ---- Theme toggle icon swap — driven by data-theme, no hydration flash ---- */
+/* ---- Theme toggle icon swap ---- */
 .theme-toggle .theme-icon { display: none; }
 html[data-theme="dark"] .theme-toggle .theme-icon--sun { display: block; }
 html[data-theme="light"] .theme-toggle .theme-icon--moon { display: block; }
@@ -195,35 +279,43 @@ html[data-theme="light"] .theme-toggle .theme-icon--moon { display: block; }
 /* Fallback: if JS fails, astro-island ssr content should still be visible */
 astro-island[ssr] { display: contents; }
 
-/* ---- Entrance animations (load-in) ----
-   No `filter` here on purpose: minifiers rewrite `blur(0)` into invalid `blur()`,
-   which can drop the keyframe. Opacity + transform is safe and faster.
-   `backwards` (not `both`) means content is visible by default — the hidden state
-   only exists while the entrance delay runs. */
+/* ---- Load-in entrance (hero) ---- */
 @keyframes riseIn {
-  from { opacity: 0; transform: translateY(18px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(18px); filter: blur(8px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
 }
-.reveal { animation: riseIn 0.7s var(--ease) backwards; }
+.reveal { animation: riseIn 0.9s var(--ease) backwards; }
 .reveal-1 { animation-delay: 0.07s; }
 .reveal-2 { animation-delay: 0.14s; }
 .reveal-3 { animation-delay: 0.21s; }
 .reveal-4 { animation-delay: 0.28s; }
 .reveal-5 { animation-delay: 0.35s; }
 
-/* Page hero — eyebrow → title → lede */
-.page-hero .eyebrow { animation: riseIn 0.6s var(--ease) backwards 0.02s; }
-.page-hero h1 { animation: riseIn 0.7s var(--ease) backwards 0.08s; }
-.page-hero .lede { animation: riseIn 0.7s var(--ease) backwards 0.15s; }
+.page-hero .eyebrow { animation: riseIn 0.7s var(--ease) backwards 0.02s; }
+.page-hero h1 { animation: riseIn 0.8s var(--ease) backwards 0.08s; }
+.page-hero .lede { animation: riseIn 0.8s var(--ease) backwards 0.15s; }
 
-/* Legal prose — staggered on load */
-.prose-editorial > section { animation: riseIn 0.65s var(--ease) backwards; }
+.prose-editorial > section { animation: riseIn 0.7s var(--ease) backwards; }
 .prose-editorial > section:nth-child(1) { animation-delay: 0.05s; }
 .prose-editorial > section:nth-child(2) { animation-delay: 0.12s; }
 .prose-editorial > section:nth-child(3) { animation-delay: 0.19s; }
 .prose-editorial > section:nth-child(4) { animation-delay: 0.26s; }
 .prose-editorial > section:nth-child(5) { animation-delay: 0.33s; }
 .prose-editorial > section:nth-child(6) { animation-delay: 0.4s; }
+
+/* ---- Scroll reveal (reference-style blur rise) ---- */
+html.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(36px);
+  filter: blur(8px);
+  transition: opacity 1.1s var(--ease), transform 1.1s var(--ease), filter 1.1s var(--ease);
+  will-change: opacity, transform, filter;
+}
+html.js [data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+}
 
 /* ---- Portfolio work grid ---- */
 .work-cover-frame {
@@ -240,38 +332,26 @@ astro-island[ssr] { display: contents; }
 .work-tile:hover .work-cover-media,
 .work-tile:focus-visible .work-cover-media { transform: scale(1.045); }
 
-/* Tokenized cover fallback — gradient wash + hairline grid + monogram.
-   Swapped for a real <Image> the moment a cover file lands in work.ts. */
+/* Tokenized cover fallback — soft mist wash + monogram. */
 .work-cover {
   height: 100%;
   width: 100%;
   overflow: hidden;
+  position: relative;
   background:
     radial-gradient(130% 120% at 16% 8%, color-mix(in srgb, var(--accent) var(--cover-accent, 26%), transparent) 0%, transparent 58%),
-    linear-gradient(150deg, var(--surface-hover) 0%, var(--surface) 70%);
-}
-.work-cover::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(var(--line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--line) 1px, transparent 1px);
-  background-size: 30px 30px;
-  -webkit-mask-image: radial-gradient(120% 120% at 74% 92%, #000 0%, transparent 68%);
-  mask-image: radial-gradient(120% 120% at 74% 92%, #000 0%, transparent 68%);
-  opacity: 0.6;
+    linear-gradient(150deg, var(--mist-strong) 0%, var(--mist) 70%);
 }
 .work-cover__mono {
   position: absolute;
   right: -0.05em;
   bottom: -0.24em;
   font-family: var(--ff-body);
-  font-weight: 800;
+  font-weight: 700;
   font-size: clamp(3.5rem, 18vw, 8rem);
   line-height: 0.8;
   letter-spacing: -0.05em;
-  color: color-mix(in srgb, var(--text) 9%, transparent);
+  color: color-mix(in srgb, var(--text) 12%, transparent);
   user-select: none;
   pointer-events: none;
 }
@@ -296,6 +376,12 @@ astro-island[ssr] { display: contents; }
     opacity: 1;
     filter: none;
     transform: none;
+  }
+  html.js [data-reveal] {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
   }
   .work-cover-media { transition: none; }
   .work-tile:hover .work-cover-media,

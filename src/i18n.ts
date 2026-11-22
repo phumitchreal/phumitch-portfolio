@@ -15,7 +15,7 @@ const en = {
   home: {
     tag1: "Expert in prompting AI to build production websites · Vibe Coding ◆ Full-stack",
     tag2: "Discord Bot and website studio · built for real use, scalable and maintainable",
-    agents: "AI Agents in Use",
+    agents: "Partners & Clients",
     work: "Work",
     about: "About",
     birthday: "Birthday",
@@ -66,9 +66,9 @@ const en = {
 
 const th: typeof en = {
   home: {
-    tag1: "ผู้เชี่ยวชาญด้านการสั่ง AI เขียนเว็บ · Vibe Coding ◆ Full-stack",
+    tag1: "ผู้เชี่ยวชาญด้านการสั่ง AI เขียนเว็บ · Vibe Coding · Full-stack",
     tag2: "Discord Bot และสตูดิโอเว็บไซต์ · สร้างเพื่อใช้งานจริง มั่นคงและดูแลง่าย",
-    agents: "AI Agents ที่ใช้",
+    agents: "พาร์ทเนอร์และลูกค้าที่ร่วมงาน",
     work: "ผลงาน",
     about: "เกี่ยวกับ",
     birthday: "วันเกิด",

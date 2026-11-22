@@ -21,7 +21,7 @@ export default function ThemeToggle({ className = "" }: { className?: string }) 
       onClick={toggle}
       aria-label="Toggle theme / สลับธีม"
       title="Theme / ธีม"
-      className={`theme-toggle flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border border-line bg-surface text-fg/60 transition-colors duration-300 hover:bg-surface-hover hover:text-fg ${className}`}
+      className={`theme-toggle flex h-7 w-7 cursor-pointer items-center justify-center rounded-full bg-mist text-fg-muted transition-colors duration-200 hover:text-fg ${className}`}
     >
       <span className="theme-icon theme-icon--sun">
         <Sun size={14} weight="bold" />

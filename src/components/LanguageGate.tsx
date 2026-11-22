@@ -27,7 +27,7 @@ export default function LanguageGate({ enabled = true }: { enabled?: boolean }) 
 
   if (!show) return null;
 
-  const Btn = `inline-flex h-10 cursor-pointer items-center justify-center rounded-full border border-line-strong bg-transparent px-7 text-sm font-medium text-fg/80 transition-colors duration-300 hover:border-fg/40 hover:bg-fg/[0.04] hover:text-fg`;
+  const Btn = `inline-flex h-10 cursor-pointer items-center justify-center rounded-full border border-line-strong bg-transparent px-7 text-sm font-medium text-fg transition-colors duration-200 hover:border-line hover:bg-mist`;
 
   return (
     <motion.div
@@ -62,8 +62,8 @@ export default function LanguageGate({ enabled = true }: { enabled?: boolean }) 
           </button>
         </div>
 
-        <p className="mt-9 font-mono text-[10px] uppercase tracking-[0.25em] text-fg-dim">
-          Saved on this device
+        <p className="mt-9 text-[12px] text-fg-dim">
+          เปลี่ยนภาษาได้ทุกเมื่อจากแถบด้านบน · Change it anytime from the top bar
         </p>
       </motion.div>
     </motion.div>

@@ -1,43 +1,386 @@
 ---
 import ZTIcon from "./ZTIcon.tsx";
-import { GithubLogoIcon as GithubLogo } from "@phosphor-icons/react";
+import {
+  GithubLogoIcon as GithubLogo,
+  ListIcon as List,
+  XIcon as X,
+  ArrowUpRightIcon as ArrowUpRight,
+} from "@phosphor-icons/react";
 import LangToggle from "./LangToggle.tsx";
 import ThemeToggle from "./ThemeToggle.tsx";
 
+interface Props {
+  /** Href of the nav item to mark as active; defaults to the current path. */
+  activeHref?: string;
+  /** How the active page is marked: "highlight" (filled pill) or "frame" (outlined rounded rect). */
+  indicator?: "highlight" | "frame";
+}
+
+const { activeHref, indicator = "highlight" } = Astro.props;
+
 const links = [
-  { href: "/portfolio", en: "Work", th: "ผลงาน" },
-  { href: "/about", en: "About", th: "เกี่ยวกับ" },
-  { href: "/birthday", en: "Birthday", th: "วันเกิด" },
+  { key: "home", href: "/", en: "Home", th: "หน้าแรก" },
+  { key: "portfolio", href: "/portfolio", en: "Work", th: "ผลงาน" },
+  { key: "about", href: "/about", en: "About", th: "เกี่ยวกับ" },
+  { key: "birthday", href: "/birthday", en: "Birthday", th: "วันเกิด" },
 ];
+
+const pathname = Astro.url.pathname.replace(/\/+$/, "") || "/";
+const markedHref = activeHref ?? pathname;
+const activeKey = links.find((l) => l.href === markedHref)?.key;
 ---
 
-<header class="reveal relative z-20 mx-auto flex w-full max-w-shell items-center justify-between gap-4 px-6 py-5">
-  <a href="/" class="flex items-center" aria-label="Phumitch · Home">
-    <ZTIcon size={32} />
-  </a>
-  <div class="flex items-center gap-2">
-    <nav aria-label="Primary" class="mr-1 hidden items-center gap-0.5 md:flex">
-      {
-        links.map((l) => (
-          <a
-            href={l.href}
-            class="rounded-md px-2.5 py-1.5 text-xs font-medium text-fg/50 transition-colors duration-300 hover:text-fg"
-          >
-            <span data-lang="en">{l.en}</span><span data-lang="th">{l.th}</span>
-          </a>
-        ))
-      }
-    </nav>
-    <LangToggle client:load />
-    <ThemeToggle client:load />
-    <a
-      href="https://github.com/phumitchreal"
-      target="_blank"
-      rel="noopener"
-      class="inline-flex h-7 items-center gap-1.5 rounded-md border border-line bg-surface px-3 text-xs font-medium text-fg/80 transition-colors duration-300 hover:bg-surface-hover hover:text-fg"
-    >
-      <GithubLogo size={14} weight="bold" className="shrink-0" />
-      GitHub
+<header
+  data-site-header
+  class="glass fixed inset-x-0 top-0 z-50 border-b border-transparent transition-[border-color,background-color] duration-500"
+>
+  <nav
+    class="container-apple flex h-12 items-center justify-between gap-3"
+    aria-label="Primary"
+    data-nav-active-href={markedHref}
+  >
+    <a href="/" class="flex items-center gap-2" aria-label="Phumitch · Home">
+      <ZTIcon size={22} />
+      <span class="hidden text-[13px] font-semibold tracking-[-0.01em] text-fg sm:inline">phumitch.space</span>
     </a>
-  </div>
+
+    <div class="hidden items-center gap-1 md:flex">
+      {
+        links.map((l) => {
+          const isActive = activeKey === l.key;
+          const activeClass =
+            indicator === "frame"
+              ? "border border-[var(--accent)] font-semibold text-[var(--accent)] hover:text-[var(--accent)]"
+              : "bg-mist font-semibold text-fg";
+          return (
+            <a
+              data-nav-link
+              href={l.href}
+              aria-current={isActive ? "page" : undefined}
+              class:list={[
+                "rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors duration-200",
+                isActive ? activeClass : "text-fg-muted hover:text-fg",
+              ]}
+            >
+              <span data-lang="en">{l.en}</span><span data-lang="th">{l.th}</span>
+            </a>
+          );
+        })
+      }
+    </div>
+
+    <div class="flex items-center gap-1.5">
+      <LangToggle client:load />
+      <ThemeToggle client:load />
+      <span class="hidden sm:inline-flex">
+        <a
+          href="https://github.com/phumitchreal"
+          target="_blank"
+          rel="noopener"
+          class="btn-primary gap-1.5"
+        >
+          <GithubLogo size={12} weight="bold" className="shrink-0" />
+          GitHub
+        </a>
+      </span>
+
+      {/* Mobile menu trigger — Apple-style: two rules that become a cross. */}
+      <button
+        type="button"
+        data-nav-toggle
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label="เมนู / Menu"
+        class="mobile-nav-toggle -mr-1 grid size-8 place-items-center rounded-full text-fg transition-colors duration-200 hover:bg-mist md:hidden"
+      >
+        <List size={19} weight="bold" className="mobile-nav-icon-open" />
+        <X size={19} weight="bold" className="mobile-nav-icon-close" />
+      </button>
+    </div>
+  </nav>
 </header>
+
+{/* Full-screen sheet menu (mobile only) */}
+<div id="mobile-menu" data-nav-menu class="mobile-menu md:hidden" inert>
+  <div class="mobile-menu__inner flex h-full flex-col overflow-y-auto px-5 pb-[max(2rem,env(safe-area-inset-bottom))] pt-20">
+    <nav aria-label="Mobile">
+      <ul>
+        {
+          links.map((l) => {
+            const isActive = activeKey === l.key;
+            return (
+              <li>
+                <a
+                  data-nav-link
+                  data-nav-mobile-link
+                  href={l.href}
+                  aria-current={isActive ? "page" : undefined}
+                  class:list={[
+                    "group flex items-center justify-between border-b border-line py-4 text-[26px] font-semibold tracking-[-0.03em] transition-colors duration-200",
+                    isActive ? "text-accent" : "text-fg hover:text-fg-muted",
+                  ]}
+                >
+                  <span>
+                    <span data-lang="en">{l.en}</span>
+                    <span data-lang="th">{l.th}</span>
+                  </span>
+                  <ArrowUpRight
+                    size={20}
+                    weight="bold"
+                    className="text-fg-dim transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                  />
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </nav>
+
+    <div class="mt-auto space-y-5 pt-10">
+      <a
+        href="https://github.com/phumitchreal"
+        target="_blank"
+        rel="noopener"
+        class="btn-primary w-full gap-2"
+      >
+        <GithubLogo size={14} weight="bold" className="shrink-0" />
+        GitHub
+      </a>
+      <p class="text-center text-[12px] text-fg-dim">phumitch.space · Vibe Coding ◆ Full-stack</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: color-mix(in srgb, var(--bg) 86%, transparent);
+    -webkit-backdrop-filter: saturate(180%) blur(24px);
+    backdrop-filter: saturate(180%) blur(24px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 0.32s var(--ease),
+      visibility 0s linear 0.32s;
+  }
+  .mobile-menu[data-open] {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: opacity 0.32s var(--ease);
+  }
+  /* Dark surfaces let too much of the page bleed through at 86% — use the
+     solid background, the way Apple's dark sheets read. */
+  html[data-theme="dark"] .mobile-menu {
+    background: var(--bg);
+  }
+  .mobile-menu__inner {
+    transform: translateY(-8px);
+    opacity: 0;
+    overscroll-behavior: contain;
+    transition:
+      transform 0.4s var(--ease),
+      opacity 0.32s var(--ease);
+  }
+  .mobile-menu[data-open] .mobile-menu__inner {
+    transform: none;
+    opacity: 1;
+  }
+
+  /* The desktop nav paints the active link as a pill; inside the sheet the
+     active row is just accent type above a hairline. */
+  #mobile-menu a[data-nav-link][aria-current="page"] {
+    background: transparent;
+    font-weight: 600;
+  }
+
+  .mobile-nav-icon-close {
+    display: none;
+  }
+  [data-nav-toggle][aria-expanded="true"] .mobile-nav-icon-open {
+    display: none;
+  }
+  [data-nav-toggle][aria-expanded="true"] .mobile-nav-icon-close {
+    display: block;
+  }
+
+  /* Keep the bar opaque while the sheet is open. */
+  header[data-menu-open] {
+    background: var(--bg);
+    border-bottom-color: var(--line);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-menu,
+    .mobile-menu__inner {
+      transition: none;
+    }
+  }
+</style>
+
+<script is:inline data-astro-rerun>
+  (function () {
+    function setup() {
+      var header = document.querySelector("[data-site-header]");
+      var toggle = document.querySelector("[data-nav-toggle]");
+      var menu = document.querySelector("[data-nav-menu]");
+      if (!header || !toggle || !menu) return;
+
+      var lastFocus = null;
+
+      // Astro ClientRouter swaps the DOM: bind once per toggle element, but the
+      // script can also re-run on first load — never add duplicate listeners.
+      if (toggle.dataset.navBound === "1") {
+        window.__crinoidMobileClose = function () {
+          if (menu.hasAttribute("data-open")) {
+            menu.removeAttribute("data-open");
+            menu.inert = true;
+            toggle.setAttribute("aria-expanded", "false");
+            header.removeAttribute("data-menu-open");
+            document.documentElement.style.overflow = "";
+            if (window.__lenis) window.__lenis.start();
+          }
+        };
+        return;
+      }
+      toggle.dataset.navBound = "1";
+
+      function isOpen() {
+        return menu.hasAttribute("data-open");
+      }
+
+      function setOpen(next) {
+        if (next === isOpen()) return;
+        if (next) {
+          lastFocus = document.activeElement;
+          menu.setAttribute("data-open", "");
+          menu.inert = false;
+          toggle.setAttribute("aria-expanded", "true");
+          header.setAttribute("data-menu-open", "");
+          document.documentElement.style.overflow = "hidden";
+          // Lenis owns wheel scrolling; freeze it behind the sheet.
+          if (window.__lenis) window.__lenis.stop();
+          var first = menu.querySelector("[data-nav-mobile-link]");
+          window.requestAnimationFrame(function () {
+            if (first) first.focus({ preventScroll: true });
+          });
+        } else {
+          menu.removeAttribute("data-open");
+          menu.inert = true;
+          toggle.setAttribute("aria-expanded", "false");
+          header.removeAttribute("data-menu-open");
+          document.documentElement.style.overflow = "";
+          if (window.__lenis) window.__lenis.start();
+          if (window.__crinoidNavScroll) window.__crinoidNavScroll();
+          if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+        }
+        if (next && window.__crinoidNavScroll) window.__crinoidNavScroll();
+      }
+
+      toggle.addEventListener("click", function () {
+        setOpen(!isOpen());
+      });
+
+      menu.addEventListener("click", function (event) {
+        var target = event.target;
+        if (!(target instanceof Element)) return;
+        if (target.closest("[data-nav-mobile-link]")) {
+          setOpen(false);
+          return;
+        }
+        // Tapping the empty area outside the panel closes the sheet.
+        if (target === menu) setOpen(false);
+      });
+
+      // Reset when the viewport grows past the mobile breakpoint.
+      if (!window.__crinoidMobileNavMQ) {
+        window.__crinoidMobileNavMQ = window.matchMedia("(min-width: 768px)");
+        window.__crinoidMobileNavMQ.addEventListener("change", function (e) {
+          if (e.matches) {
+            var m = document.querySelector("[data-nav-menu]");
+            var t = document.querySelector("[data-nav-toggle]");
+            var h = document.querySelector("[data-site-header]");
+            if (m) {
+              m.removeAttribute("data-open");
+              m.inert = true;
+            }
+            if (t) t.setAttribute("aria-expanded", "false");
+            if (h) h.removeAttribute("data-menu-open");
+            document.documentElement.style.overflow = "";
+            if (window.__lenis) window.__lenis.start();
+          }
+        });
+      }
+
+      // Navigation via ClientRouter: make sure the sheet is gone.
+      window.__crinoidMobileClose = function () {
+        if (isOpen()) setOpen(false);
+      };
+    }
+
+    // Escape closes the sheet from anywhere (focus can land on body before
+    // the first link receives focus).
+    if (!window.__crinoidMobileEsc) {
+      window.__crinoidMobileEsc = true;
+      document.addEventListener("keydown", function (event) {
+        if (event.key !== "Escape") return;
+        var open = document.querySelector("[data-nav-menu][data-open]");
+        if (!open) return;
+        event.preventDefault();
+        if (window.__crinoidMobileClose) window.__crinoidMobileClose();
+        var t = document.querySelector("[data-nav-toggle]");
+        if (t) t.focus({ preventScroll: true });
+      });
+    }
+
+    setup();
+    document.addEventListener("astro:page-load", function () {
+      if (window.__crinoidMobileClose) window.__crinoidMobileClose();
+      setup();
+    });
+  })();
+</script>
+
+<script is:inline data-astro-rerun>
+  (function () {
+    var header = document.querySelector("[data-site-header]");
+    if (!header) return;
+    var onScroll = function () {
+      var scrolled = window.scrollY > 8 || header.hasAttribute("data-menu-open");
+      header.style.borderBottomColor = scrolled ? "var(--line)" : "transparent";
+      header.style.backgroundColor = scrolled ? "" : "transparent";
+      header.style.backdropFilter = scrolled ? "" : "none";
+      header.style.webkitBackdropFilter = scrolled ? "" : "none";
+    };
+    window.__crinoidNavScroll = onScroll;
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+  })();
+</script>
+
+<script is:inline data-astro-rerun>
+  (function () {
+    if (window.__crinoidNavActive) return;
+    window.__crinoidNavActive = true;
+    function setActive() {
+      var path = location.pathname.replace(/\/+$/, "") || "/";
+      var nav = document.querySelector("[data-site-header] nav");
+      var target = (nav && nav.getAttribute("data-nav-active-href")) || path;
+      var links = document.querySelectorAll("[data-nav-link]");
+      for (var i = 0; i < links.length; i++) {
+        var a = links[i];
+        if ((a.getAttribute("href") || "") === target) {
+          a.setAttribute("aria-current", "page");
+        } else {
+          a.removeAttribute("aria-current");
+        }
+      }
+    }
+    setActive();
+    document.addEventListener("astro:page-load", setActive);
+  })();
+</script>

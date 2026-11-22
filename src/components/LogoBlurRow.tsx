@@ -39,8 +39,17 @@ const agentLinks: Record<string, string> = {
   OpenCode: "https://opencode.ai",
 };
 
+interface LogoItem {
+  name: string;
+  href?: string;
+  monogram?: string;
+  image?: string;
+  imageDark?: string;
+  icon?: React.ComponentType<{ size?: number; className?: string }>;
+}
+
 interface Props {
-  logos: { name: string }[] | string[];
+  logos: (LogoItem | string)[];
   desktopCount?: number;
   mobileCount?: number;
   interval?: number;
@@ -48,7 +57,16 @@ interface Props {
 }
 
 export default function LogoBlurRow({ logos: rawLogos, desktopCount = 3, mobileCount = 3, interval = 2.6, stagger = 130 }: Props) {
-  const logos = rawLogos.map((l) => (typeof l === "string" ? { name: l } : l)).map((l) => ({ name: l.name, Icon: (iconMap[l.name] || Code) }));
+  const logos = rawLogos
+    .map((l) => (typeof l === "string" ? { name: l } : l))
+    .map((l) => ({
+      name: l.name,
+      href: l.href || agentLinks[l.name],
+      monogram: l.monogram,
+      image: l.image,
+      imageDark: l.imageDark,
+      Icon: l.icon || iconMap[l.name] || null,
+    }));
   const ref = useRef<HTMLDivElement>(null);
   const [w, setW] = useState(1024);
   const [indices, setIndices] = useState(() => logos.slice(0, desktopCount).map((_, i) => i));
@@ -78,7 +96,7 @@ export default function LogoBlurRow({ logos: rawLogos, desktopCount = 3, mobileC
     };
   }, []);
 
-  const isMobile = w < 640;
+  const isMobile = w < 768;
   const visible = Math.min(isMobile ? mobileCount : desktopCount, logos.length || 1);
 
   useEffect(() => {
@@ -109,28 +127,71 @@ export default function LogoBlurRow({ logos: rawLogos, desktopCount = 3, mobileC
       ref={ref}
       onPointerEnter={() => setPaused(true)}
       onPointerLeave={() => setPaused(false)}
-      className="mx-auto flex w-full max-w-[680px] items-center justify-between gap-10 overflow-hidden p-6"
+      className="mx-auto flex w-full max-w-[680px] items-center justify-between gap-3 overflow-hidden p-4 sm:gap-6 sm:p-6"
     >
       {Array.from({ length: visible }).map((_, i) => {
-        const { Icon, name } = logos[indices[i] % logos.length];
+        // `indices` can briefly be shorter than `visible` during a resize
+        // (mobile → desktop). Fall back to the slot position instead of
+        // dereferencing `logos[undefined]`.
+        const idx = (indices[i] ?? i) % logos.length;
+        const { Icon, name, href, monogram, image, imageDark } = logos[idx];
         return (
           <div key={i} className="group flex flex-1 items-center justify-center min-w-0">
             <AnimatePresence mode="popLayout" initial={false}>
               <motion.a
                 key={name}
-                href={agentLinks[name]}
-                target={agentLinks[name] ? "_blank" : undefined}
-                rel={agentLinks[name] ? "noopener noreferrer" : undefined}
-                aria-label={agentLinks[name] ? `${name} — visit website` : undefined}
-                title={agentLinks[name] ? `${name} — visit website` : undefined}
-                initial={{ y: "24%", opacity: 0, filter: "blur(6px)" }}
+                href={href}
+                target={href ? "_blank" : undefined}
+                rel={href ? "noopener noreferrer" : undefined}
+                aria-label={href ? `${name} — visit website` : undefined}
+                title={href ? `${name} — visit website` : undefined}
+                initial={{ y: "40%", opacity: 0, filter: "blur(8px)" }}
                 animate={{ y: "0%", opacity: 1, filter: "blur(0px)" }}
-                exit={{ y: "-24%", opacity: 0, filter: "blur(6px)" }}
+                exit={{ y: "-40%", opacity: 0, filter: "blur(8px)" }}
                 transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
               >
-                <div className="flex items-center gap-3 grayscale-[80%] opacity-85 transition-all duration-300 ease-in-out group-hover:grayscale-0 group-hover:opacity-100">
-                  <Icon className="h-7 w-7 shrink-0 text-fg" />
-                  <span className="text-[16px] font-semibold tracking-[-0.01em] text-fg whitespace-nowrap" style={{ fontFamily: "var(--font-body)" }}>{name}</span>
+                <div className="flex items-center gap-2 sm:gap-2.5 grayscale-[80%] opacity-85 transition-all duration-300 ease-in-out group-hover:scale-[1.04] group-hover:translate-y-[-1.5px] group-hover:grayscale-0 group-hover:opacity-100">
+                  {image ? (
+                    <>
+                      {imageDark ? (
+                        <>
+                          <img
+                            src={image}
+                            alt={name}
+                            width={32}
+                            height={32}
+                            className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 shrink-0 rounded-lg object-contain dark:hidden"
+                          />
+                          <img
+                            src={imageDark}
+                            alt={name}
+                            width={32}
+                            height={32}
+                            className="hidden h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 shrink-0 rounded-lg object-contain dark:block"
+                          />
+                        </>
+                      ) : (
+                        <img
+                          src={image}
+                          alt={name}
+                          width={32}
+                          height={32}
+                          className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 shrink-0 rounded-lg object-contain"
+                        />
+                      )}
+                    </>
+                  ) : Icon ? (
+                    <Icon className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 shrink-0 text-fg" />
+                  ) : monogram ? (
+                    <span className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-lg bg-surface text-[11px] sm:text-[12px] font-bold text-fg ring-1 ring-black/[0.08] shadow-[0_1px_2px_rgba(0,0,0,0.04)] dark:ring-white/[0.1]">
+                      {monogram}
+                    </span>
+                  ) : (
+                    <span className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-lg bg-surface text-[11px] sm:text-[12px] font-bold text-fg ring-1 ring-black/[0.08] shadow-[0_1px_2px_rgba(0,0,0,0.04)] dark:ring-white/[0.1]">
+                      {name.slice(0, 2)}
+                    </span>
+                  )}
+                  <span className="text-[13px] sm:text-[14px] md:text-[15px] font-semibold tracking-[-0.01em] text-fg whitespace-nowrap" style={{ fontFamily: "var(--font-body)" }}>{name}</span>
                 </div>
               </motion.a>
             </AnimatePresence>

@@ -16,14 +16,14 @@ const filters = [
 ---
 
 <section class="mt-2">
-  <div class="flex flex-wrap items-center gap-2" role="group" aria-label={en.filterLabel}>
+  <div class="inline-flex flex-wrap items-center gap-1 rounded-full bg-mist p-1" role="group" aria-label={en.filterLabel}>
     {
       filters.map((f, i) => (
         <button
           type="button"
           data-work-filter={f.id}
           aria-pressed={i === 0 ? "true" : "false"}
-          class="rounded-full border border-line px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.08em] text-fg/40 transition-colors duration-300 hover:border-line-strong hover:text-fg/70 aria-pressed:border-fg aria-pressed:bg-fg aria-pressed:text-bg"
+          class="cursor-pointer rounded-full px-3.5 py-1.5 text-[13px] font-medium text-fg-muted transition-colors duration-200 hover:text-fg aria-pressed:bg-surface aria-pressed:text-fg aria-pressed:shadow-[var(--shadow-card)]"
         >
           <span data-lang="en">{f.en}</span>
           <span data-lang="th">{f.th}</span>
@@ -32,7 +32,7 @@ const filters = [
     }
   </div>
 
-  <div data-work-grid class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2">
+  <div data-work-grid class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
     {
       works.map((w, i) => (
         <WorkTile
@@ -48,17 +48,17 @@ const filters = [
     href="https://zexta.xyz"
     target="_blank"
     rel="noopener"
-    class="group mt-8 flex items-center justify-between rounded-xl border border-line bg-surface px-6 py-5 transition-colors duration-300 hover:border-line-strong hover:bg-surface-hover"
+    class="group mt-8 flex items-center justify-between gap-4 rounded-[24px] bg-mist px-6 py-5 transition-colors duration-300 hover:bg-mist-strong sm:px-8 sm:py-6"
   >
     <div>
-      <p class="text-sm font-medium text-fg">
+      <p class="text-[16px] font-semibold tracking-[-0.015em] text-fg">
         <span data-lang="en">{en.moreProjects}</span>
         <span data-lang="th">{th.moreProjects}</span>
       </p>
-      <p class="mt-0.5 font-mono text-xs text-fg/35">zexta.xyz</p>
+      <p class="mt-0.5 text-[13px] text-fg-muted">zexta.xyz</p>
     </div>
-    <span class="text-fg/30 transition-all duration-300 group-hover:translate-x-1 group-hover:text-fg">
-      <ArrowRight size={18} weight="bold" />
+    <span class="grid size-9 place-items-center rounded-full bg-surface text-fg shadow-[var(--shadow-card)] transition-transform duration-300 group-hover:translate-x-1">
+      <ArrowRight size={16} weight="bold" />
     </span>
   </a>
 </section>

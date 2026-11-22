@@ -23,7 +23,9 @@ export const COOKIE_NAME = "pv_verified";
 /** Must match the `action` the widget renders with (see TurnstileGate.tsx). */
 export const EXPECTED_ACTION = "site-gate";
 
-const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
+// Session-scoped cookie: no Max-Age or Expires means the browser deletes it when closed.
+// We still sign an internal expiry of 2 hours as a defense-in-depth ceiling.
+const SESSION_TTL_MS = 2 * 60 * 60 * 1000;
 const SITEVERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 const SITEVERIFY_TIMEOUT_MS = 5000;
 const COOKIE_ATTRS = "HttpOnly; Secure; SameSite=Lax; Path=/";
@@ -118,7 +120,8 @@ export function isSessionValid(req) {
 }
 
 export function setSessionCookie(res) {
-  res.setHeader("Set-Cookie", `${COOKIE_NAME}=${issueSession()}; ${COOKIE_ATTRS}; Max-Age=${SESSION_TTL_MS / 1000}`);
+  // Session cookie (no Max-Age) ensures it expires when the browser/session is closed
+  res.setHeader("Set-Cookie", `${COOKIE_NAME}=${issueSession()}; ${COOKIE_ATTRS}`);
 }
 
 export function clearSessionCookie(res) {

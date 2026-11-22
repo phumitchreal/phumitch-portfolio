@@ -1,0 +1,121 @@
+---
+import { ArrowUpRightIcon as ArrowUpRight } from "@phosphor-icons/react";
+import WorkCover from "./WorkCover.astro";
+import { works } from "../content/work.ts";
+
+const featured = works[0];
+const rest = works.slice(1);
+const ordered = [featured, ...rest];
+
+const categoryLabel: Record<string, { en: string; th: string }> = {
+  bot: { en: "Bot", th: "บอท" },
+  website: { en: "Website", th: "เว็บไซต์" },
+  community: { en: "Community", th: "คอมมูนิตี้" },
+};
+---
+
+<section id="works" class="py-24 sm:py-32">
+  <div class="container-apple">
+    <div class="flex flex-col justify-between gap-6 sm:flex-row sm:items-end" data-reveal>
+      <div class="max-w-[720px]">
+        <p class="eyebrow">
+          <span data-lang="en">Selected work</span><span data-lang="th">ผลงานที่เลือก</span>
+        </p>
+        <h2 class="headline mt-3 text-[40px] sm:text-[56px]">
+          <span data-lang="en">Things I've built</span>
+          <span data-lang="th">ผลงานที่ลงมือทำ</span>
+        </h2>
+        <p class="mt-4 max-w-[560px] text-[15px] leading-relaxed text-fg-muted sm:text-[17px]">
+          <span data-lang="en">Production websites, Discord bots and communities — designed for real use, not demos.</span>
+          <span data-lang="th">เว็บไซต์ Discord bot และคอมมูนิตี้ที่ใช้งานจริง — ออกแบบมาเพื่อ production ไม่ใช่แค่เดโม่</span>
+        </p>
+      </div>
+      <p class="flex items-baseline gap-3 sm:justify-end">
+        <span class="text-[56px] font-semibold leading-none tracking-[-0.05em] text-fg tabular-nums sm:text-[72px]">
+          {String(works.length).padStart(2, "0")}
+        </span>
+        <span class="text-[13px] leading-[1.35] font-medium text-fg-muted">
+          <span data-lang="en">Projects<br />shipped</span>
+          <span data-lang="th">โปรเจกต์<br />ที่ส่งงานจริง</span>
+        </span>
+      </p>
+    </div>
+
+    <ul class="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        ordered.map((w, i) => (
+          <li
+            data-reveal
+            style={`transition-delay:${Math.min(i * 70, 350)}ms`}
+          >
+            <a
+              href={w.href}
+              target={w.href ? "_blank" : undefined}
+              rel={w.href ? "noopener" : undefined}
+              class="group flex h-full flex-col rounded-[28px] bg-mist p-4 outline-none transition-colors duration-300 hover:bg-mist-strong sm:p-5"
+            >
+              <div class="relative overflow-hidden rounded-[20px] bg-surface ring-1 ring-black/[0.06] shadow-[var(--shadow-card)]">
+                <div class="work-cover-frame aspect-[16/10]">
+                  <WorkCover
+                    title={w.title}
+                    monogram={w.monogram}
+                    cover={w.cover}
+                    accent={i === 0 ? "18%" : "10%"}
+                    sizes="(min-width: 1024px) 360px, 100vw"
+                  />
+                </div>
+
+                <span class="absolute left-3 top-3 inline-flex items-center rounded-full bg-surface/85 px-2.5 py-1 text-[11px] font-semibold text-fg-muted backdrop-blur">
+                  {categoryLabel[w.categories[0]] ? (
+                    <>
+                      <span data-lang="en">{categoryLabel[w.categories[0]].en}</span>
+                      <span data-lang="th">{categoryLabel[w.categories[0]].th}</span>
+                    </>
+                  ) : (
+                    "Project"
+                  )}
+                </span>
+
+                <span class="absolute right-3 top-3 grid size-8 place-items-center rounded-full bg-fg/80 text-bg shadow-lg backdrop-blur transition-[transform,background-color] duration-500 ease-apple group-hover:rotate-90 group-hover:scale-110 group-hover:bg-fg">
+                  <ArrowUpRight size={16} weight="bold" />
+                </span>
+              </div>
+
+              <div class="flex flex-1 flex-col px-1 pb-2 pt-5">
+                <div class="flex items-center justify-between gap-3 text-[12px] text-fg-dim">
+                  <span>
+                    <span data-lang="en">{w.role}</span>
+                    <span data-lang="th">{w.roleTh}</span>
+                  </span>
+                  <span class="tabular-nums">{w.year}</span>
+                </div>
+                <h3 class="mt-1.5 text-[22px] font-semibold leading-[1.15] tracking-[-0.02em] text-fg sm:text-[24px]">
+                  {w.title}
+                </h3>
+                <p class="mt-1.5 line-clamp-2 text-[14px] leading-relaxed text-fg-muted">
+                  <span data-lang="en">{w.desc}</span>
+                  <span data-lang="th">{w.descTh}</span>
+                </p>
+                <div class="mt-auto flex flex-wrap gap-1.5 pt-4">
+                  {w.tags.slice(0, 3).map((t) => (
+                    <span class="rounded-full bg-surface px-2.5 py-1 text-[11px] font-medium text-fg-dim">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="mt-8 flex justify-center" data-reveal>
+      <a href="/portfolio" class="btn-ghost">
+        <span data-lang="en">See all work</span>
+        <span data-lang="th">ดูผลงานทั้งหมด</span>
+        <ArrowUpRight size={16} weight="bold" />
+      </a>
+    </div>
+  </div>
+</section>

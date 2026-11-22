@@ -14,7 +14,7 @@ import Footer from "../components/Footer.astro";
   <div class="relative flex min-h-screen flex-col text-fg-body">
     <SiteNav />
 
-    <main id="main" class="relative mx-auto w-full max-w-page flex-1 px-6 py-8 md:py-12">
+    <main id="main" class="relative mx-auto w-full max-w-shell flex-1 px-4 pb-20 pt-20 sm:px-6 sm:pt-28">
       <PageHero
         eyebrow={{ en: "Portfolio", th: "ผลงาน" }}
         lede={{
@@ -25,11 +25,11 @@ import Footer from "../components/Footer.astro";
         <span data-lang="en">Selected Work</span><span data-lang="th">ผลงานที่เลือก</span>
       </PageHero>
 
-      <div class="mt-10">
+      <div class="mt-12">
         <WorkGrid />
       </div>
 
-      <div class="mt-8">
+      <div class="mt-14 border-t border-line pt-8">
         <BackHome />
       </div>
     </main>

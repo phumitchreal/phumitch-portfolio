@@ -46,10 +46,10 @@ function SectionHeader({ icon, title }: { icon: UIcon; title: React.ReactNode })
   const IconCmp = icon;
   return (
     <div className="flex items-center gap-2">
-      <span className="text-fg/40">
+      <span className="text-fg-dim">
         <IconCmp size={16} weight="regular" />
       </span>
-      <h2 className="text-xs font-semibold tracking-wider text-fg/40">{title}</h2>
+      <h2 className="text-[15px] font-semibold tracking-[-0.01em] text-fg">{title}</h2>
     </div>
   );
 }
@@ -145,17 +145,17 @@ export default function AboutPage() {
           {personal.map(([key, IconCmp]) => (
             <div
               key={key}
-              className="group flex items-center justify-between gap-4 rounded-xl border border-line bg-fg/[0.02] p-4 transition-all duration-300 hover:border-line-strong hover:bg-fg/[0.05]"
+              className="group flex items-center justify-between gap-4 rounded-2xl bg-mist p-4 transition-all duration-300 hover:bg-mist-strong hover:shadow-[var(--shadow-card)]"
             >
               <div className="flex items-center gap-3">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-line bg-fg/[0.04] text-fg/40 transition-colors duration-300 group-hover:border-line-strong group-hover:text-fg/70">
-                  <IconCmp size={16} weight="regular" />
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-surface text-fg-dim shadow-[0_1px_3px_rgba(0,0,0,0.06)] ring-1 ring-black/[0.04] transition-all duration-300 group-hover:scale-105 group-hover:text-accent dark:ring-white/[0.08]">
+                  <IconCmp size={18} weight="regular" />
                 </span>
-                <span className="text-xs font-medium text-fg/40 transition-colors duration-300 group-hover:text-fg/60">
+                <span className="text-[13px] font-medium text-fg-muted transition-colors duration-300 group-hover:text-fg">
                   <L en={enD.personal[key][0]} th={thD.personal[key][0]} />
                 </span>
               </div>
-              <span className="text-right text-xs font-medium text-fg/85 transition-colors duration-300 group-hover:text-fg">
+              <span className="text-right text-[13px] font-medium text-fg">
                 <L en={enD.personal[key][1]} th={thD.personal[key][1]} />
               </span>
             </div>
@@ -172,17 +172,17 @@ export default function AboutPage() {
             return (
               <div
                 key={i}
-                className="group relative flex flex-col justify-between rounded-xl border border-line bg-fg/[0.02] p-5 transition-all duration-300 hover:border-line-strong hover:bg-fg/[0.05]"
+                className="group relative flex flex-col justify-between rounded-2xl bg-mist p-5 transition-all duration-300 hover:bg-mist-strong hover:shadow-[var(--shadow-card)]"
               >
                 <div className="flex items-center justify-between">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-line bg-fg/[0.04] text-fg/40 transition-colors duration-300 group-hover:border-line-strong group-hover:text-fg">
-                    <IconCmp size={17} weight="regular" />
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface text-fg-dim shadow-[0_1px_3px_rgba(0,0,0,0.06)] ring-1 ring-black/[0.04] transition-all duration-300 group-hover:scale-105 group-hover:text-accent dark:ring-white/[0.08]">
+                    <IconCmp size={18} weight="regular" />
                   </span>
-                  <span className="font-mono text-xs font-bold text-fg/20 transition-colors duration-300 group-hover:text-fg/40">
+                  <span className="text-[12px] font-semibold tabular-nums text-accent">
                     0{i + 1}
                   </span>
                 </div>
-                <p className="mt-5 text-xs leading-relaxed text-fg/65 transition-colors duration-300 group-hover:text-fg/90">
+                <p className="mt-5 text-[13px] leading-relaxed text-fg-body">
                   <L en={enD.do[i]} th={thD.do[i]} />
                 </p>
               </div>
@@ -195,24 +195,26 @@ export default function AboutPage() {
       <motion.section {...revealProps(2, reduced)}>
         <SectionHeader icon={Wrench} title={<L en={enD.toolkitTitle} th={thD.toolkitTitle} />} />
 
-        <div className="mt-4 overflow-hidden rounded-2xl border border-line bg-gradient-to-b from-fg/[0.03] to-transparent p-2 backdrop-blur-sm">
+        <div className="mt-4 overflow-hidden rounded-2xl bg-mist p-2">
           <LogoBlurRow logos={["Cursor", "Claude", "Copilot", "Antigravity", "opencode"]} desktopCount={5} mobileCount={3} />
         </div>
 
-        <div className="mt-6 space-y-5">
+        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
           {stacks.map(([cat, tags, IconCmp]) => (
-            <div key={cat} className="rounded-xl border border-line bg-fg/[0.01] p-4">
-              <p className="flex items-center gap-2 text-xs font-semibold tracking-wider text-fg/40">
-                <IconCmp size={14} weight="bold" className="text-fg/40" />
+            <div key={cat} className="flex flex-col rounded-2xl bg-mist p-5 transition-all duration-300 hover:bg-mist-strong">
+              <p className="flex items-center gap-2.5 text-[13px] font-semibold text-fg-muted">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-surface text-fg-dim shadow-[0_1px_2px_rgba(0,0,0,0.05)] ring-1 ring-black/[0.04] dark:ring-white/[0.08]">
+                  <IconCmp size={15} weight="bold" />
+                </span>
                 <L en={enD.toolkit[cat]} th={thD.toolkit[cat]} />
               </p>
-              <div className="mt-3 flex flex-wrap gap-2">
+              <div className="mt-4 flex flex-wrap gap-2">
                 {tags.map(([tag, TagIcon]) => (
                   <span
                     key={tag}
-                    className="group flex items-center gap-2 rounded-lg border border-line bg-fg/[0.03] px-3 py-1.5 font-mono text-xs font-medium text-fg/60 transition-all duration-300 hover:border-line-strong hover:bg-fg/[0.08] hover:text-fg"
+                    className="group flex items-center gap-2 rounded-full bg-surface px-3 py-1.5 text-[12px] font-medium text-fg-body shadow-[0_1px_2px_rgba(0,0,0,0.05)] ring-1 ring-black/[0.04] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md dark:ring-white/[0.08]"
                   >
-                    <TagIcon className="h-4 w-4 shrink-0 opacity-60 grayscale transition-all duration-300 group-hover:scale-110 group-hover:opacity-100 group-hover:grayscale-0" />
+                    <TagIcon className="h-4 w-4 shrink-0 opacity-70 grayscale transition-all duration-300 group-hover:scale-110 group-hover:opacity-100 group-hover:grayscale-0" />
                     {tag}
                   </span>
                 ))}
@@ -232,24 +234,24 @@ export default function AboutPage() {
               href={href}
               target={href.startsWith("http") ? "_blank" : undefined}
               rel={href.startsWith("http") ? "noopener" : undefined}
-              className="group flex items-center justify-between gap-4 rounded-xl border border-line bg-fg/[0.02] p-4 transition-all duration-300 hover:border-line-strong hover:bg-fg/[0.06] hover:shadow-[var(--shadow-card)]"
+              className="group flex items-center justify-between gap-4 rounded-2xl bg-mist p-4 transition-all duration-300 hover:bg-mist-strong hover:shadow-[var(--shadow-card)]"
               {...revealProps(0, reduced)}
             >
               <div className="flex items-center gap-3.5">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-line bg-fg/[0.04] text-fg/50 transition-all duration-300 group-hover:border-line-strong group-hover:bg-fg/10 group-hover:text-fg">
-                  <IconCmp className="h-4 w-4" />
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-surface text-fg-muted shadow-[0_1px_3px_rgba(0,0,0,0.06)] ring-1 ring-black/[0.04] transition-all duration-300 group-hover:scale-105 group-hover:text-accent dark:ring-white/[0.08]">
+                  <IconCmp className="h-5 w-5" />
                 </span>
                 <div>
-                  <p className="text-sm font-semibold text-fg/90 transition-colors duration-300 group-hover:text-fg">
+                  <p className="text-[14px] font-semibold text-fg transition-colors duration-300 group-hover:text-accent">
                     {label}
                   </p>
-                  <p className="mt-0.5 font-mono text-xs text-fg/40 transition-colors duration-300 group-hover:text-fg/60">
+                  <p className="mt-0.5 text-[12px] text-fg-muted">
                     {handle}
                   </p>
                 </div>
               </div>
 
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-line bg-fg/[0.02] text-fg/40 transition-all duration-300 group-hover:border-fg group-hover:bg-fg group-hover:text-bg">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface text-fg-dim shadow-[0_1px_3px_rgba(0,0,0,0.06)] ring-1 ring-black/[0.04] transition-all duration-300 group-hover:text-accent dark:ring-white/[0.08]">
                 <ArrowUpRight
                   weight="bold"
                   size={15}

@@ -81,8 +81,8 @@ export const works: Work[] = [
   },
   {
     title: "phumitch.space",
-    desc: "Personal portfolio · editorial design system, dark-first, bilingual.",
-    descTh: "เว็บพอร์ตส่วนตัว · ระบบดีไซน์แบบ editorial, dark-first, สองภาษา",
+    desc: "Personal portfolio · Apple-inspired design system, light-first, bilingual.",
+    descTh: "เว็บพอร์ตส่วนตัว · ระบบดีไซน์แบบ Apple, light-first, สองภาษา",
     href: "https://phumitch.space/",
     tags: ["Website", "Design System"],
     categories: ["website"],
