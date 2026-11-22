@@ -37,3 +37,7 @@ pnpm-debug.log*
 !.env.example
 
 .vercel
+
+# agent skills
+.agents/
+skills-lock.json

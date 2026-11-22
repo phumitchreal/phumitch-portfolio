@@ -3,9 +3,10 @@ import { ArrowUpRightIcon as ArrowUpRight } from "@phosphor-icons/react";
 import WorkCover from "./WorkCover.astro";
 import { dicts } from "../i18n.ts";
 import type { Work } from "../content/work.ts";
+import type { DBProject } from "../lib/portfolioData.ts";
 
 interface Props {
-  work: Work;
+  work: Work | DBProject;
   index?: number;
   sizes?: string;
 }

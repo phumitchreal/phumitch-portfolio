@@ -3,26 +3,23 @@ import { Image } from "astro:assets";
 import { ArrowUpRightIcon as ArrowUpRight } from "@phosphor-icons/react";
 import aboutPhoto from "../assets/about-photo.jpg";
 import { dicts } from "../i18n.ts";
+import { getProfile } from "../lib/portfolioData.ts";
 
+const profile = await getProfile();
 const { en, th } = dicts;
 
 const facts = [
-  { en: en.personal.location, th: th.personal.location, valueEn: en.personal.location[1], valueTh: th.personal.location[1] },
-  { en: en.personal.education, th: th.personal.education, valueEn: en.personal.education[1], valueTh: th.personal.education[1] },
-  { en: en.personal.nickname, th: th.personal.nickname, valueEn: en.personal.nickname[1], valueTh: th.personal.nickname[1] },
+  { en: [en.personal.location[0], profile.personal.location[0]], th: [th.personal.location[0], profile.personal.location[1]], valueEn: profile.personal.location[0], valueTh: profile.personal.location[1] },
+  { en: [en.personal.education[0], profile.personal.education[0]], th: [th.personal.education[0], profile.personal.education[1]], valueEn: profile.personal.education[0], valueTh: profile.personal.education[1] },
+  { en: [en.personal.nickname[0], profile.personal.nickname[0]], th: [th.personal.nickname[0], profile.personal.nickname[1]], valueEn: profile.personal.nickname[0], valueTh: profile.personal.nickname[1] },
 ];
 
-const doMini = [
-  { keyEn: en.do[0], keyTh: th.do[0] },
-  { keyEn: en.do[1], keyTh: th.do[1] },
-  { keyEn: en.do[2], keyTh: th.do[2] },
-];
+const doMini = profile.what_i_do.map((item) => ({
+  keyEn: item.en,
+  keyTh: item.th,
+}));
 
-const socials = [
-  { href: "https://github.com/phumitchreal", label: "GitHub" },
-  { href: "https://instagram.com/null_phumitch", label: "Instagram" },
-  { href: "https://discord.com/users/919878532228841532", label: "Discord" },
-];
+const socials = profile.socials;
 ---
 
 <section id="about" class="pb-24 sm:pb-32">

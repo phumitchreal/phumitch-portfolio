@@ -1,0 +1,12 @@
+---
+import Base from "../layouts/Base.astro";
+import AdminApp from "../components/admin/AdminApp.tsx";
+---
+
+<Base title="Admin Dashboard | phumitch.space" description="Portfolio Admin Panel">
+  <div class="relative min-h-[100dvh] flex flex-col text-fg-body bg-bg">
+    <main class="relative z-10 flex-1">
+      <AdminApp client:only="react" />
+    </main>
+  </div>
+</Base>

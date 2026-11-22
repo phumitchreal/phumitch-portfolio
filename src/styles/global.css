@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 @import "./fonts.css";
 @import "./tokens.css";
 
@@ -326,6 +327,8 @@ html.js [data-reveal].is-revealed {
 .work-cover-media {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
   transition: transform var(--dur-slow) var(--ease);
   will-change: transform;
 }

@@ -160,14 +160,14 @@ export default function LogoBlurRow({ logos: rawLogos, desktopCount = 3, mobileC
                             alt={name}
                             width={32}
                             height={32}
-                            className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 shrink-0 rounded-lg object-contain dark:hidden"
+                            className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 shrink-0 rounded-lg object-contain [html[data-theme='dark']_&]:hidden"
                           />
                           <img
                             src={imageDark}
                             alt={name}
                             width={32}
                             height={32}
-                            className="hidden h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 shrink-0 rounded-lg object-contain dark:block"
+                            className="hidden h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 shrink-0 rounded-lg object-contain [html[data-theme='dark']_&]:block"
                           />
                         </>
                       ) : (

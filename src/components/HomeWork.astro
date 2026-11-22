@@ -1,14 +1,18 @@
 ---
-import { ArrowUpRightIcon as ArrowUpRight } from "@phosphor-icons/react";
+import { ArrowUpRightIcon as ArrowUpRight, CaretRightIcon as CaretRight } from "@phosphor-icons/react";
 import WorkCover from "./WorkCover.astro";
-import { works } from "../content/work.ts";
+import { getProjects } from "../lib/portfolioData.ts";
 
-const featured = works[0];
-const rest = works.slice(1);
-const ordered = [featured, ...rest];
+const works = await getProjects();
+const featured = works.find((w) => w.featured) || works[0];
+const rest = works.filter((w) => w !== featured);
+
+// Split rest into Tier 2 (Duo - 2 spotlight cards) and Tier 3 (Trio - 3 ecosystem cards)
+const duo = rest.slice(0, 2);
+const trio = rest.slice(2);
 
 const categoryLabel: Record<string, { en: string; th: string }> = {
-  bot: { en: "Bot", th: "บอท" },
+  bot: { en: "Discord Bot", th: "Discord Bot" },
   website: { en: "Website", th: "เว็บไซต์" },
   community: { en: "Community", th: "คอมมูนิตี้" },
 };
@@ -16,6 +20,7 @@ const categoryLabel: Record<string, { en: string; th: string }> = {
 
 <section id="works" class="py-24 sm:py-32">
   <div class="container-apple">
+    {/* Apple-style Section Header */}
     <div class="flex flex-col justify-between gap-6 sm:flex-row sm:items-end" data-reveal>
       <div class="max-w-[720px]">
         <p class="eyebrow">
@@ -41,79 +46,247 @@ const categoryLabel: Record<string, { en: string; th: string }> = {
       </p>
     </div>
 
-    <ul class="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {/* =========================================================================
+        APPLE PRODUCT SHOWCASE BENTO
+       ========================================================================= */}
+    <div class="mt-12 sm:mt-16 space-y-6">
+      {/* -----------------------------------------------------------------------
+          TIER 1: FLAGSHIP HERO (Apple Flagship Hero Card - Full Width)
+         ----------------------------------------------------------------------- */}
       {
-        ordered.map((w, i) => (
-          <li
-            data-reveal
-            style={`transition-delay:${Math.min(i * 70, 350)}ms`}
-          >
-            <a
-              href={w.href}
-              target={w.href ? "_blank" : undefined}
-              rel={w.href ? "noopener" : undefined}
-              class="group flex h-full flex-col rounded-[28px] bg-mist p-4 outline-none transition-colors duration-300 hover:bg-mist-strong sm:p-5"
-            >
-              <div class="relative overflow-hidden rounded-[20px] bg-surface ring-1 ring-black/[0.06] shadow-[var(--shadow-card)]">
-                <div class="work-cover-frame aspect-[16/10]">
-                  <WorkCover
-                    title={w.title}
-                    monogram={w.monogram}
-                    cover={w.cover}
-                    accent={i === 0 ? "18%" : "10%"}
-                    sizes="(min-width: 1024px) 360px, 100vw"
-                  />
-                </div>
+        featured && (
+          <div data-reveal>
+            <div class="group relative overflow-hidden rounded-[32px] sm:rounded-[40px] bg-mist border border-line ring-1 ring-black/[0.04] dark:ring-white/[0.06] p-7 sm:p-12 lg:p-14 shadow-[var(--shadow-panel)] transition-all duration-500 hover:shadow-2xl">
+              {/* Subtle Ambient Back Glow */}
+              <div class="pointer-events-none absolute -right-24 -top-24 size-96 rounded-full bg-accent/10 blur-[120px]" />
+              <div class="pointer-events-none absolute -left-24 -bottom-24 size-96 rounded-full bg-accent/5 blur-[120px]" />
 
-                <span class="absolute left-3 top-3 inline-flex items-center rounded-full bg-surface/85 px-2.5 py-1 text-[11px] font-semibold text-fg-muted backdrop-blur">
-                  {categoryLabel[w.categories[0]] ? (
-                    <>
-                      <span data-lang="en">{categoryLabel[w.categories[0]].en}</span>
-                      <span data-lang="th">{categoryLabel[w.categories[0]].th}</span>
-                    </>
-                  ) : (
-                    "Project"
-                  )}
-                </span>
-
-                <span class="absolute right-3 top-3 grid size-8 place-items-center rounded-full bg-fg/80 text-bg shadow-lg backdrop-blur transition-[transform,background-color] duration-500 ease-apple group-hover:rotate-90 group-hover:scale-110 group-hover:bg-fg">
-                  <ArrowUpRight size={16} weight="bold" />
-                </span>
-              </div>
-
-              <div class="flex flex-1 flex-col px-1 pb-2 pt-5">
-                <div class="flex items-center justify-between gap-3 text-[12px] text-fg-dim">
-                  <span>
-                    <span data-lang="en">{w.role}</span>
-                    <span data-lang="th">{w.roleTh}</span>
-                  </span>
-                  <span class="tabular-nums">{w.year}</span>
-                </div>
-                <h3 class="mt-1.5 text-[22px] font-semibold leading-[1.15] tracking-[-0.02em] text-fg sm:text-[24px]">
-                  {w.title}
-                </h3>
-                <p class="mt-1.5 line-clamp-2 text-[14px] leading-relaxed text-fg-muted">
-                  <span data-lang="en">{w.desc}</span>
-                  <span data-lang="th">{w.descTh}</span>
-                </p>
-                <div class="mt-auto flex flex-wrap gap-1.5 pt-4">
-                  {w.tags.slice(0, 3).map((t) => (
-                    <span class="rounded-full bg-surface px-2.5 py-1 text-[11px] font-medium text-fg-dim">
-                      {t}
+              <div class="relative z-10 grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-center lg:gap-12">
+                {/* Story & Copy */}
+                <div class="flex flex-col lg:col-span-6">
+                  <div class="flex items-center gap-2">
+                    <span class="text-[12px] font-semibold tracking-[0.14em] uppercase text-accent">
+                      <span data-lang="en">Featured Flagship</span>
+                      <span data-lang="th">ผลงานเด่นพิเศษ</span>
                     </span>
-                  ))}
+                    <span class="text-fg-dim">·</span>
+                    <span class="text-[12px] font-medium text-fg-dim uppercase tracking-wider">
+                      {categoryLabel[featured.categories[0]] ? (
+                        <>
+                          <span data-lang="en">{categoryLabel[featured.categories[0]].en}</span>
+                          <span data-lang="th">{categoryLabel[featured.categories[0]].th}</span>
+                        </>
+                      ) : (
+                        featured.categories[0]
+                      )}
+                    </span>
+                  </div>
+
+                  <h3 class="mt-3 text-[36px] sm:text-[48px] lg:text-[52px] font-bold tracking-tight text-fg leading-[1.08]">
+                    {featured.title}
+                  </h3>
+
+                  <p class="mt-2 text-[14px] sm:text-[16px] font-medium text-fg-dim">
+                    <span data-lang="en">{featured.role}</span>
+                    <span data-lang="th">{featured.roleTh}</span>
+                    <span class="mx-1.5 opacity-40">·</span>
+                    <span class="tabular-nums">{featured.year}</span>
+                  </p>
+
+                  <p class="mt-4 max-w-xl text-[15px] sm:text-[17px] leading-relaxed text-fg-muted">
+                    <span data-lang="en">{featured.desc}</span>
+                    <span data-lang="th">{featured.descTh}</span>
+                  </p>
+
+                  {/* Tags */}
+                  <div class="mt-6 flex flex-wrap gap-2">
+                    {featured.tags.map((t) => (
+                      <span class="rounded-full bg-surface px-3 py-1.5 text-[12px] font-medium text-fg-body shadow-xs ring-1 ring-black/[0.04] dark:ring-white/[0.06]">
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Action Link (Apple Style Pill) */}
+                  {featured.href && (
+                    <div class="mt-8 flex flex-wrap items-center gap-4">
+                      <a
+                        href={featured.href}
+                        target="_blank"
+                        rel="noopener"
+                        class="btn-primary inline-flex items-center gap-2 px-6 py-3 text-[14px] shadow-lg shadow-accent/20 transition-transform duration-300 hover:scale-[1.02]"
+                      >
+                        <span data-lang="en">Explore Project</span>
+                        <span data-lang="th">เปิดดูโปรเจกต์</span>
+                        <ArrowUpRight size={16} weight="bold" />
+                      </a>
+
+                      <span class="text-[13px] text-fg-dim">
+                        {new URL(featured.href).hostname.replace("www.", "")}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Device Screen Showcase */}
+                <div class="lg:col-span-6">
+                  <a
+                    href={featured.href || undefined}
+                    target={featured.href ? "_blank" : undefined}
+                    rel={featured.href ? "noopener" : undefined}
+                    class="group/screen relative block overflow-hidden rounded-[24px] sm:rounded-[28px] bg-surface ring-1 ring-black/[0.08] shadow-[var(--shadow-card)] dark:ring-white/[0.12] transition-transform duration-500 ease-apple group-hover:scale-[1.01]"
+                  >
+                    <div class="work-cover-frame relative aspect-[16/10] w-full overflow-hidden">
+                      <WorkCover
+                        title={featured.title}
+                        monogram={featured.monogram}
+                        cover={featured.cover}
+                        accent="20%"
+                        sizes="(min-width: 1024px) 580px, 100vw"
+                      />
+                    </div>
+                  </a>
                 </div>
               </div>
-            </a>
-          </li>
-        ))
+            </div>
+          </div>
+        )
       }
-    </ul>
 
-    <div class="mt-8 flex justify-center" data-reveal>
+      {/* -----------------------------------------------------------------------
+          TIER 2: THE DUO (Apple Product 2-Column Spotlight Grid)
+         ----------------------------------------------------------------------- */}
+      {
+        duo.length > 0 && (
+          <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {duo.map((w, idx) => (
+              <div data-reveal style={`transition-delay:${idx * 100}ms`}>
+                <a
+                  href={w.href}
+                  target={w.href ? "_blank" : undefined}
+                  rel={w.href ? "noopener" : undefined}
+                  class="group relative flex h-full flex-col justify-between overflow-hidden rounded-[28px] sm:rounded-[36px] bg-mist border border-line ring-1 ring-black/[0.04] dark:ring-white/[0.06] p-7 sm:p-9 shadow-sm transition-all duration-500 hover:bg-mist-strong hover:shadow-xl"
+                >
+                  {/* Top Header Information */}
+                  <div>
+                    <div class="flex items-center justify-between text-[12px]">
+                      <span class="font-semibold tracking-[0.12em] uppercase text-accent">
+                        {categoryLabel[w.categories[0]] ? (
+                          <>
+                            <span data-lang="en">{categoryLabel[w.categories[0]].en}</span>
+                            <span data-lang="th">{categoryLabel[w.categories[0]].th}</span>
+                          </>
+                        ) : (
+                          w.categories[0]
+                        )}
+                      </span>
+                      <span class="text-fg-dim tabular-nums font-medium">{w.year}</span>
+                    </div>
+
+                    <h3 class="mt-2.5 text-[28px] sm:text-[34px] font-bold tracking-tight text-fg leading-tight">
+                      {w.title}
+                    </h3>
+
+                    <p class="mt-2 line-clamp-2 text-[14px] sm:text-[15px] leading-relaxed text-fg-muted">
+                      <span data-lang="en">{w.desc}</span>
+                      <span data-lang="th">{w.descTh}</span>
+                    </p>
+
+                    <div class="mt-4 inline-flex items-center gap-1 text-[14px] font-medium text-accent group-hover:underline">
+                      <span data-lang="en">Learn more</span>
+                      <span data-lang="th">ดูรายละเอียด</span>
+                      <CaretRight size={14} weight="bold" className="transition-transform group-hover:translate-x-1" />
+                    </div>
+                  </div>
+
+                  {/* Bottom Media Showcase */}
+                  <div class="mt-8 overflow-hidden rounded-[20px] bg-surface ring-1 ring-black/[0.08] dark:ring-white/[0.1] shadow-md">
+                    <div class="work-cover-frame relative aspect-[16/10] w-full overflow-hidden transition-transform duration-500 ease-apple group-hover:scale-[1.03]">
+                      <WorkCover
+                        title={w.title}
+                        monogram={w.monogram}
+                        cover={w.cover}
+                        accent="16%"
+                        sizes="(min-width: 1024px) 540px, 100vw"
+                      />
+                    </div>
+                  </div>
+                </a>
+              </div>
+            ))}
+          </div>
+        )
+      }
+
+      {/* -----------------------------------------------------------------------
+          TIER 3: THE TRIO (Apple Product 3-Column Ecosystem Grid)
+         ----------------------------------------------------------------------- */}
+      {
+        trio.length > 0 && (
+          <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {trio.map((w, idx) => (
+              <div data-reveal style={`transition-delay:${idx * 80}ms`}>
+                <a
+                  href={w.href}
+                  target={w.href ? "_blank" : undefined}
+                  rel={w.href ? "noopener" : undefined}
+                  class="group relative flex h-full flex-col justify-between overflow-hidden rounded-[24px] sm:rounded-[28px] bg-mist border border-line ring-1 ring-black/[0.04] dark:ring-white/[0.06] p-6 sm:p-7 shadow-xs transition-all duration-400 hover:bg-mist-strong hover:shadow-lg"
+                >
+                  <div>
+                    <div class="flex items-center justify-between text-[11px]">
+                      <span class="font-semibold tracking-[0.12em] uppercase text-fg-dim">
+                        {categoryLabel[w.categories[0]] ? (
+                          <>
+                            <span data-lang="en">{categoryLabel[w.categories[0]].en}</span>
+                            <span data-lang="th">{categoryLabel[w.categories[0]].th}</span>
+                          </>
+                        ) : (
+                          w.categories[0]
+                        )}
+                      </span>
+                      <span class="text-fg-dim tabular-nums font-medium">{w.year}</span>
+                    </div>
+
+                    <h4 class="mt-2 text-[22px] sm:text-[24px] font-bold tracking-tight text-fg leading-tight">
+                      {w.title}
+                    </h4>
+
+                    <p class="mt-1.5 line-clamp-2 text-[13px] sm:text-[14px] leading-relaxed text-fg-muted">
+                      <span data-lang="en">{w.desc}</span>
+                      <span data-lang="th">{w.descTh}</span>
+                    </p>
+
+                    <div class="mt-3.5 inline-flex items-center gap-1 text-[13px] font-medium text-accent group-hover:underline">
+                      <span data-lang="en">Explore</span>
+                      <span data-lang="th">สำรวจ</span>
+                      <CaretRight size={13} weight="bold" className="transition-transform group-hover:translate-x-1" />
+                    </div>
+                  </div>
+
+                  <div class="mt-6 overflow-hidden rounded-[16px] bg-surface ring-1 ring-black/[0.06] dark:ring-white/[0.08] shadow-sm">
+                    <div class="work-cover-frame relative aspect-[16/10] w-full overflow-hidden transition-transform duration-500 ease-apple group-hover:scale-[1.04]">
+                      <WorkCover
+                        title={w.title}
+                        monogram={w.monogram}
+                        cover={w.cover}
+                        accent="12%"
+                        sizes="(min-width: 1024px) 360px, 100vw"
+                      />
+                    </div>
+                  </div>
+                </a>
+              </div>
+            ))}
+          </div>
+        )
+      }
+    </div>
+
+    {/* See All Work CTA */}
+    <div class="mt-14 flex justify-center" data-reveal>
       <a href="/portfolio" class="btn-ghost">
-        <span data-lang="en">See all work</span>
-        <span data-lang="th">ดูผลงานทั้งหมด</span>
+        <span data-lang="en">Explore all projects</span>
+        <span data-lang="th">สำรวจผลงานทั้งหมด</span>
         <ArrowUpRight size={16} weight="bold" />
       </a>
     </div>

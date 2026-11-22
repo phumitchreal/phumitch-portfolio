@@ -1,5 +1,5 @@
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowDownIcon as ArrowDown, BriefcaseIcon as Briefcase, UserIcon as User } from "@phosphor-icons/react";
 import ZTIcon from "./ZTIcon.tsx";
 import LogoBlurRow from "./LogoBlurRow.tsx";
@@ -17,9 +17,6 @@ export default function HeroMotion() {
   const { en: enD, th: thD } = dicts;
   const reduced = useReducedMotion();
   const [index, setIndex] = useState(0);
-  const [logoClicks, setLogoClicks] = useState(0);
-  const [unlocking, setUnlocking] = useState(false);
-  const clickedRef = useRef(false);
   const greeting = GREETINGS[index];
 
   useEffect(() => {
@@ -32,42 +29,8 @@ export default function HeroMotion() {
 
   const nextGreeting = () => setIndex((i) => (i + 1) % GREETINGS.length);
 
-  const handleLogoClick = () => {
-    if (unlocking) return;
-    const next = logoClicks + 1;
-    setLogoClicks(next);
-    if (next >= 2) {
-      setUnlocking(true);
-      setTimeout(() => {
-        window.location.href = "/studio_lol";
-      }, 900);
-      return;
-    }
-    clickedRef.current = true;
-    setTimeout(() => setLogoClicks(0), 400);
-  };
-
   return (
     <section className="relative flex min-h-[100svh] flex-col overflow-x-clip">
-      {/* unlock flash */}
-      <AnimatePresence>
-        {unlocking && (
-          <motion.div
-            key="unlock-flash"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: [0, 1, 0] }}
-            transition={{ duration: 0.9, times: [0, 0.3, 1], ease: "easeOut" }}
-            className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center bg-fg"
-          >
-            <motion.span
-              initial={{ scale: 0.4, opacity: 0 }}
-              animate={{ scale: [0.4, 1.4, 2.2], opacity: [0, 1, 0] }}
-              transition={{ duration: 0.9, times: [0, 0.4, 1], ease: "easeOut" }}
-              className="h-40 w-40 rounded-full border-4 border-bg/80"
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       <div className="container-apple flex flex-1 flex-col items-center justify-center pt-24 pb-24 text-center">
         {/* status pill */}
@@ -77,14 +40,9 @@ export default function HeroMotion() {
           transition={{ duration: 0.7, ease: EASE }}
           className="glass inline-flex items-center gap-2 rounded-full border border-line px-2 py-1.5 pr-3.5 text-[12px] font-medium text-fg-muted"
         >
-          <button
-            type="button"
-            onClick={handleLogoClick}
-            aria-label="Phumitch avatar"
-            className="flex cursor-pointer items-center"
-          >
+          <span className="flex items-center" aria-hidden="true">
             <ZTIcon size={22} />
-          </button>
+          </span>
           <span className="relative flex size-1.5" aria-hidden="true">
             <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent/60" />
             <span className="relative inline-flex size-1.5 rounded-full bg-accent" />
@@ -172,8 +130,8 @@ export default function HeroMotion() {
               {
                 name: "Fuyuri TR",
                 href: "https://fuyuri.net/",
-                image: "/partners/fuyuri-dark.avif",
-                imageDark: "/partners/fuyuri-light.avif",
+                image: "/partners/fuyuri-black.avif",
+                imageDark: "/partners/fuyuri-white.avif",
                 monogram: "Fu",
               },
               { name: "Aven Labs", href: "https://aven-labs.phumitch.space/", image: "/partners/avenlabs.avif", monogram: "Av" },

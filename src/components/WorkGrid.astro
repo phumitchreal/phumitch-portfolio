@@ -1,8 +1,10 @@
 ---
 import { ArrowRightIcon as ArrowRight } from "@phosphor-icons/react";
 import WorkTile from "./WorkTile.astro";
-import { works } from "../content/work.ts";
+import { getProjects } from "../lib/portfolioData.ts";
 import { dicts } from "../i18n.ts";
+
+const works = await getProjects();
 
 const en = dicts.en.work;
 const th = dicts.th.work;

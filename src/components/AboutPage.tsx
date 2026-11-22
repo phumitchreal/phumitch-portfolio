@@ -41,6 +41,7 @@ import {
 import LogoBlurRow from "./LogoBlurRow.tsx";
 import { L, dicts } from "../i18n.ts";
 import { revealProps } from "../lib/motion.ts";
+import { defaultProfile, type DBProfile } from "../lib/portfolioData.ts";
 
 function SectionHeader({ icon, title }: { icon: UIcon; title: React.ReactNode }) {
   const IconCmp = icon;
@@ -125,16 +126,20 @@ function DiscordIcon({ className }: { className?: string }) {
   );
 }
 
-const socials: [string, string, string, BrandIcon][] = [
-  ["GitHub", "@phumitchreal", "https://github.com/phumitchreal", GithubIcon],
-  ["Instagram", "@null_phumitch", "https://instagram.com/null_phumitch", InstagramIcon],
-  ["Discord", "@phumitch.exe", "https://discord.com/users/919878532228841532", DiscordIcon],
-  ["Website", "phumitch.space", "https://phumitch.space", GlobeSimple as unknown as BrandIcon],
-];
 
-export default function AboutPage() {
+
+export default function AboutPage({ profile = defaultProfile }: { profile?: DBProfile }) {
   const { en: enD, th: thD } = dicts;
   const reduced = !!useReducedMotion();
+
+  const activeSocials = profile.socials.map((s) => {
+    let IconCmp: BrandIcon = GlobeSimple as unknown as BrandIcon;
+    const lower = s.label.toLowerCase();
+    if (lower.includes("github")) IconCmp = GithubIcon;
+    else if (lower.includes("instagram")) IconCmp = InstagramIcon;
+    else if (lower.includes("discord")) IconCmp = DiscordIcon;
+    return [s.label, s.handle, s.href, IconCmp] as [string, string, string, BrandIcon];
+  });
 
   return (
     <div className="mt-12 space-y-16">
@@ -156,7 +161,7 @@ export default function AboutPage() {
                 </span>
               </div>
               <span className="text-right text-[13px] font-medium text-fg">
-                <L en={enD.personal[key][1]} th={thD.personal[key][1]} />
+                <L en={profile.personal[key]?.[0] || enD.personal[key][1]} th={profile.personal[key]?.[1] || thD.personal[key][1]} />
               </span>
             </div>
           ))}
@@ -167,8 +172,8 @@ export default function AboutPage() {
       <motion.section {...revealProps(1, reduced)}>
         <SectionHeader icon={Lightning} title={<L en={enD.doTitle} th={thD.doTitle} />} />
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-          {enD.do.map((_, i) => {
-            const IconCmp = workIcons[i];
+          {profile.what_i_do.map((item, i) => {
+            const IconCmp = workIcons[i] || Code;
             return (
               <div
                 key={i}
@@ -183,7 +188,7 @@ export default function AboutPage() {
                   </span>
                 </div>
                 <p className="mt-5 text-[13px] leading-relaxed text-fg-body">
-                  <L en={enD.do[i]} th={thD.do[i]} />
+                  <L en={item.en} th={item.th} />
                 </p>
               </div>
             );
@@ -228,7 +233,7 @@ export default function AboutPage() {
       <motion.section {...revealProps(3, reduced)}>
         <SectionHeader icon={EnvelopeSimple} title={<L en={enD.contactTitle} th={thD.contactTitle} />} />
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {socials.map(([label, handle, href, IconCmp]) => (
+          {activeSocials.map(([label, handle, href, IconCmp]) => (
             <motion.a
               key={label}
               href={href}
