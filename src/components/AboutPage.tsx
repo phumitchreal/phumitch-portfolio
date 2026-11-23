@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   ArrowUpRightIcon as ArrowUpRight,
@@ -42,6 +43,7 @@ import LogoBlurRow from "./LogoBlurRow.tsx";
 import { L, dicts } from "../i18n.ts";
 import { revealProps } from "../lib/motion.ts";
 import { defaultProfile, type DBProfile } from "../lib/portfolioData.ts";
+import { supabase } from "../db/supabase.js";
 
 function SectionHeader({ icon, title }: { icon: UIcon; title: React.ReactNode }) {
   const IconCmp = icon;
@@ -129,10 +131,38 @@ function DiscordIcon({ className }: { className?: string }) {
 
 
 export default function AboutPage({ profile = defaultProfile }: { profile?: DBProfile }) {
+  const [liveProfile, setLiveProfile] = useState<DBProfile>(profile);
   const { en: enD, th: thD } = dicts;
   const reduced = !!useReducedMotion();
 
-  const activeSocials = profile.socials.map((s) => {
+  useEffect(() => {
+    // Subscribe to realtime profile updates
+    const channel = supabase
+      .channel("about-page-profile-sync")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "portfolio_profile" },
+        (payload) => {
+          if (payload.new && (payload.new as any).data) {
+            const fresh = (payload.new as any).data;
+            setLiveProfile({
+              ...defaultProfile,
+              ...fresh,
+              personal: { ...defaultProfile.personal, ...(fresh.personal || {}) },
+              home: { ...defaultProfile.home, ...(fresh.home || {}) },
+              about: { ...defaultProfile.about, ...(fresh.about || {}) },
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const activeSocials = liveProfile.socials.map((s) => {
     let IconCmp: BrandIcon = GlobeSimple as unknown as BrandIcon;
     const lower = s.label.toLowerCase();
     if (lower.includes("github")) IconCmp = GithubIcon;
@@ -161,7 +191,7 @@ export default function AboutPage({ profile = defaultProfile }: { profile?: DBPr
                 </span>
               </div>
               <span className="text-right text-[13px] font-medium text-fg">
-                <L en={profile.personal[key]?.[0] || enD.personal[key][1]} th={profile.personal[key]?.[1] || thD.personal[key][1]} />
+                <L en={liveProfile.personal[key]?.[0] || enD.personal[key][1]} th={liveProfile.personal[key]?.[1] || thD.personal[key][1]} />
               </span>
             </div>
           ))}
@@ -172,7 +202,7 @@ export default function AboutPage({ profile = defaultProfile }: { profile?: DBPr
       <motion.section {...revealProps(1, reduced)}>
         <SectionHeader icon={Lightning} title={<L en={enD.doTitle} th={thD.doTitle} />} />
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-          {profile.what_i_do.map((item, i) => {
+          {liveProfile.what_i_do.map((item, i) => {
             const IconCmp = workIcons[i] || Code;
             return (
               <div

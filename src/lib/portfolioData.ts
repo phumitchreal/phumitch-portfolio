@@ -38,6 +38,7 @@ export type DBProfile = {
   about: {
     desc_en: string;
     desc_th: string;
+    photo_url?: string;
   };
   what_i_do: Array<{ en: string; th: string }>;
   socials: Array<{ label: string; handle: string; href: string }>;
@@ -61,6 +62,7 @@ export const defaultProfile: DBProfile = {
   about: {
     desc_en: dicts.en.about.desc,
     desc_th: dicts.th.about.desc,
+    photo_url: undefined,
   },
   what_i_do: [
     { en: dicts.en.do[0], th: dicts.th.do[0] },

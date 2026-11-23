@@ -27,10 +27,14 @@ import {
   UsersIcon as Users,
   SparkleIcon as Sparkle,
   ShieldCheckIcon as ShieldCheck,
+  UploadSimpleIcon as UploadSimple,
+  CameraIcon as Camera,
+  ArrowCounterClockwiseIcon as ArrowCounterClockwise,
 } from "@phosphor-icons/react";
 import { supabase } from "../../db/supabase.js";
 import { hashPassword, generateSalt, generateSessionToken } from "../../lib/authCrypto.ts";
 import { defaultProfile, type DBProfile } from "../../lib/portfolioData.ts";
+import { compressAndReadFile } from "../../lib/imageUpload.ts";
 
 const SESSION_KEY = "phumitch_admin_session";
 
@@ -82,6 +86,8 @@ export default function AdminApp() {
   const [profile, setProfile] = useState<DBProfile>(defaultProfile);
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileHasChanges, setProfileHasChanges] = useState(false);
+  const [uploadingAboutPhoto, setUploadingAboutPhoto] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
 
   // Account State
   const [newUsername, setNewUsername] = useState("");
@@ -1287,6 +1293,108 @@ export default function AdminApp() {
         {activeTab === "profile" && (
           <section className="space-y-6">
             <form onSubmit={handleSaveProfile} className="space-y-6">
+              {/* Profile / About Photo */}
+              <div className="rounded-3xl border border-line bg-surface p-6 shadow-xs">
+                <div className="flex items-center justify-between border-b border-line pb-4">
+                  <div className="flex items-center gap-2.5">
+                    <span className="flex size-8 items-center justify-center rounded-xl bg-accent-soft text-accent">
+                      <Camera size={18} weight="bold" />
+                    </span>
+                    <div>
+                      <h3 className="text-[16px] font-semibold text-fg">รูปภาพประจำตัว (About Photo)</h3>
+                      <p className="text-[12px] text-fg-muted">รูปภาพที่แสดงในหน้าแรก (ส่วน About) และหน้า /about ทั้งหมด</p>
+                    </div>
+                  </div>
+                  {profile.about?.photo_url && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setProfileHasChanges(true);
+                        setProfile({
+                          ...profile,
+                          about: { ...profile.about, photo_url: undefined },
+                        });
+                      }}
+                      className="flex cursor-pointer items-center gap-1 text-[12px] font-medium text-fg-dim hover:text-red-500"
+                    >
+                      <ArrowCounterClockwise size={14} />
+                      <span>รีเซ็ตเป็นรูปเริ่มต้น</span>
+                    </button>
+                  )}
+                </div>
+
+                <div className="mt-5 flex flex-col gap-6 sm:flex-row sm:items-center">
+                  <div className="relative size-32 shrink-0 overflow-hidden rounded-2xl bg-mist ring-1 ring-black/[0.08] shadow-md">
+                    <img
+                      src={profile.about?.photo_url || "/about-photo.jpg"}
+                      alt="About portrait"
+                      className="size-full object-cover"
+                      style={{ objectPosition: "center 30%" }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity hover:opacity-100 flex items-end p-2">
+                      <span className="text-[10px] text-white/90 font-medium">ภาพตัวอย่าง</span>
+                    </div>
+                  </div>
+
+                  <div className="flex-1 space-y-3">
+                    <div className="flex flex-wrap gap-2">
+                      <label className="btn-primary cursor-pointer inline-flex items-center gap-2 px-4 py-2 text-[13px]">
+                        <UploadSimple size={16} weight="bold" />
+                        <span>{uploadingAboutPhoto ? "กำลังอัปโหลด..." : "อัปโหลดรูปภาพใหม่"}</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          disabled={uploadingAboutPhoto}
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            try {
+                              setUploadingAboutPhoto(true);
+                              const dataUrl = await compressAndReadFile(file, {
+                                maxWidth: 800,
+                                maxHeight: 1000,
+                                quality: 0.85,
+                              });
+                              setProfileHasChanges(true);
+                              setProfile({
+                                ...profile,
+                                about: { ...profile.about, photo_url: dataUrl },
+                              });
+                            } catch (err: any) {
+                              alert(err.message || "เกิดข้อผิดพลาดในการอัปโหลดรูป");
+                            } finally {
+                              setUploadingAboutPhoto(false);
+                            }
+                          }}
+                        />
+                      </label>
+                    </div>
+
+                    <p className="text-[12px] text-fg-muted leading-relaxed">
+                      รองรับไฟล์ภาพ JPEG, PNG, WebP โดยระบบจะปรับขนาดและแปลงไฟล์ให้อัตโนมัติ พร้อมอัปเดตแสดงผลทันทีทั้งหน้าแรกและหน้า About
+                    </p>
+
+                    <div>
+                      <label className="block text-[11px] text-fg-dim">หรือใส่ลิงก์รูปภาพโดยตรง (Direct Image URL)</label>
+                      <input
+                        type="text"
+                        placeholder="https://... หรือ /works/..."
+                        value={profile.about?.photo_url || ""}
+                        onChange={(e) => {
+                          setProfileHasChanges(true);
+                          setProfile({
+                            ...profile,
+                            about: { ...profile.about, photo_url: e.target.value || undefined },
+                          });
+                        }}
+                        className="mt-1 w-full rounded-xl border border-line bg-mist/60 px-3 py-1.5 text-[12px] text-fg outline-none focus:border-accent focus:bg-surface"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Personal Details */}
               <div className="rounded-3xl border border-line bg-surface p-6 shadow-xs">
                 <div className="flex items-center gap-2.5 border-b border-line pb-4">
@@ -1454,6 +1562,76 @@ export default function AdminApp() {
                       className="mt-1 w-full rounded-xl border border-line bg-mist/60 px-3.5 py-2.5 text-[13px] text-fg outline-none focus:border-accent focus:bg-surface"
                     />
                   </div>
+
+                  {/* Status (สถานะ) */}
+                  <div>
+                    <label className="block text-[12px] font-medium text-fg-body">สถานะ (Status EN)</label>
+                    <input
+                      type="text"
+                      placeholder="Single หรือ Available for work"
+                      value={profile.personal.status ? profile.personal.status[0] : ""}
+                      onChange={(e) => {
+                        setProfileHasChanges(true);
+                        setProfile({
+                          ...profile,
+                          personal: {
+                            ...profile.personal,
+                            status: [e.target.value, profile.personal.status ? profile.personal.status[1] : ""],
+                          },
+                        });
+                      }}
+                      className="mt-1 w-full rounded-xl border border-line bg-mist/60 px-3.5 py-2.5 text-[13px] text-fg outline-none focus:border-accent focus:bg-surface"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[12px] font-medium text-fg-body">สถานะ (Status TH)</label>
+                    <input
+                      type="text"
+                      placeholder="โสด หรือ พร้อมรับงาน"
+                      value={profile.personal.status ? profile.personal.status[1] : ""}
+                      onChange={(e) => {
+                        setProfileHasChanges(true);
+                        setProfile({
+                          ...profile,
+                          personal: {
+                            ...profile.personal,
+                            status: [profile.personal.status ? profile.personal.status[0] : "", e.target.value],
+                          },
+                        });
+                      }}
+                      className="mt-1 w-full rounded-xl border border-line bg-mist/60 px-3.5 py-2.5 text-[13px] text-fg outline-none focus:border-accent focus:bg-surface"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-2 flex flex-wrap items-center gap-1.5 pt-1">
+                    <span className="text-[11px] text-fg-dim">สถานะด่วน (Quick Presets):</span>
+                    {[
+                      { en: "Single", th: "โสด" },
+                      { en: "Available for work", th: "พร้อมรับงาน" },
+                      { en: "Open to opportunities", th: "เปิดรับโอกาสงาน" },
+                      { en: "Freelance", th: "รับงานฟรีแลนซ์" },
+                      { en: "Busy", th: "ติดโปรเจกต์" },
+                    ].map((st) => (
+                      <button
+                        key={st.en}
+                        type="button"
+                        onClick={() => {
+                          setProfileHasChanges(true);
+                          setProfile({
+                            ...profile,
+                            personal: { ...profile.personal, status: [st.en, st.th] },
+                          });
+                        }}
+                        className={`cursor-pointer rounded-lg px-2.5 py-1 text-[11px] font-medium transition-colors ${
+                          profile.personal.status?.[0] === st.en
+                            ? "bg-accent text-white"
+                            : "bg-mist text-fg-muted hover:bg-mist-strong hover:text-fg"
+                        }`}
+                      >
+                        {st.th} ({st.en})
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -1555,22 +1733,56 @@ export default function AdminApp() {
 
               {/* What I Do */}
               <div className="rounded-3xl border border-line bg-surface p-6 shadow-xs">
-                <div className="flex items-center gap-2.5 border-b border-line pb-4">
-                  <span className="flex size-8 items-center justify-center rounded-xl bg-accent-soft text-accent">
-                    <Briefcase size={18} weight="bold" />
-                  </span>
-                  <div>
-                    <h3 className="text-[16px] font-semibold text-fg">สิ่งที่ฉันทำ (What I Do)</h3>
-                    <p className="text-[12px] text-fg-muted">จุดเด่น 3 ข้อที่แสดงในหน้าแรกและหน้า About</p>
+                <div className="flex items-center justify-between border-b border-line pb-4">
+                  <div className="flex items-center gap-2.5">
+                    <span className="flex size-8 items-center justify-center rounded-xl bg-accent-soft text-accent">
+                      <Briefcase size={18} weight="bold" />
+                    </span>
+                    <div>
+                      <h3 className="text-[16px] font-semibold text-fg">สิ่งที่ฉันทำ (What I Do)</h3>
+                      <p className="text-[12px] text-fg-muted">จุดเด่นที่แสดงในหน้าแรกและหน้า About</p>
+                    </div>
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setProfileHasChanges(true);
+                      setProfile({
+                        ...profile,
+                        what_i_do: [...profile.what_i_do, { en: "New Skill · Tool", th: "ทักษะใหม่ · เครื่องมือ" }],
+                      });
+                    }}
+                    className="flex cursor-pointer items-center gap-1 text-[13px] font-semibold text-accent hover:underline"
+                  >
+                    <Plus size={14} weight="bold" />
+                    <span>เพิ่มข้อ</span>
+                  </button>
                 </div>
 
                 <div className="mt-5 space-y-3">
                   {profile.what_i_do.map((item, idx) => (
                     <div key={idx} className="rounded-2xl border border-line bg-mist/40 p-4">
-                      <span className="text-[11px] font-bold tracking-wider text-accent uppercase">
-                        ข้อ 0{idx + 1}
-                      </span>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-bold tracking-wider text-accent uppercase">
+                          ข้อ 0{idx + 1}
+                        </span>
+                        {profile.what_i_do.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setProfileHasChanges(true);
+                              setProfile({
+                                ...profile,
+                                what_i_do: profile.what_i_do.filter((_, i) => i !== idx),
+                              });
+                            }}
+                            className="flex size-7 cursor-pointer items-center justify-center rounded-lg text-fg-dim hover:bg-red-500/10 hover:text-red-500"
+                            title="ลบข้อนี้"
+                          >
+                            <Trash size={14} />
+                          </button>
+                        )}
+                      </div>
                       <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
                         <div>
                           <label className="block text-[11px] text-fg-dim">ภาษาอังกฤษ (EN)</label>
@@ -1902,16 +2114,60 @@ export default function AdminApp() {
                     </div>
                   </div>
 
-                  {/* Cover URL with quick chips */}
+                  {/* Cover URL with upload button and quick chips */}
                   <div>
-                    <label className="block text-[12px] font-medium text-fg-body">รูปภาพหน้าปก (Cover URL)</label>
-                    <input
-                      type="text"
-                      value={editingProject.cover_url || ""}
-                      onChange={(e) => setEditingProject({ ...editingProject, cover_url: e.target.value })}
-                      placeholder="/works/zexta.jpg หรือ https://..."
-                      className="mt-1 w-full rounded-xl border border-line bg-mist/60 px-3.5 py-2 text-[13px] text-fg outline-none focus:border-accent focus:bg-surface"
-                    />
+                    <div className="flex items-center justify-between">
+                      <label className="block text-[12px] font-medium text-fg-body">รูปภาพหน้าปก (Cover Image)</label>
+                      {editingProject.cover_url && (
+                        <button
+                          type="button"
+                          onClick={() => setEditingProject({ ...editingProject, cover_url: "" })}
+                          className="cursor-pointer text-[11px] text-red-500 hover:underline"
+                        >
+                          ลบรูปหน้าปก
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="mt-1.5 flex flex-col sm:flex-row gap-2">
+                      <label className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-line bg-mist/40 p-2.5 text-center transition-colors hover:border-accent hover:bg-mist/70">
+                        <UploadSimple size={16} className="text-accent" />
+                        <span className="text-[12px] font-medium text-fg">
+                          {uploadingCover ? "กำลังอัปโหลด..." : "อัปโหลดรูปภาพจากเครื่อง"}
+                        </span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          disabled={uploadingCover}
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            try {
+                              setUploadingCover(true);
+                              const dataUrl = await compressAndReadFile(file, {
+                                maxWidth: 1200,
+                                maxHeight: 800,
+                                quality: 0.85,
+                              });
+                              setEditingProject({ ...editingProject, cover_url: dataUrl });
+                            } catch (err: any) {
+                              alert(err.message || "เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ");
+                            } finally {
+                              setUploadingCover(false);
+                            }
+                          }}
+                        />
+                      </label>
+                      <input
+                        type="text"
+                        value={editingProject.cover_url || ""}
+                        onChange={(e) => setEditingProject({ ...editingProject, cover_url: e.target.value })}
+                        placeholder="หรือใส่ลิงก์ /works/zexta.jpg"
+                        className="flex-1 rounded-xl border border-line bg-mist/60 px-3.5 py-2 text-[12px] text-fg outline-none focus:border-accent focus:bg-surface"
+                      />
+                    </div>
+
                     <div className="mt-1.5 flex flex-wrap items-center gap-1">
                       <span className="text-[11px] text-fg-dim">รูปภาพที่มีในระบบ:</span>
                       {AVAILABLE_COVERS.map((cov) => (
