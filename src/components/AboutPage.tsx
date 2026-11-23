@@ -136,7 +136,32 @@ export default function AboutPage({ profile = defaultProfile }: { profile?: DBPr
   const reduced = !!useReducedMotion();
 
   useEffect(() => {
-    // Subscribe to realtime profile updates
+    // 1. Fetch live profile on mount to guarantee fresh DB state
+    const fetchLiveProfile = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("portfolio_profile")
+          .select("data")
+          .eq("id", "main")
+          .maybeSingle();
+
+        if (!error && data && data.data) {
+          setLiveProfile({
+            ...defaultProfile,
+            ...data.data,
+            personal: { ...defaultProfile.personal, ...(data.data.personal || {}) },
+            home: { ...defaultProfile.home, ...(data.data.home || {}) },
+            about: { ...defaultProfile.about, ...(data.data.about || {}) },
+          });
+        }
+      } catch (e) {
+        console.warn("Failed to load live profile from Supabase:", e);
+      }
+    };
+
+    fetchLiveProfile();
+
+    // 2. Subscribe to realtime profile updates
     const channel = supabase
       .channel("about-page-profile-sync")
       .on(
@@ -172,7 +197,45 @@ export default function AboutPage({ profile = defaultProfile }: { profile?: DBPr
   });
 
   return (
-    <div className="mt-12 space-y-16">
+    <div>
+      {/* Dynamic Header */}
+      <header className="flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:gap-7">
+        <img
+          src={liveProfile.about?.photo_url || "/about-photo.jpg"}
+          alt={`${liveProfile.personal.fullName[1]} (${liveProfile.personal.nickname[1]}) — ${liveProfile.personal.fullName[0]}`}
+          className="h-24 w-24 shrink-0 rounded-full object-cover shadow-[var(--shadow-panel)] ring-1 ring-black/[0.06] sm:h-28 sm:w-28 transition-transform duration-300 hover:scale-105"
+          style={{ objectPosition: "center 30%" }}
+          loading="eager"
+        />
+        <div className="min-w-0">
+          <p className="eyebrow">
+            <span data-lang="en">About</span>
+            <span data-lang="th">เกี่ยวกับ</span>
+          </p>
+          <h1 className="page-title mt-2">
+            <span data-lang="en">{liveProfile.personal.fullName[0]}</span>
+            <span data-lang="th">{liveProfile.personal.fullName[1]}</span>
+          </h1>
+          <p className="mt-3 flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center rounded-full bg-accent-soft px-3 py-1 text-[12px] font-medium text-accent">
+              <span data-lang="en">Nickname: {liveProfile.personal.nickname[0]}</span>
+              <span data-lang="th">ชื่อเล่น: {liveProfile.personal.nickname[1]}</span>
+            </span>
+            <span className="inline-flex items-center rounded-full bg-mist px-3 py-1 text-[12px] font-medium text-fg-muted ring-1 ring-black/[0.04]">
+              <span data-lang="en">Status: {liveProfile.personal.status?.[0] || 'Single'}</span>
+              <span data-lang="th">สถานะ: {liveProfile.personal.status?.[1] || 'โสด'}</span>
+            </span>
+          </p>
+        </div>
+      </header>
+
+      {/* Dynamic Description Lede */}
+      <p className="lede mt-6">
+        <span data-lang="en">{liveProfile.about?.desc_en || enD.about.desc}</span>
+        <span data-lang="th">{liveProfile.about?.desc_th || thD.about.desc}</span>
+      </p>
+
+      <div className="mt-12 space-y-16">
       {/* Personal Info Grid */}
       <motion.section {...revealProps(0, reduced)}>
         <SectionHeader icon={User} title={<L en={enD.personalTitle} th={thD.personalTitle} />} />
@@ -297,6 +360,7 @@ export default function AboutPage({ profile = defaultProfile }: { profile?: DBPr
           ))}
         </div>
       </motion.section>
+    </div>
     </div>
   );
 }
