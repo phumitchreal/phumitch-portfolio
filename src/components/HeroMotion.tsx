@@ -183,7 +183,13 @@ export default function HeroMotion({ initialProfile }: Props) {
           </p>
           <LogoBlurRow
             logos={[
-              { name: "Zexta Studio", href: "https://zexta.xyz/", image: "/partners/zexta.avif", monogram: "Zx" },
+              {
+                name: "Zexta Studio",
+                href: "https://zexta.xyz/",
+                image: "/partners/zexta-black.avif",
+                imageDark: "/partners/zexta-white.avif",
+                monogram: "Zx",
+              },
               {
                 name: "Fuyuri TR",
                 href: "https://fuyuri.net/",
@@ -191,8 +197,20 @@ export default function HeroMotion({ initialProfile }: Props) {
                 imageDark: "/partners/fuyuri-white.avif",
                 monogram: "Fu",
               },
-              { name: "Aven Labs", href: "https://aven-labs.phumitch.space/", image: "/partners/avenlabs.avif", monogram: "Av" },
-              { name: "FiguraTH", href: "https://figurath.vercel.app/", image: "/partners/figurath.avif", monogram: "Fg" },
+              {
+                name: "Aven Labs",
+                href: "https://aven-labs.phumitch.space/",
+                image: "/partners/avenlabs-black.avif",
+                imageDark: "/partners/avenlabs-white.avif",
+                monogram: "Av",
+              },
+              {
+                name: "FiguraTH",
+                href: "https://figurath.vercel.app/",
+                image: "/partners/figurath-black.avif",
+                imageDark: "/partners/figurath-white.avif",
+                monogram: "Fg",
+              },
             ]}
             desktopCount={3}
             mobileCount={2}
