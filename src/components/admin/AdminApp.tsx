@@ -842,11 +842,11 @@ export default function AdminApp() {
 
         {/* Navigation Tabs */}
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <nav className="flex gap-2 py-2">
+          <nav className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto py-2 scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {[
-              { id: "projects", label: "ผลงาน (Projects)", count: projects.length, icon: Briefcase },
-              { id: "profile", label: "ข้อมูลส่วนตัว (Profile)", icon: User },
-              { id: "account", label: "บัญชีผู้ดูแล (Account)", icon: LockKey },
+              { id: "projects", label: "ผลงาน", labelFull: "ผลงาน (Projects)", count: projects.length, icon: Briefcase },
+              { id: "profile", label: "ข้อมูลส่วนตัว", labelFull: "ข้อมูลส่วนตัว (Profile)", icon: User },
+              { id: "account", label: "บัญชีผู้ดูแล", labelFull: "บัญชีผู้ดูแล (Account)", icon: LockKey },
             ].map((tab) => {
               const IconCmp = tab.icon;
               const isActive = activeTab === tab.id;
@@ -854,7 +854,7 @@ export default function AdminApp() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`relative flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 text-[13px] font-medium transition-colors ${
+                  className={`relative flex shrink-0 cursor-pointer items-center gap-2 rounded-full px-3.5 py-2 text-[13px] font-medium transition-colors whitespace-nowrap ${
                     isActive ? "text-fg" : "text-fg-muted hover:text-fg"
                   }`}
                 >
@@ -865,9 +865,10 @@ export default function AdminApp() {
                       transition={{ type: "spring", stiffness: 450, damping: 35 }}
                     />
                   )}
-                  <span className="relative z-10 flex items-center gap-2">
+                  <span className="relative z-10 flex items-center gap-1.5 sm:gap-2">
                     <IconCmp size={16} weight={isActive ? "bold" : "regular"} />
-                    <span>{tab.label}</span>
+                    <span className="hidden sm:inline">{tab.labelFull}</span>
+                    <span className="sm:hidden">{tab.label}</span>
                     {typeof tab.count === "number" && (
                       <span className="rounded-full bg-surface px-1.5 py-0.2 text-[11px] font-semibold text-fg-dim shadow-xs">
                         {tab.count}
@@ -904,7 +905,7 @@ export default function AdminApp() {
 
               <div className="rounded-2xl border border-line bg-surface p-4 shadow-xs">
                 <p className="text-[12px] font-medium text-fg-dim">หมวดหมู่ที่ใช้งาน</p>
-                <div className="mt-2 flex gap-1">
+                <div className="mt-2 flex flex-wrap gap-1">
                   <span className="rounded-md bg-mist px-2 py-0.5 text-[11px] font-medium text-fg-muted">
                     Web
                   </span>
@@ -930,7 +931,7 @@ export default function AdminApp() {
             <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
               <div className="flex flex-1 flex-wrap items-center gap-2">
                 {/* Search Input */}
-                <div className="relative min-w-[220px] flex-1 sm:max-w-xs">
+                <div className="relative min-w-[180px] flex-1 sm:max-w-xs">
                   <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-fg-dim">
                     <MagnifyingGlass size={16} />
                   </span>
@@ -952,7 +953,7 @@ export default function AdminApp() {
                 </div>
 
                 {/* Category Filter Pills */}
-                <div className="flex items-center rounded-xl border border-line bg-mist/60 p-1 text-[12px]">
+                <div className="flex items-center overflow-x-auto scrollbar-none flex-nowrap rounded-xl border border-line bg-mist/60 p-1 text-[12px] max-w-full">
                   {[
                     { id: "all", label: "ทั้งหมด" },
                     { id: "website", label: "Website" },
@@ -962,7 +963,7 @@ export default function AdminApp() {
                     <button
                       key={cat.id}
                       onClick={() => setSelectedCategory(cat.id)}
-                      className={`cursor-pointer rounded-lg px-2.5 py-1 font-medium transition-all ${
+                      className={`cursor-pointer shrink-0 whitespace-nowrap rounded-lg px-2.5 py-1 font-medium transition-all ${
                         selectedCategory === cat.id
                           ? "bg-surface text-fg shadow-xs"
                           : "text-fg-muted hover:text-fg"
@@ -975,7 +976,7 @@ export default function AdminApp() {
               </div>
 
               {/* Right: View Toggle + Add Button */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-between sm:justify-end gap-2">
                 <div className="flex items-center rounded-xl border border-line bg-mist/60 p-1">
                   <button
                     onClick={() => setViewMode("grid")}
@@ -999,7 +1000,7 @@ export default function AdminApp() {
 
                 <button
                   onClick={handleOpenAddProject}
-                  className="btn-primary cursor-pointer text-[13px]"
+                  className="btn-primary cursor-pointer text-[13px] flex-1 sm:flex-initial justify-center"
                 >
                   <Plus size={16} weight="bold" />
                   <span>เพิ่มผลงาน</span>
@@ -1167,8 +1168,8 @@ export default function AdminApp() {
               </div>
             ) : (
               /* LIST VIEW */
-              <div className="overflow-hidden rounded-3xl border border-line bg-surface shadow-xs">
-                <table className="w-full text-left text-[13px]">
+              <div className="overflow-x-auto rounded-3xl border border-line bg-surface shadow-xs">
+                <table className="w-full min-w-[560px] text-left text-[13px]">
                   <thead className="border-b border-line bg-mist/50 text-[11px] font-semibold tracking-wider text-fg-dim uppercase">
                     <tr>
                       <th className="py-3 pl-4 pr-2">ลำดับ</th>
