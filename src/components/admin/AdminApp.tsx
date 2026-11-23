@@ -2064,7 +2064,7 @@ export default function AdminApp() {
                     <button
                       type="button"
                       onClick={handleResetPartnersToDefault}
-                      className="btn-ghost text-[13px] text-fg-muted hover:text-fg px-3 py-1.5"
+                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-line bg-surface px-3 py-1.5 text-[13px] font-medium text-fg-muted hover:border-line-strong hover:bg-mist hover:text-fg transition-colors"
                       title="รีเซ็ตเป็น 4 พาร์ทเนอร์เริ่มต้น"
                     >
                       <ArrowCounterClockwise size={15} weight="bold" />
@@ -2172,12 +2172,12 @@ export default function AdminApp() {
                           </div>
 
                           {/* Reorder and Delete controls */}
-                          <div className="flex items-center gap-1 self-end sm:self-auto">
+                          <div className="flex items-center gap-1.5 self-end sm:self-auto">
                             <button
                               type="button"
                               onClick={() => handleReorderPartner(index, "up")}
                               disabled={index === 0}
-                              className="btn-ghost size-8 p-0 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                              className="flex size-8 cursor-pointer items-center justify-center rounded-full border border-line bg-surface text-fg-dim transition-colors hover:border-line-strong hover:bg-mist hover:text-fg disabled:opacity-20 disabled:cursor-not-allowed"
                               title="ย้ายขึ้น"
                             >
                               <ArrowUp size={15} weight="bold" />
@@ -2186,7 +2186,7 @@ export default function AdminApp() {
                               type="button"
                               onClick={() => handleReorderPartner(index, "down")}
                               disabled={index === (profile.partners || defaultPartners).length - 1}
-                              className="btn-ghost size-8 p-0 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                              className="flex size-8 cursor-pointer items-center justify-center rounded-full border border-line bg-surface text-fg-dim transition-colors hover:border-line-strong hover:bg-mist hover:text-fg disabled:opacity-20 disabled:cursor-not-allowed"
                               title="ย้ายลง"
                             >
                               <ArrowDown size={15} weight="bold" />
@@ -2194,7 +2194,7 @@ export default function AdminApp() {
                             <button
                               type="button"
                               onClick={() => handleDeletePartner(index)}
-                              className="btn-ghost size-8 p-0 text-red-500 hover:bg-red-500/10 cursor-pointer ml-1"
+                              className="flex size-8 cursor-pointer items-center justify-center rounded-full border border-line bg-surface text-red-500 transition-colors hover:border-red-500/40 hover:bg-red-500/10 ml-0.5"
                               title="ลบพาร์ทเนอร์นี้"
                             >
                               <Trash size={15} weight="bold" />
@@ -2297,7 +2297,7 @@ export default function AdminApp() {
                                   className="input-field w-full text-[12px] font-mono"
                                 />
                                 <div className="flex items-center gap-2">
-                                  <label className="btn-ghost cursor-pointer text-[12px] px-2.5 py-1 text-fg hover:bg-mist-strong inline-flex items-center gap-1.5">
+                                  <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-line bg-surface px-3 py-1.5 text-[12px] font-medium text-fg hover:border-line-strong hover:bg-mist transition-colors">
                                     <UploadSimple size={14} weight="bold" />
                                     <span>{isUploadingLight ? "กำลังอัปโหลด..." : "อัปโหลดรูป/SVG"}</span>
                                     <input
@@ -2360,7 +2360,7 @@ export default function AdminApp() {
                                   className="input-field w-full text-[12px] font-mono"
                                 />
                                 <div className="flex items-center gap-2">
-                                  <label className="btn-ghost cursor-pointer text-[12px] px-2.5 py-1 text-fg hover:bg-mist-strong inline-flex items-center gap-1.5">
+                                  <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-line bg-surface px-3 py-1.5 text-[12px] font-medium text-fg hover:border-line-strong hover:bg-mist transition-colors">
                                     <UploadSimple size={14} weight="bold" />
                                     <span>{isUploadingDark ? "กำลังอัปโหลด..." : "อัปโหลดรูป/SVG"}</span>
                                     <input
@@ -2414,7 +2414,7 @@ export default function AdminApp() {
                 <button
                   type="button"
                   onClick={handleAddPartner}
-                  className="btn-ghost border border-dashed border-line text-[13px] px-6 py-2.5 rounded-2xl hover:border-fg hover:bg-surface"
+                  className="inline-flex cursor-pointer items-center gap-2 rounded-2xl border border-dashed border-line bg-surface/50 px-6 py-2.5 text-[13px] font-medium text-fg-muted hover:border-fg hover:bg-surface hover:text-fg transition-colors"
                 >
                   <Plus size={16} weight="bold" />
                   <span>เพิ่มพาร์ทเนอร์อีกรายการ</span>
