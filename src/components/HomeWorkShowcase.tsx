@@ -12,6 +12,7 @@ const categoryLabels: Record<string, { en: string; th: string }> = {
   bot: { en: "Discord Bot", th: "Discord Bot" },
   website: { en: "Website", th: "เว็บไซต์" },
   community: { en: "Community", th: "คอมมูนิตี้" },
+  design: { en: "Graphic Design", th: "ออกแบบภาพ" },
 };
 
 export default function HomeWorkShowcase({ initialWorks }: Props) {

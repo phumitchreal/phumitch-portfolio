@@ -30,6 +30,7 @@ import {
   UploadSimpleIcon as UploadSimple,
   CameraIcon as Camera,
   ArrowCounterClockwiseIcon as ArrowCounterClockwise,
+  PaletteIcon as Palette,
 } from "@phosphor-icons/react";
 import { supabase } from "../../db/supabase.js";
 import { hashPassword, generateSalt, generateSessionToken } from "../../lib/authCrypto.ts";
@@ -1025,6 +1026,9 @@ export default function AdminApp() {
                   <span className="rounded-md bg-mist px-2 py-0.5 text-[11px] font-medium text-fg-muted">
                     Community
                   </span>
+                  <span className="rounded-md bg-mist px-2 py-0.5 text-[11px] font-medium text-fg-muted">
+                    Design
+                  </span>
                 </div>
               </div>
 
@@ -1069,6 +1073,7 @@ export default function AdminApp() {
                     { id: "website", label: "Website" },
                     { id: "bot", label: "Bot" },
                     { id: "community", label: "Community" },
+                    { id: "design", label: "ออกแบบภาพ (Design)" },
                   ].map((cat) => (
                     <button
                       key={cat.id}
@@ -2595,12 +2600,12 @@ export default function AdminApp() {
 
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                     <div className="sm:col-span-2">
-                      <label className="block text-[12px] font-medium text-fg-body">ลิงก์เว็บไซต์ (URL)</label>
+                      <label className="block text-[12px] font-medium text-fg-body">ลิงก์เว็บไซต์ (URL) — สำหรับงานภาพไม่ใส่ก็ได้</label>
                       <input
                         type="text"
                         value={editingProject.href || ""}
                         onChange={(e) => setEditingProject({ ...editingProject, href: e.target.value })}
-                        placeholder="https://..."
+                        placeholder="https://... (หากไม่ใส่ คลิกที่การ์ดจะเปิดดูรูปภาพผลงาน)"
                         className="mt-1 w-full rounded-xl border border-line bg-mist/60 px-3.5 py-2 text-[13px] text-fg outline-none focus:border-accent focus:bg-surface"
                       />
                     </div>
@@ -2696,6 +2701,7 @@ export default function AdminApp() {
                         { id: "website", label: "Website", icon: Globe },
                         { id: "bot", label: "Bot", icon: Robot },
                         { id: "community", label: "Community", icon: Users },
+                        { id: "design", label: "ออกแบบภาพ (Design)", icon: Palette },
                       ].map((cat) => {
                         const isSelected = (editingProject.categories || []).includes(cat.id);
                         const IconCmp = cat.icon;
@@ -2721,6 +2727,41 @@ export default function AdminApp() {
                         );
                       })}
                     </div>
+
+                    {/* Quick Design Template Button */}
+                    {(editingProject.categories || []).includes("design") && (
+                      <div className="mt-2.5 flex flex-wrap items-center gap-1.5 rounded-xl border border-line bg-surface p-2.5 text-[11px]">
+                        <span className="font-semibold text-accent flex items-center gap-1">
+                          <Palette size={13} weight="bold" />
+                          <span>แม่แบบสำหรับงานออกแบบ:</span>
+                        </span>
+                        {[
+                          { label: "Graphic Design", roleEn: "Graphic Designer", roleTh: "นักออกแบบกราฟิก", tag: "Graphic" },
+                          { label: "Banner & Poster", roleEn: "Banner / Poster Design", roleTh: "ออกแบบแบนเนอร์และโปสเตอร์", tag: "Poster" },
+                          { label: "Logo & Branding", roleEn: "Logo & Brand Identity", roleTh: "ออกแบบโลโก้และแบรนด์", tag: "Logo" },
+                          { label: "Illustration / Art", roleEn: "Digital Illustration", roleTh: "ภาพวาดและภาพประกอบดิจิทัล", tag: "Artwork" },
+                        ].map((tpl) => (
+                          <button
+                            key={tpl.label}
+                            type="button"
+                            onClick={() => {
+                              const currentTags = new Set(editingProject.tags || []);
+                              currentTags.add(tpl.tag);
+                              currentTags.add("Design");
+                              setEditingProject({
+                                ...editingProject,
+                                role_en: tpl.roleEn,
+                                role_th: tpl.roleTh,
+                                tags: Array.from(currentTags),
+                              });
+                            }}
+                            className="rounded-lg border border-line bg-mist/60 px-2 py-0.5 text-fg-muted hover:border-accent hover:text-accent transition-colors cursor-pointer"
+                          >
+                            + {tpl.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* Roles */}
@@ -2805,6 +2846,24 @@ export default function AdminApp() {
                         placeholder="+ พิมพ์แท็กแล้วกด Enter"
                         className="flex-1 min-w-[120px] bg-transparent px-2 py-0.5 text-[12px] text-fg outline-none"
                       />
+                    </div>
+
+                    {/* Quick Tag Suggestions */}
+                    <div className="mt-1.5 flex flex-wrap items-center gap-1 text-[11px] text-fg-dim">
+                      <span>แท็กแนะนำ:</span>
+                      {["Artwork", "Graphic", "Banner", "Poster", "Logo", "Illustration", "UI/UX", "Photoshop", "Website", "Discord Bot"].map((tg) => (
+                        <button
+                          key={tg}
+                          type="button"
+                          onClick={() => {
+                            const set = new Set([...(editingProject.tags || []), tg]);
+                            setEditingProject({ ...editingProject, tags: Array.from(set) });
+                          }}
+                          className="rounded-md border border-line bg-surface px-1.5 py-0.5 hover:border-accent hover:text-accent transition-colors cursor-pointer"
+                        >
+                          +{tg}
+                        </button>
+                      ))}
                     </div>
                   </div>
 

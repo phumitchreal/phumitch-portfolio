@@ -6,7 +6,7 @@ import studioLolCover from "../assets/works/studio-lol.jpg";
 import fuyuriCover from "../assets/works/fuyuri.jpg";
 import avenLabsCover from "../assets/works/aven-labs.jpg";
 
-export type WorkCategory = "bot" | "website" | "community";
+export type WorkCategory = "bot" | "website" | "community" | "design";
 
 export type Work = {
   title: string;

@@ -19,11 +19,13 @@ const th = dicts.th.work;
 const accents = ["20%", "28%", "14%", "34%", "24%", "18%"];
 const accent = accents[index % accents.length];
 const delay = `${Math.min(index * 60, 300)}ms`;
-const isLink = Boolean(w.href);
+const coverUrl = typeof w.cover === "string" ? w.cover : (w.cover as any)?.src;
+const targetHref = w.href || coverUrl || undefined;
+const isLink = Boolean(targetHref);
 ---
 
 <a
-  href={w.href}
+  href={targetHref}
   target={isLink ? "_blank" : undefined}
   rel={isLink ? "noopener" : undefined}
   class:list={[

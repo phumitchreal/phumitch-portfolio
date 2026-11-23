@@ -60,6 +60,7 @@ const en = {
     filterBot: "Bot",
     filterWebsite: "Website",
     filterCommunity: "Community",
+    filterDesign: "Design",
     filterLabel: "Filter projects by category",
   },
 };
@@ -113,6 +114,7 @@ const th: typeof en = {
     filterBot: "บอท",
     filterWebsite: "เว็บไซต์",
     filterCommunity: "คอมมูนิตี้",
+    filterDesign: "ออกแบบภาพ",
     filterLabel: "กรองผลงานตามหมวดหมู่",
   },
 };
