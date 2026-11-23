@@ -33,8 +33,9 @@ import {
 } from "@phosphor-icons/react";
 import { supabase } from "../../db/supabase.js";
 import { hashPassword, generateSalt, generateSessionToken } from "../../lib/authCrypto.ts";
-import { defaultProfile, type DBProfile } from "../../lib/portfolioData.ts";
+import { defaultProfile, defaultPartners, type DBProfile, type DBPartner } from "../../lib/portfolioData.ts";
 import { compressAndReadFile } from "../../lib/imageUpload.ts";
+import LogoBlurRow from "../LogoBlurRow.tsx";
 
 const SESSION_KEY = "phumitch_admin_session";
 
@@ -47,14 +48,45 @@ const AVAILABLE_COVERS = [
   { label: "studio.lol", url: "/works/studio-lol.jpg" },
 ];
 
+const AVAILABLE_PARTNER_PRESETS: DBPartner[] = [
+  {
+    name: "Zexta Studio",
+    href: "https://zexta.space",
+    image: "/works/zexta-logo.svg",
+    imageDark: "/works/zexta-logo-dark.svg",
+    monogram: "ZS",
+  },
+  {
+    name: "Fuyuri TR",
+    href: "https://fuyuri.com",
+    image: "/works/fuyuri-logo.svg",
+    imageDark: "/works/fuyuri-logo-dark.svg",
+    monogram: "FY",
+  },
+  {
+    name: "Aven Labs",
+    href: "https://avenlabs.co",
+    image: "/works/aven-labs-logo.svg",
+    imageDark: "/works/aven-labs-logo-dark.svg",
+    monogram: "AL",
+  },
+  {
+    name: "FiguraTH",
+    href: "https://figurath.com",
+    image: "/works/figurath-logo.svg",
+    imageDark: "/works/figurath-logo-dark.svg",
+    monogram: "FG",
+  },
+];
+
 export default function AdminApp() {
   const [loading, setLoading] = useState(true);
   const [tableMissing, setTableMissing] = useState(false);
   const [hasAdmin, setHasAdmin] = useState(false);
   const [sessionUser, setSessionUser] = useState<string | null>(null);
 
-  // Tabs: "projects" | "profile" | "account"
-  const [activeTab, setActiveTab] = useState<"projects" | "profile" | "account">("projects");
+  // Tabs: "projects" | "profile" | "partners" | "account"
+  const [activeTab, setActiveTab] = useState<"projects" | "profile" | "partners" | "account">("projects");
 
   // Search & Filter
   const [searchQuery, setSearchQuery] = useState("");
@@ -88,6 +120,7 @@ export default function AdminApp() {
   const [profileHasChanges, setProfileHasChanges] = useState(false);
   const [uploadingAboutPhoto, setUploadingAboutPhoto] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
+  const [uploadingPartnerIndex, setUploadingPartnerIndex] = useState<{ idx: number; mode: "light" | "dark" } | null>(null);
 
   // Account State
   const [newUsername, setNewUsername] = useState("");
@@ -230,10 +263,109 @@ export default function AdminApp() {
           personal: { ...defaultProfile.personal, ...(data.data.personal || {}) },
           home: { ...defaultProfile.home, ...(data.data.home || {}) },
           about: { ...defaultProfile.about, ...(data.data.about || {}) },
+          partners: data.data.partners || defaultPartners,
         });
       }
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  // Partners Management Handlers
+  const handleAddPartner = () => {
+    const current = profile.partners && profile.partners.length > 0 ? profile.partners : defaultPartners;
+    const newPartner: DBPartner = {
+      name: `พาร์ทเนอร์ใหม่ ${current.length + 1}`,
+      href: "",
+      monogram: "NEW",
+      image: "",
+      imageDark: "",
+    };
+    setProfile({
+      ...profile,
+      partners: [...current, newPartner],
+    });
+    setProfileHasChanges(true);
+    showToast("เพิ่มพาร์ทเนอร์ใหม่แล้ว อย่าลืมกดบันทึก", "success");
+  };
+
+  const handleUpdatePartner = (index: number, patch: Partial<DBPartner>) => {
+    const current = [...(profile.partners && profile.partners.length > 0 ? profile.partners : defaultPartners)];
+    current[index] = { ...current[index], ...patch };
+    setProfile({
+      ...profile,
+      partners: current,
+    });
+    setProfileHasChanges(true);
+  };
+
+  const handleDeletePartner = (index: number) => {
+    const current = [...(profile.partners && profile.partners.length > 0 ? profile.partners : defaultPartners)];
+    const deleted = current[index]?.name || "พาร์ทเนอร์";
+    current.splice(index, 1);
+    setProfile({
+      ...profile,
+      partners: current,
+    });
+    setProfileHasChanges(true);
+    showToast(`ลบ "${deleted}" เรียบร้อย อย่าลืมกดบันทึก`, "success");
+  };
+
+  const handleReorderPartner = (index: number, direction: "up" | "down") => {
+    const current = [...(profile.partners && profile.partners.length > 0 ? profile.partners : defaultPartners)];
+    const target = direction === "up" ? index - 1 : index + 1;
+    if (target < 0 || target >= current.length) return;
+    const temp = current[index];
+    current[index] = current[target];
+    current[target] = temp;
+    setProfile({
+      ...profile,
+      partners: current,
+    });
+    setProfileHasChanges(true);
+    showToast("ปรับลำดับพาร์ทเนอร์แล้ว", "success");
+  };
+
+  const handleResetPartnersToDefault = () => {
+    if (!confirm("ต้องการรีเซ็ตรายชื่อพาร์ทเนอร์กลับเป็นค่าเริ่มต้น 4 รายการใช่หรือไม่?")) return;
+    setProfile({
+      ...profile,
+      partners: [...defaultPartners],
+    });
+    setProfileHasChanges(true);
+    showToast("รีเซ็ตพาร์ทเนอร์เป็นค่าเริ่มต้นแล้ว อย่าลืมกดบันทึก", "success");
+  };
+
+  const handleUploadPartnerLogo = async (file: File, index: number, mode: "light" | "dark") => {
+    if (!file) return;
+    try {
+      setUploadingPartnerIndex({ idx: index, mode });
+      let dataUrl: string;
+      if (file.type === "image/svg+xml") {
+        dataUrl = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      } else {
+        dataUrl = await compressAndReadFile(file, { maxWidth: 500, maxHeight: 500, quality: 0.9 });
+      }
+      const currentPartners = [...(profile.partners && profile.partners.length > 0 ? profile.partners : defaultPartners)];
+      const updated = { ...currentPartners[index] };
+      if (mode === "light") {
+        updated.image = dataUrl;
+      } else {
+        updated.imageDark = dataUrl;
+      }
+      currentPartners[index] = updated;
+      setProfile({ ...profile, partners: currentPartners });
+      setProfileHasChanges(true);
+      showToast(`อัปโหลดโลโก้ (${mode === "light" ? "Light / Black" : "Dark / White"}) เรียบร้อย`, "success");
+    } catch (err: any) {
+      showToast(err.message || "อัปโหลดรูปภาพไม่สำเร็จ", "error");
+    } finally {
+      setUploadingPartnerIndex(null);
     }
   };
 
@@ -852,6 +984,7 @@ export default function AdminApp() {
             {[
               { id: "projects", label: "ผลงาน", labelFull: "ผลงาน (Projects)", count: projects.length, icon: Briefcase },
               { id: "profile", label: "ข้อมูลส่วนตัว", labelFull: "ข้อมูลส่วนตัว (Profile)", icon: User },
+              { id: "partners", label: "พาร์ทเนอร์", labelFull: "พาร์ทเนอร์ & ลูกค้า (Partners)", count: (profile.partners || defaultPartners).length, icon: Users },
               { id: "account", label: "บัญชีผู้ดูแล", labelFull: "บัญชีผู้ดูแล (Account)", icon: LockKey },
             ].map((tab) => {
               const IconCmp = tab.icon;
@@ -1938,7 +2071,402 @@ export default function AdminApp() {
           </section>
         )}
 
-        {/* TAB 3: ACCOUNT & SECURITY */}
+        {/* TAB 3: PARTNERS & CLIENTS */}
+        {activeTab === "partners" && (
+          <section className="space-y-6">
+            <form onSubmit={handleSaveProfile} className="space-y-6">
+              {/* Header Box */}
+              <div className="rounded-3xl border border-line bg-surface p-6 shadow-xs">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-line pb-4">
+                  <div className="flex items-center gap-3">
+                    <span className="flex size-10 items-center justify-center rounded-2xl bg-accent-soft text-accent">
+                      <Users size={22} weight="bold" />
+                    </span>
+                    <div>
+                      <h3 className="text-[17px] font-semibold text-fg">พาร์ทเนอร์และลูกค้าที่ร่วมงาน</h3>
+                      <p className="text-[13px] text-fg-muted">
+                        จัดการรายชื่อพาร์ทเนอร์และลูกค้าที่แสดงในหน้าแรก Hero section (รองรับแยกโลโก้ธีมสว่าง/มืด และลิ้งก์)
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handleResetPartnersToDefault}
+                      className="btn-ghost text-[13px] text-fg-muted hover:text-fg px-3 py-1.5"
+                      title="รีเซ็ตเป็น 4 พาร์ทเนอร์เริ่มต้น"
+                    >
+                      <ArrowCounterClockwise size={15} weight="bold" />
+                      <span>รีเซ็ตเริ่มต้น</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleAddPartner}
+                      className="btn-primary cursor-pointer px-4 py-2 text-[13px]"
+                    >
+                      <Plus size={16} weight="bold" />
+                      <span>เพิ่มพาร์ทเนอร์ใหม่</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Live Preview Box */}
+                <div className="mt-6 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[12px] font-semibold uppercase tracking-wider text-fg-dim">
+                      ภาพตัวอย่างแสดงผลจริง (Live Preview)
+                    </span>
+                    <span className="text-[11px] text-fg-dim">
+                      หมุนวนอัตโนมัติเหมือนบนหน้าแรก
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Light theme preview box */}
+                    <div className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-xs text-neutral-900">
+                      <div className="mb-2 flex items-center justify-between text-[11px] font-medium text-neutral-500">
+                        <span>☀️ ธีมสว่าง (Light Theme) — ใช้โลโก้สีดำ</span>
+                        <span className="text-[10px] bg-neutral-100 text-neutral-600 rounded px-1.5 py-0.5">Preview</span>
+                      </div>
+                      <div className="py-2 flex items-center justify-center overflow-hidden">
+                        <LogoBlurRow
+                          logos={profile.partners && profile.partners.length > 0 ? profile.partners : defaultPartners}
+                          desktopCount={3}
+                          mobileCount={2}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Dark theme preview box */}
+                    <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-4 shadow-xs text-white">
+                      <div className="mb-2 flex items-center justify-between text-[11px] font-medium text-neutral-400">
+                        <span>🌙 ธีมมืด (Dark Theme) — ใช้โลโก้สีขาว</span>
+                        <span className="text-[10px] bg-neutral-800 text-neutral-300 rounded px-1.5 py-0.5">Preview</span>
+                      </div>
+                      <div className="py-2 flex items-center justify-center overflow-hidden">
+                        <LogoBlurRow
+                          logos={profile.partners && profile.partners.length > 0 ? profile.partners : defaultPartners}
+                          desktopCount={3}
+                          mobileCount={2}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Partner Cards List */}
+              <div className="space-y-4">
+                {(profile.partners && profile.partners.length > 0 ? profile.partners : defaultPartners).map(
+                  (partner, index) => {
+                    const isUploadingLight =
+                      uploadingPartnerIndex?.idx === index && uploadingPartnerIndex?.mode === "light";
+                    const isUploadingDark =
+                      uploadingPartnerIndex?.idx === index && uploadingPartnerIndex?.mode === "dark";
+
+                    return (
+                      <div
+                        key={index}
+                        className="rounded-3xl border border-line bg-surface p-5 sm:p-6 shadow-xs space-y-4 transition-all"
+                      >
+                        {/* Card top bar */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-line pb-3.5">
+                          <div className="flex items-center gap-3">
+                            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-line bg-mist font-mono text-[13px] font-bold text-fg">
+                              {partner.monogram || (partner.name ? partner.name.slice(0, 2).toUpperCase() : "P")}
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-[11px] font-mono text-fg-dim">#{index + 1}</span>
+                                <h4 className="text-[15px] font-semibold text-fg">
+                                  {partner.name || "ยังไม่ได้ตั้งชื่อ"}
+                                </h4>
+                              </div>
+                              {partner.href ? (
+                                <a
+                                  href={partner.href}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 text-[12px] text-accent hover:underline"
+                                >
+                                  <span>{partner.href}</span>
+                                  <ArrowSquareOut size={12} />
+                                </a>
+                              ) : (
+                                <span className="text-[12px] text-fg-dim">ไม่มีลิ้งก์ (แสดงเป็นป้ายชื่อ)</span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Reorder and Delete controls */}
+                          <div className="flex items-center gap-1 self-end sm:self-auto">
+                            <button
+                              type="button"
+                              onClick={() => handleReorderPartner(index, "up")}
+                              disabled={index === 0}
+                              className="btn-ghost size-8 p-0 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                              title="ย้ายขึ้น"
+                            >
+                              <ArrowUp size={15} weight="bold" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleReorderPartner(index, "down")}
+                              disabled={index === (profile.partners || defaultPartners).length - 1}
+                              className="btn-ghost size-8 p-0 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                              title="ย้ายลง"
+                            >
+                              <ArrowDown size={15} weight="bold" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeletePartner(index)}
+                              className="btn-ghost size-8 p-0 text-red-500 hover:bg-red-500/10 cursor-pointer ml-1"
+                              title="ลบพาร์ทเนอร์นี้"
+                            >
+                              <Trash size={15} weight="bold" />
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Fields Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div>
+                            <label className="mb-1.5 block text-[13px] font-medium text-fg">
+                              ชื่อพาร์ทเนอร์ / ลูกค้า
+                            </label>
+                            <input
+                              type="text"
+                              value={partner.name}
+                              onChange={(e) => handleUpdatePartner(index, { name: e.target.value })}
+                              placeholder="เช่น Zexta Studio"
+                              className="input-field w-full text-[13px]"
+                              required
+                            />
+                          </div>
+
+                          <div>
+                            <label className="mb-1.5 block text-[13px] font-medium text-fg">
+                              เว็บไซต์ / ลิ้งก์ (ไม่ใส่ก็ได้)
+                            </label>
+                            <div className="relative">
+                              <Globe size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-fg-dim" />
+                              <input
+                                type="url"
+                                value={partner.href || ""}
+                                onChange={(e) => handleUpdatePartner(index, { href: e.target.value })}
+                                placeholder="https://..."
+                                className="input-field w-full pl-8 text-[13px]"
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="mb-1.5 block text-[13px] font-medium text-fg">
+                              ตัวย่อ / Monogram
+                            </label>
+                            <input
+                              type="text"
+                              maxLength={4}
+                              value={partner.monogram || ""}
+                              onChange={(e) => handleUpdatePartner(index, { monogram: e.target.value.toUpperCase() })}
+                              placeholder="เช่น ZS, FY, AL"
+                              className="input-field w-full text-[13px] font-mono uppercase"
+                            />
+                            <p className="mt-1 text-[11px] text-fg-dim">
+                              แสดงเป็นตัวย่อเมื่อไม่มีรูปภาพโลโก้
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Logo Uploads: Light & Dark */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                          {/* Light Logo (For Light Theme - Black Logo) */}
+                          <div className="rounded-2xl border border-line bg-mist/40 p-4 space-y-3">
+                            <div className="flex items-center justify-between">
+                              <label className="text-[13px] font-semibold text-fg flex items-center gap-1.5">
+                                <span>☀️ โลโก้ธีมสว่าง</span>
+                                <span className="text-[11px] font-normal text-fg-muted">(โลโก้สีดำ / สีเข้ม)</span>
+                              </label>
+                              {partner.image && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleUpdatePartner(index, { image: "" })}
+                                  className="text-[11px] text-red-500 hover:underline"
+                                >
+                                  ลบรูป
+                                </button>
+                              )}
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                              {/* Preview Box on white */}
+                              <div className="flex size-14 shrink-0 items-center justify-center rounded-xl border border-neutral-300 bg-white p-2 shadow-xs overflow-hidden">
+                                {partner.image ? (
+                                  <img
+                                    src={partner.image}
+                                    alt="Light logo"
+                                    className="max-h-full max-w-full object-contain"
+                                  />
+                                ) : (
+                                  <span className="font-mono text-[11px] text-neutral-400 font-bold">
+                                    {partner.monogram || "NONE"}
+                                  </span>
+                                )}
+                              </div>
+
+                              <div className="flex-1 space-y-2">
+                                <input
+                                  type="text"
+                                  value={partner.image || ""}
+                                  onChange={(e) => handleUpdatePartner(index, { image: e.target.value })}
+                                  placeholder="/works/... หรือ data:image/..."
+                                  className="input-field w-full text-[12px] font-mono"
+                                />
+                                <div className="flex items-center gap-2">
+                                  <label className="btn-ghost cursor-pointer text-[12px] px-2.5 py-1 text-fg hover:bg-mist-strong inline-flex items-center gap-1.5">
+                                    <UploadSimple size={14} weight="bold" />
+                                    <span>{isUploadingLight ? "กำลังอัปโหลด..." : "อัปโหลดรูป/SVG"}</span>
+                                    <input
+                                      type="file"
+                                      accept="image/*,.svg"
+                                      className="hidden"
+                                      disabled={isUploadingLight}
+                                      onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) handleUploadPartnerLogo(file, index, "light");
+                                      }}
+                                    />
+                                  </label>
+                                  <span className="text-[11px] text-fg-dim">รองรับ SVG, PNG, WebP</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Dark Logo (For Dark Theme - White Logo) */}
+                          <div className="rounded-2xl border border-line bg-mist/40 p-4 space-y-3">
+                            <div className="flex items-center justify-between">
+                              <label className="text-[13px] font-semibold text-fg flex items-center gap-1.5">
+                                <span>🌙 โลโก้ธีมมืด</span>
+                                <span className="text-[11px] font-normal text-fg-muted">(โลโก้สีขาว / สีสว่าง)</span>
+                              </label>
+                              {partner.imageDark && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleUpdatePartner(index, { imageDark: "" })}
+                                  className="text-[11px] text-red-500 hover:underline"
+                                >
+                                  ลบรูป
+                                </button>
+                              )}
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                              {/* Preview Box on black */}
+                              <div className="flex size-14 shrink-0 items-center justify-center rounded-xl border border-neutral-700 bg-neutral-900 p-2 shadow-xs overflow-hidden">
+                                {partner.imageDark || partner.image ? (
+                                  <img
+                                    src={partner.imageDark || partner.image}
+                                    alt="Dark logo"
+                                    className="max-h-full max-w-full object-contain"
+                                  />
+                                ) : (
+                                  <span className="font-mono text-[11px] text-neutral-500 font-bold">
+                                    {partner.monogram || "NONE"}
+                                  </span>
+                                )}
+                              </div>
+
+                              <div className="flex-1 space-y-2">
+                                <input
+                                  type="text"
+                                  value={partner.imageDark || ""}
+                                  onChange={(e) => handleUpdatePartner(index, { imageDark: e.target.value })}
+                                  placeholder="/works/... หรือ data:image/..."
+                                  className="input-field w-full text-[12px] font-mono"
+                                />
+                                <div className="flex items-center gap-2">
+                                  <label className="btn-ghost cursor-pointer text-[12px] px-2.5 py-1 text-fg hover:bg-mist-strong inline-flex items-center gap-1.5">
+                                    <UploadSimple size={14} weight="bold" />
+                                    <span>{isUploadingDark ? "กำลังอัปโหลด..." : "อัปโหลดรูป/SVG"}</span>
+                                    <input
+                                      type="file"
+                                      accept="image/*,.svg"
+                                      className="hidden"
+                                      disabled={isUploadingDark}
+                                      onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) handleUploadPartnerLogo(file, index, "dark");
+                                      }}
+                                    />
+                                  </label>
+                                  <span className="text-[11px] text-fg-dim">รองรับ SVG, PNG, WebP</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Presets Chips */}
+                        <div className="flex flex-wrap items-center gap-1.5 pt-1 text-[11px] text-fg-dim">
+                          <span>เติมค่าด่วนจากพาร์ทเนอร์แนะนำ:</span>
+                          {AVAILABLE_PARTNER_PRESETS.map((preset) => (
+                            <button
+                              key={preset.name}
+                              type="button"
+                              onClick={() =>
+                                handleUpdatePartner(index, {
+                                  name: preset.name,
+                                  href: preset.href,
+                                  monogram: preset.monogram,
+                                  image: preset.image,
+                                  imageDark: preset.imageDark,
+                                })
+                              }
+                              className="rounded-full border border-line bg-surface px-2.5 py-0.5 text-fg-muted hover:border-accent hover:text-accent transition-colors"
+                            >
+                              + {preset.name}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  }
+                )}
+              </div>
+
+              {/* Add Partner button at bottom */}
+              <div className="flex justify-center pt-2">
+                <button
+                  type="button"
+                  onClick={handleAddPartner}
+                  className="btn-ghost border border-dashed border-line text-[13px] px-6 py-2.5 rounded-2xl hover:border-fg hover:bg-surface"
+                >
+                  <Plus size={16} weight="bold" />
+                  <span>เพิ่มพาร์ทเนอร์อีกรายการ</span>
+                </button>
+              </div>
+
+              {/* Bottom Sticky Save Bar */}
+              <div className="sticky bottom-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-2xl border border-line bg-surface/90 p-4 shadow-xl backdrop-blur-xl">
+                <span className="text-[13px] font-medium text-fg-muted text-center sm:text-left">
+                  {profileHasChanges ? "⚠️ มีการแก้ไขที่ยังไม่ได้บันทึก" : "ข้อมูลพาร์ทเนอร์เป็นปัจจุบันแล้ว"}
+                </span>
+                <button
+                  type="submit"
+                  disabled={savingProfile}
+                  className="btn-primary cursor-pointer w-full sm:w-auto justify-center px-6 py-2.5 text-[14px]"
+                >
+                  <FloppyDisk size={16} weight="bold" />
+                  <span>{savingProfile ? "กำลังบันทึก..." : "บันทึกข้อมูลพาร์ทเนอร์ทั้งหมด"}</span>
+                </button>
+              </div>
+            </form>
+          </section>
+        )}
+
+        {/* TAB 4: ACCOUNT & SECURITY */}
         {activeTab === "account" && (
           <section className="mx-auto max-w-xl space-y-6">
             <div className="rounded-3xl border border-line bg-surface p-6 shadow-xs">

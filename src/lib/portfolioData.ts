@@ -2,6 +2,14 @@ import { supabase } from "../db/supabase.js";
 import { works as defaultWorks, type WorkCategory } from "../content/work.ts";
 import { dicts } from "../i18n.ts";
 
+export type DBPartner = {
+  name: string;
+  href?: string;
+  image?: string;
+  imageDark?: string;
+  monogram?: string;
+};
+
 export type DBProject = {
   id?: string;
   title: string;
@@ -42,7 +50,39 @@ export type DBProfile = {
   };
   what_i_do: Array<{ en: string; th: string }>;
   socials: Array<{ label: string; handle: string; href: string }>;
+  partners: DBPartner[];
 };
+
+export const defaultPartners: DBPartner[] = [
+  {
+    name: "Zexta Studio",
+    href: "https://zexta.xyz/",
+    image: "/partners/zexta-black.avif",
+    imageDark: "/partners/zexta-white.avif",
+    monogram: "Zx",
+  },
+  {
+    name: "Fuyuri TR",
+    href: "https://fuyuri.net/",
+    image: "/partners/fuyuri-black.avif",
+    imageDark: "/partners/fuyuri-white.avif",
+    monogram: "Fu",
+  },
+  {
+    name: "Aven Labs",
+    href: "https://aven-labs.phumitch.space/",
+    image: "/partners/avenlabs-black.avif",
+    imageDark: "/partners/avenlabs-white.avif",
+    monogram: "Av",
+  },
+  {
+    name: "FiguraTH",
+    href: "https://figurath.vercel.app/",
+    image: "/partners/figurath-black.avif",
+    imageDark: "/partners/figurath-white.avif",
+    monogram: "Fg",
+  },
+];
 
 export const defaultProfile: DBProfile = {
   personal: {
@@ -75,6 +115,7 @@ export const defaultProfile: DBProfile = {
     { label: "Discord", handle: "@phumitch.exe", href: "https://discord.com/users/919878532228841532" },
     { label: "Website", handle: "phumitch.space", href: "https://phumitch.space" },
   ],
+  partners: defaultPartners,
 };
 
 /**
@@ -151,6 +192,7 @@ export async function getProfile(): Promise<DBProfile> {
         ...defaultProfile.about,
         ...(data.data.about || {}),
       },
+      partners: data.data.partners || defaultPartners,
     };
   } catch {
     return defaultProfile;

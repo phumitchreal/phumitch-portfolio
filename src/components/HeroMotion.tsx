@@ -6,7 +6,7 @@ import LogoBlurRow from "./LogoBlurRow.tsx";
 import { L, dicts } from "../i18n.ts";
 import { EASE } from "../lib/motion.ts";
 import { supabase } from "../db/supabase.js";
-import { defaultProfile, type DBProfile } from "../lib/portfolioData.ts";
+import { defaultProfile, defaultPartners, type DBProfile } from "../lib/portfolioData.ts";
 
 const GREETINGS = [
   { text: "สวัสดี", lang: "th" },
@@ -41,6 +41,7 @@ export default function HeroMotion({ initialProfile }: Props) {
           personal: { ...defaultProfile.personal, ...(data.data.personal || {}) },
           home: { ...defaultProfile.home, ...(data.data.home || {}) },
           about: { ...defaultProfile.about, ...(data.data.about || {}) },
+          partners: data.data.partners || defaultProfile.partners,
         });
       }
     } catch (err) {
@@ -182,36 +183,7 @@ export default function HeroMotion({ initialProfile }: Props) {
             <L en={enD.home.agents} th={thD.home.agents} />
           </p>
           <LogoBlurRow
-            logos={[
-              {
-                name: "Zexta Studio",
-                href: "https://zexta.xyz/",
-                image: "/partners/zexta-black.avif",
-                imageDark: "/partners/zexta-white.avif",
-                monogram: "Zx",
-              },
-              {
-                name: "Fuyuri TR",
-                href: "https://fuyuri.net/",
-                image: "/partners/fuyuri-black.avif",
-                imageDark: "/partners/fuyuri-white.avif",
-                monogram: "Fu",
-              },
-              {
-                name: "Aven Labs",
-                href: "https://aven-labs.phumitch.space/",
-                image: "/partners/avenlabs-black.avif",
-                imageDark: "/partners/avenlabs-white.avif",
-                monogram: "Av",
-              },
-              {
-                name: "FiguraTH",
-                href: "https://figurath.vercel.app/",
-                image: "/partners/figurath-black.avif",
-                imageDark: "/partners/figurath-white.avif",
-                monogram: "Fg",
-              },
-            ]}
+            logos={profile.partners && profile.partners.length > 0 ? profile.partners : defaultPartners}
             desktopCount={3}
             mobileCount={2}
             interval={2.4}
