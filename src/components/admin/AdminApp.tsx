@@ -48,36 +48,7 @@ const AVAILABLE_COVERS = [
   { label: "studio.lol", url: "/works/studio-lol.jpg" },
 ];
 
-const AVAILABLE_PARTNER_PRESETS: DBPartner[] = [
-  {
-    name: "Zexta Studio",
-    href: "https://zexta.space",
-    image: "/works/zexta-logo.svg",
-    imageDark: "/works/zexta-logo-dark.svg",
-    monogram: "ZS",
-  },
-  {
-    name: "Fuyuri TR",
-    href: "https://fuyuri.com",
-    image: "/works/fuyuri-logo.svg",
-    imageDark: "/works/fuyuri-logo-dark.svg",
-    monogram: "FY",
-  },
-  {
-    name: "Aven Labs",
-    href: "https://avenlabs.co",
-    image: "/works/aven-labs-logo.svg",
-    imageDark: "/works/aven-labs-logo-dark.svg",
-    monogram: "AL",
-  },
-  {
-    name: "FiguraTH",
-    href: "https://figurath.com",
-    image: "/works/figurath-logo.svg",
-    imageDark: "/works/figurath-logo-dark.svg",
-    monogram: "FG",
-  },
-];
+const AVAILABLE_PARTNER_PRESETS: DBPartner[] = defaultPartners;
 
 export default function AdminApp() {
   const [loading, setLoading] = useState(true);
@@ -2133,6 +2104,7 @@ export default function AdminApp() {
                           logos={profile.partners && profile.partners.length > 0 ? profile.partners : defaultPartners}
                           desktopCount={3}
                           mobileCount={2}
+                          forceTheme="light"
                         />
                       </div>
                     </div>
@@ -2148,6 +2120,7 @@ export default function AdminApp() {
                           logos={profile.partners && profile.partners.length > 0 ? profile.partners : defaultPartners}
                           desktopCount={3}
                           mobileCount={2}
+                          forceTheme="dark"
                         />
                       </div>
                     </div>

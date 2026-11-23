@@ -54,9 +54,10 @@ interface Props {
   mobileCount?: number;
   interval?: number;
   stagger?: number;
+  forceTheme?: "light" | "dark";
 }
 
-export default function LogoBlurRow({ logos: rawLogos, desktopCount = 3, mobileCount = 3, interval = 2.6, stagger = 130 }: Props) {
+export default function LogoBlurRow({ logos: rawLogos, desktopCount = 3, mobileCount = 3, interval = 2.6, stagger = 130, forceTheme }: Props) {
   const logos = rawLogos
     .map((l) => (typeof l === "string" ? { name: l } : l))
     .map((l) => ({
@@ -151,7 +152,39 @@ export default function LogoBlurRow({ logos: rawLogos, desktopCount = 3, mobileC
                 transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
               >
                 <div className="flex items-center gap-2 sm:gap-2.5 grayscale-[80%] opacity-85 transition-all duration-300 ease-in-out group-hover:scale-[1.04] group-hover:translate-y-[-1.5px] group-hover:grayscale-0 group-hover:opacity-100">
-                  {image ? (
+                  {forceTheme === "dark" ? (
+                    imageDark || image ? (
+                      <img
+                        src={imageDark || image}
+                        alt={name}
+                        width={32}
+                        height={32}
+                        className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 shrink-0 object-contain"
+                      />
+                    ) : Icon ? (
+                      <Icon className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 shrink-0 text-white" />
+                    ) : (
+                      <span className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-lg bg-neutral-800 text-[11px] sm:text-[12px] font-bold text-white ring-1 ring-white/10 shadow-[0_1px_2px_rgba(0,0,0,0.2)]">
+                        {monogram || name.slice(0, 2)}
+                      </span>
+                    )
+                  ) : forceTheme === "light" ? (
+                    image ? (
+                      <img
+                        src={image}
+                        alt={name}
+                        width={32}
+                        height={32}
+                        className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 shrink-0 object-contain"
+                      />
+                    ) : Icon ? (
+                      <Icon className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 shrink-0 text-neutral-900" />
+                    ) : (
+                      <span className="flex h-6 w-6 sm:h-7 sm:w-7 items-center justify-center rounded-lg bg-white text-[11px] sm:text-[12px] font-bold text-neutral-900 ring-1 ring-black/10 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+                        {monogram || name.slice(0, 2)}
+                      </span>
+                    )
+                  ) : image ? (
                     <>
                       {imageDark ? (
                         <>
@@ -191,7 +224,18 @@ export default function LogoBlurRow({ logos: rawLogos, desktopCount = 3, mobileC
                       {name.slice(0, 2)}
                     </span>
                   )}
-                  <span className="text-[13px] sm:text-[14px] md:text-[15px] font-semibold tracking-[-0.01em] text-fg whitespace-nowrap" style={{ fontFamily: "var(--font-body)" }}>{name}</span>
+                  <span
+                    className={`text-[13px] sm:text-[14px] md:text-[15px] font-semibold tracking-[-0.01em] whitespace-nowrap ${
+                      forceTheme === "dark"
+                        ? "text-white"
+                        : forceTheme === "light"
+                        ? "text-neutral-900"
+                        : "text-fg"
+                    }`}
+                    style={{ fontFamily: "var(--font-body)" }}
+                  >
+                    {name}
+                  </span>
                 </div>
               </motion.a>
             </AnimatePresence>
