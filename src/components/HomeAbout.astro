@@ -71,8 +71,8 @@ const socials = profile.socials;
           <span data-lang="th">{th.about.title1}</span>
         </h2>
         <p class="mt-4 max-w-[560px] text-[16px] leading-relaxed text-fg-muted sm:text-[17px]">
-          <span data-lang="en">{en.about.desc}</span>
-          <span data-lang="th">{th.about.desc}</span>
+          <span data-lang="en">{profile.about?.desc_en || en.about.desc}</span>
+          <span data-lang="th">{profile.about?.desc_th || th.about.desc}</span>
         </p>
 
         <dl class="mt-8 grid grid-cols-1 gap-2.5 sm:grid-cols-3">

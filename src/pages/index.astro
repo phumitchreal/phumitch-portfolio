@@ -2,23 +2,28 @@
 import Base from "../layouts/Base.astro";
 import SiteNav from "../components/SiteNav.astro";
 import HeroMotion from "../components/HeroMotion.tsx";
-import HomeWork from "../components/HomeWork.astro";
+import HomeWorkShowcase from "../components/HomeWorkShowcase.tsx";
 import HomeAbout from "../components/HomeAbout.astro";
 import SongCard from "../components/SongCard.astro";
 import Footer from "../components/Footer.astro";
+import { getProjects, getProfile } from "../lib/portfolioData.ts";
+
+const initialWorks = await getProjects();
+const initialProfile = await getProfile();
 ---
 
 <Base>
   <div class="relative flex min-h-[100dvh] flex-col text-fg-body">
     <SiteNav />
     <main id="main" class="relative z-10 flex flex-1 flex-col">
-      <HeroMotion client:load />
-      <HomeWork />
+      <HeroMotion client:load initialProfile={initialProfile} />
+      <HomeWorkShowcase client:load initialWorks={initialWorks} />
       <HomeAbout />
       <SongCard />
     </main>
     <Footer />
   </div>
 </Base>
+
 
 

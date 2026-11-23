@@ -5,6 +5,8 @@ import ZTIcon from "./ZTIcon.tsx";
 import LogoBlurRow from "./LogoBlurRow.tsx";
 import { L, dicts } from "../i18n.ts";
 import { EASE } from "../lib/motion.ts";
+import { supabase } from "../db/supabase.js";
+import { defaultProfile, type DBProfile } from "../lib/portfolioData.ts";
 
 const GREETINGS = [
   { text: "สวัสดี", lang: "th" },
@@ -13,11 +15,57 @@ const GREETINGS = [
   { text: "こんにちは", lang: "ja" },
 ];
 
-export default function HeroMotion() {
+interface Props {
+  initialProfile?: DBProfile;
+}
+
+export default function HeroMotion({ initialProfile }: Props) {
   const { en: enD, th: thD } = dicts;
   const reduced = useReducedMotion();
   const [index, setIndex] = useState(0);
+  const [profile, setProfile] = useState<DBProfile>(initialProfile || defaultProfile);
   const greeting = GREETINGS[index];
+
+  const fetchLiveProfile = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("portfolio_profile")
+        .select("data")
+        .eq("id", "main")
+        .maybeSingle();
+
+      if (!error && data && data.data) {
+        setProfile({
+          ...defaultProfile,
+          ...data.data,
+          personal: { ...defaultProfile.personal, ...(data.data.personal || {}) },
+          home: { ...defaultProfile.home, ...(data.data.home || {}) },
+          about: { ...defaultProfile.about, ...(data.data.about || {}) },
+        });
+      }
+    } catch (err) {
+      console.error("Error fetching live profile in hero:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchLiveProfile();
+
+    const channel = supabase
+      .channel("home-profile-realtime")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "portfolio_profile" },
+        () => {
+          fetchLiveProfile();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   useEffect(() => {
     if (reduced) return;
@@ -87,13 +135,22 @@ export default function HeroMotion() {
           className="mt-6 max-w-[640px]"
         >
           <h1 className="text-[15px] font-medium text-fg sm:text-[17px]">
-            <L en="Phumitch Somsri · Guitar" th="ภูมิทัศน์ สมศรี · กีต้า" />
+            <L
+              en={profile.personal?.fullName?.[0] || "Phumitch Somsri · Guitar"}
+              th={profile.personal?.fullName?.[1] || "ภูมิทัศน์ สมศรี · กีต้า"}
+            />
           </h1>
           <p className="mt-2 text-pretty text-[15px] leading-relaxed text-fg-muted sm:text-[17px]">
-            <L en={enD.home.tag1} th={thD.home.tag1} />
+            <L
+              en={profile.home?.tag1_en || enD.home.tag1}
+              th={profile.home?.tag1_th || thD.home.tag1}
+            />
           </p>
           <p className="mt-1 text-pretty text-[13px] leading-relaxed text-fg-dim sm:text-[14px]">
-            <L en={enD.home.tag2} th={thD.home.tag2} />
+            <L
+              en={profile.home?.tag2_en || enD.home.tag2}
+              th={profile.home?.tag2_th || thD.home.tag2}
+            />
           </p>
         </motion.div>
 
