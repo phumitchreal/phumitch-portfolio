@@ -17,9 +17,6 @@ const {
   ogImage = "/zt-icon.png",
 } = Astro.props;
 
-/* Cloudflare Turnstile sitekey — public by design. Empty ⇒ the gate stays inert. */
-const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
-
 /* /verify shows its own full-page dialog — the intro overlays would sit on top of it. */
 const isVerify = /^\/verify\/?$/.test(Astro.url.pathname);
 ---

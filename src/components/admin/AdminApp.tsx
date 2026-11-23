@@ -1638,81 +1638,85 @@ export default function AdminApp() {
                   {profile.socials.map((s, idx) => (
                     <div
                       key={idx}
-                      className="flex flex-wrap items-center gap-2 rounded-2xl border border-line bg-mist/40 p-3 transition-colors hover:bg-mist/70"
+                      className="flex flex-col sm:flex-row sm:items-center gap-2 rounded-2xl border border-line bg-mist/40 p-3 transition-colors hover:bg-mist/70"
                     >
-                      <input
-                        type="text"
-                        placeholder="Label"
-                        value={s.label}
-                        onChange={(e) => {
-                          setProfileHasChanges(true);
-                          const next = [...profile.socials];
-                          next[idx].label = e.target.value;
-                          setProfile({ ...profile, socials: next });
-                        }}
-                        className="w-28 rounded-xl border border-line bg-surface px-3 py-2 text-[13px] text-fg"
-                      />
-                      <input
-                        type="text"
-                        placeholder="@handle"
-                        value={s.handle}
-                        onChange={(e) => {
-                          setProfileHasChanges(true);
-                          const next = [...profile.socials];
-                          next[idx].handle = e.target.value;
-                          setProfile({ ...profile, socials: next });
-                        }}
-                        className="w-36 rounded-xl border border-line bg-surface px-3 py-2 text-[13px] text-fg"
-                      />
-                      <input
-                        type="text"
-                        placeholder="https://..."
-                        value={s.href}
-                        onChange={(e) => {
-                          setProfileHasChanges(true);
-                          const next = [...profile.socials];
-                          next[idx].href = e.target.value;
-                          setProfile({ ...profile, socials: next });
-                        }}
-                        className="min-w-[200px] flex-1 rounded-xl border border-line bg-surface px-3 py-2 text-[13px] text-fg"
-                      />
-                      <a
-                        href={s.href}
-                        target="_blank"
-                        rel="noopener"
-                        className="flex size-9 items-center justify-center rounded-xl text-fg-dim hover:bg-surface hover:text-fg"
-                        title="ทดสอบเปิดลิงก์"
-                      >
-                        <ArrowSquareOut size={16} />
-                      </a>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setProfileHasChanges(true);
-                          setProfile({
-                            ...profile,
-                            socials: profile.socials.filter((_, i) => i !== idx),
-                          });
-                        }}
-                        className="flex size-9 cursor-pointer items-center justify-center rounded-xl text-fg-dim hover:bg-red-500/10 hover:text-red-500"
-                        title="ลบ"
-                      >
-                        <Trash size={16} />
-                      </button>
+                      <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-2">
+                        <input
+                          type="text"
+                          placeholder="Label"
+                          value={s.label}
+                          onChange={(e) => {
+                            setProfileHasChanges(true);
+                            const next = [...profile.socials];
+                            next[idx].label = e.target.value;
+                            setProfile({ ...profile, socials: next });
+                          }}
+                          className="w-full sm:w-28 rounded-xl border border-line bg-surface px-3 py-2 text-[13px] text-fg"
+                        />
+                        <input
+                          type="text"
+                          placeholder="@handle"
+                          value={s.handle}
+                          onChange={(e) => {
+                            setProfileHasChanges(true);
+                            const next = [...profile.socials];
+                            next[idx].handle = e.target.value;
+                            setProfile({ ...profile, socials: next });
+                          }}
+                          className="w-full sm:w-36 rounded-xl border border-line bg-surface px-3 py-2 text-[13px] text-fg"
+                        />
+                      </div>
+                      <div className="flex flex-1 items-center gap-2">
+                        <input
+                          type="text"
+                          placeholder="https://..."
+                          value={s.href}
+                          onChange={(e) => {
+                            setProfileHasChanges(true);
+                            const next = [...profile.socials];
+                            next[idx].href = e.target.value;
+                            setProfile({ ...profile, socials: next });
+                          }}
+                          className="min-w-0 flex-1 rounded-xl border border-line bg-surface px-3 py-2 text-[13px] text-fg"
+                        />
+                        <a
+                          href={s.href}
+                          target="_blank"
+                          rel="noopener"
+                          className="flex size-9 shrink-0 items-center justify-center rounded-xl text-fg-dim hover:bg-surface hover:text-fg"
+                          title="ทดสอบเปิดลิงก์"
+                        >
+                          <ArrowSquareOut size={16} />
+                        </a>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setProfileHasChanges(true);
+                            setProfile({
+                              ...profile,
+                              socials: profile.socials.filter((_, i) => i !== idx),
+                            });
+                          }}
+                          className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-xl text-fg-dim hover:bg-red-500/10 hover:text-red-500"
+                          title="ลบ"
+                        >
+                          <Trash size={16} />
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Floating Save Bar */}
-              <div className="sticky bottom-6 flex items-center justify-between rounded-2xl border border-line bg-surface/90 p-4 shadow-xl backdrop-blur-xl">
-                <span className="text-[13px] font-medium text-fg-muted">
+              <div className="sticky bottom-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between rounded-2xl border border-line bg-surface/90 p-4 shadow-xl backdrop-blur-xl">
+                <span className="text-[13px] font-medium text-fg-muted text-center sm:text-left">
                   {profileHasChanges ? "⚠️ มีการแก้ไขที่ยังไม่ได้บันทึก" : "ข้อมูลเป็นปัจจุบันแล้ว"}
                 </span>
                 <button
                   type="submit"
                   disabled={savingProfile}
-                  className="btn-primary cursor-pointer px-6 py-2.5 text-[14px]"
+                  className="btn-primary cursor-pointer w-full sm:w-auto justify-center px-6 py-2.5 text-[14px]"
                 >
                   <FloppyDisk size={16} weight="bold" />
                   <span>{savingProfile ? "กำลังบันทึก..." : "บันทึกข้อมูลทั้งหมด"}</span>
@@ -1847,7 +1851,7 @@ export default function AdminApp() {
               <div
                 data-lenis-prevent
                 onWheel={(e) => e.stopPropagation()}
-                className="flex-1 overflow-y-auto overscroll-contain p-6"
+                className="flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6"
               >
                 <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
                   {/* Form Inputs (7 Cols) */}
@@ -1930,7 +1934,7 @@ export default function AdminApp() {
                   {/* Categories Pills */}
                   <div>
                     <label className="block text-[12px] font-medium text-fg-body">หมวดหมู่ Categories</label>
-                    <div className="mt-1.5 flex gap-2">
+                    <div className="mt-1.5 flex flex-wrap gap-2">
                       {[
                         { id: "website", label: "Website", icon: Globe },
                         { id: "bot", label: "Bot", icon: Robot },
@@ -2070,15 +2074,15 @@ export default function AdminApp() {
                     </button>
                   </div>
 
-                  <div className="flex justify-end gap-2 pt-2">
+                  <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-2">
                     <button
                       type="button"
                       onClick={() => setEditingProject(null)}
-                      className="cursor-pointer rounded-xl px-4 py-2 text-[13px] text-fg-muted hover:bg-mist"
+                      className="w-full sm:w-auto cursor-pointer rounded-xl px-4 py-2 text-[13px] text-fg-muted hover:bg-mist text-center"
                     >
                       ยกเลิก
                     </button>
-                    <button type="submit" className="btn-primary cursor-pointer text-[13px]">
+                    <button type="submit" className="btn-primary w-full sm:w-auto cursor-pointer text-[13px] justify-center">
                       <FloppyDisk size={16} weight="bold" />
                       <span>{isNewProject ? "เพิ่มผลงานใหม่" : "บันทึกการแก้ไข"}</span>
                     </button>
@@ -2173,18 +2177,18 @@ export default function AdminApp() {
               <p className="mt-1.5 text-[13px] leading-relaxed text-fg-muted">
                 คุณแน่ใจหรือไม่ว่าต้องการลบผลงาน <strong>"{deleteConfirmTarget.title}"</strong> ออกจากฐานข้อมูล? การกระทำนี้ไม่สามารถย้อนกลับได้
               </p>
-              <div className="mt-6 flex justify-end gap-2">
+              <div className="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setDeleteConfirmTarget(null)}
-                  className="cursor-pointer rounded-xl px-4 py-2 text-[13px] font-medium text-fg-muted hover:bg-mist"
+                  className="w-full sm:w-auto cursor-pointer rounded-xl px-4 py-2 text-[13px] font-medium text-fg-muted hover:bg-mist text-center"
                 >
                   ยกเลิก
                 </button>
                 <button
                   type="button"
                   onClick={handleConfirmDelete}
-                  className="cursor-pointer rounded-xl bg-red-500 px-4 py-2 text-[13px] font-medium text-white shadow-md shadow-red-500/20 transition-all hover:bg-red-600"
+                  className="w-full sm:w-auto cursor-pointer rounded-xl bg-red-500 px-4 py-2 text-[13px] font-medium text-white shadow-md shadow-red-500/20 transition-all hover:bg-red-600 text-center"
                 >
                   ลบผลงาน
                 </button>
