@@ -5,7 +5,6 @@ import ZTIcon from "./ZTIcon.tsx";
 import LogoBlurRow from "./LogoBlurRow.tsx";
 import { L, dicts } from "../i18n.ts";
 import { EASE } from "../lib/motion.ts";
-import { supabase } from "../db/supabase.js";
 import { defaultProfile, defaultPartners, type DBProfile } from "../lib/portfolioData.ts";
 
 const GREETINGS = [
@@ -28,6 +27,7 @@ export default function HeroMotion({ initialProfile }: Props) {
 
   const fetchLiveProfile = async () => {
     try {
+      const { supabase } = await import("../db/supabase.js");
       const { data, error } = await supabase
         .from("portfolio_profile")
         .select("data")
@@ -50,21 +50,29 @@ export default function HeroMotion({ initialProfile }: Props) {
   };
 
   useEffect(() => {
-    fetchLiveProfile();
+    void fetchLiveProfile();
 
-    const channel = supabase
-      .channel("home-profile-realtime")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "portfolio_profile" },
-        () => {
-          fetchLiveProfile();
-        }
-      )
-      .subscribe();
+    let cancelled = false;
+    let supabase: any;
+    let channel: any;
+    void import("../db/supabase.js").then(({ supabase: s }) => {
+      if (cancelled) return;
+      supabase = s;
+      channel = s
+        .channel("home-profile-realtime")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "portfolio_profile" },
+          () => {
+            void fetchLiveProfile();
+          }
+        )
+        .subscribe();
+    });
 
     return () => {
-      supabase.removeChannel(channel);
+      cancelled = true;
+      if (supabase && channel) supabase.removeChannel(channel);
     };
   }, []);
 

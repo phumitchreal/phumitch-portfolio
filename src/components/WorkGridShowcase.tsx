@@ -3,7 +3,6 @@ import {
   ArrowUpRightIcon as ArrowUpRight,
   ArrowRightIcon as ArrowRight,
 } from "@phosphor-icons/react";
-import { supabase } from "../db/supabase.js";
 import { dicts, L } from "../i18n.ts";
 import type { DBProject } from "../lib/portfolioData.ts";
 import { getProjectCover, isDesignWork } from "../lib/projectMedia.ts";
@@ -50,6 +49,7 @@ export default function WorkGridShowcase({ initialWorks }: Props) {
 
   const fetchLiveProjects = async () => {
     try {
+      const { supabase } = await import("../db/supabase.js");
       const { data, error } = await supabase
         .from("portfolio_projects")
         .select("*")
@@ -67,21 +67,30 @@ export default function WorkGridShowcase({ initialWorks }: Props) {
 
   useEffect(() => {
     // Refresh from the database so admin edits appear without a redeploy.
-    fetchLiveProjects();
+    void fetchLiveProjects();
 
-    const channel = supabase
-      .channel("work-grid-projects-realtime")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "portfolio_projects" },
-        () => {
-          fetchLiveProjects();
-        }
-      )
-      .subscribe();
+    // Subscribe to realtime changes lazily (the client module is big).
+    let cancelled = false;
+    let supabase: any;
+    let channel: any;
+    void import("../db/supabase.js").then(({ supabase: s }) => {
+      if (cancelled) return;
+      supabase = s;
+      channel = s
+        .channel("work-grid-projects-realtime")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "portfolio_projects" },
+          () => {
+            void fetchLiveProjects();
+          }
+        )
+        .subscribe();
+    });
 
     return () => {
-      supabase.removeChannel(channel);
+      cancelled = true;
+      if (supabase && channel) supabase.removeChannel(channel);
     };
   }, []);
 

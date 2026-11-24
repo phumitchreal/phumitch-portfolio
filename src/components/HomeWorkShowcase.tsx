@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { ArrowUpRightIcon as ArrowUpRight, CaretRightIcon as CaretRight } from "@phosphor-icons/react";
-import { supabase } from "../db/supabase.js";
 import { L } from "../i18n.ts";
 import type { DBProject } from "../lib/portfolioData.ts";
-import { isDesignWork } from "../lib/projectMedia.ts";
+import { getProjectCover, isDesignWork } from "../lib/projectMedia.ts";
 import DesignShowcase from "./DesignShowcase.tsx";
 
 interface Props {
@@ -22,6 +21,7 @@ export default function HomeWorkShowcase({ initialWorks }: Props) {
 
   const fetchLiveProjects = async () => {
     try {
+      const { supabase } = await import("../db/supabase.js");
       const { data, error } = await supabase
         .from("portfolio_projects")
         .select("*")
@@ -56,22 +56,30 @@ export default function HomeWorkShowcase({ initialWorks }: Props) {
 
   useEffect(() => {
     // 1. Fetch latest projects on client mount
-    fetchLiveProjects();
+    void fetchLiveProjects();
 
     // 2. Subscribe to real-time changes from Supabase
-    const channel = supabase
-      .channel("home-projects-realtime")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "portfolio_projects" },
-        () => {
-          fetchLiveProjects();
-        }
-      )
-      .subscribe();
+    let cancelled = false;
+    let supabase: any;
+    let channel: any;
+    void import("../db/supabase.js").then(({ supabase: s }) => {
+      if (cancelled) return;
+      supabase = s;
+      channel = s
+        .channel("home-projects-realtime")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "portfolio_projects" },
+          () => {
+            void fetchLiveProjects();
+          }
+        )
+        .subscribe();
+    });
 
     return () => {
-      supabase.removeChannel(channel);
+      cancelled = true;
+      if (supabase && channel) supabase.removeChannel(channel);
     };
   }, []);
 
@@ -83,6 +91,19 @@ export default function HomeWorkShowcase({ initialWorks }: Props) {
   const duo = rest.slice(0, 2);
   const trio = rest.slice(2);
 
+  // Preload the featured work cover so the first paint of / has it in cache.
+  const featuredCover = featured ? getProjectCover(featured) : undefined;
+  useEffect(() => {
+    if (!featuredCover || document.querySelector(`link[data-preload-cover="${featuredCover}"]`)) return;
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "image";
+    link.href = featuredCover;
+    link.setAttribute("data-preload-cover", featuredCover);
+    document.head.appendChild(link);
+    return () => link.remove();
+  }, [featuredCover]);
+
   const getHostname = (url?: string) => {
     if (!url) return "";
     try {
@@ -90,6 +111,15 @@ export default function HomeWorkShowcase({ initialWorks }: Props) {
     } catch {
       return "";
     }
+  };
+
+  // width/height when the cover is a static Astro image asset (CLS reducer)
+  const coverDims = (w: DBProject): { width?: number; height?: number } => {
+    const c = w.cover as any;
+    if (c && typeof c === "object" && typeof c.width === "number" && typeof c.height === "number") {
+      return { width: c.width, height: c.height };
+    }
+    return {};
   };
 
   return (
@@ -217,8 +247,12 @@ export default function HomeWorkShowcase({ initialWorks }: Props) {
                           <img
                             src={featured.cover_url || featured.cover}
                             alt={featured.title}
+                            width={coverDims(featured).width}
+                            height={coverDims(featured).height}
                             className="size-full object-cover transition-transform duration-500 group-hover/screen:scale-[1.03]"
-                            loading="lazy"
+                            loading="eager"
+                            decoding="async"
+                            fetchPriority="high"
                           />
                         ) : (
                           <div className="flex size-full items-center justify-center font-bold text-fg-dim text-[48px] bg-mist">
@@ -283,8 +317,11 @@ export default function HomeWorkShowcase({ initialWorks }: Props) {
                           <img
                             src={w.cover_url || w.cover}
                             alt={w.title}
+                            width={coverDims(w).width}
+                            height={coverDims(w).height}
                             className="size-full object-cover"
                             loading="lazy"
+                            decoding="async"
                           />
                         ) : (
                           <div className="flex size-full items-center justify-center font-bold text-fg-dim text-[36px] bg-mist">
@@ -349,8 +386,11 @@ export default function HomeWorkShowcase({ initialWorks }: Props) {
                           <img
                             src={w.cover_url || w.cover}
                             alt={w.title}
+                            width={coverDims(w).width}
+                            height={coverDims(w).height}
                             className="size-full object-cover"
                             loading="lazy"
+                            decoding="async"
                           />
                         ) : (
                           <div className="flex size-full items-center justify-center font-bold text-fg-dim text-[28px] bg-mist">

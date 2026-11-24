@@ -43,7 +43,6 @@ import LogoBlurRow from "./LogoBlurRow.tsx";
 import { L, dicts } from "../i18n.ts";
 import { revealProps } from "../lib/motion.ts";
 import { defaultProfile, type DBProfile } from "../lib/portfolioData.ts";
-import { supabase } from "../db/supabase.js";
 
 function SectionHeader({ icon, title }: { icon: UIcon; title: React.ReactNode }) {
   const IconCmp = icon;
@@ -139,6 +138,7 @@ export default function AboutPage({ profile = defaultProfile }: { profile?: DBPr
     // 1. Fetch live profile on mount to guarantee fresh DB state
     const fetchLiveProfile = async () => {
       try {
+        const { supabase } = await import("../db/supabase.js");
         const { data, error } = await supabase
           .from("portfolio_profile")
           .select("data")
@@ -159,31 +159,39 @@ export default function AboutPage({ profile = defaultProfile }: { profile?: DBPr
       }
     };
 
-    fetchLiveProfile();
+    void fetchLiveProfile();
 
-    // 2. Subscribe to realtime profile updates
-    const channel = supabase
-      .channel("about-page-profile-sync")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "portfolio_profile" },
-        (payload) => {
-          if (payload.new && (payload.new as any).data) {
-            const fresh = (payload.new as any).data;
-            setLiveProfile({
-              ...defaultProfile,
-              ...fresh,
-              personal: { ...defaultProfile.personal, ...(fresh.personal || {}) },
-              home: { ...defaultProfile.home, ...(fresh.home || {}) },
-              about: { ...defaultProfile.about, ...(fresh.about || {}) },
-            });
+    // 2. Subscribe to realtime profile updates (lazily — the client is large)
+    let cancelled = false;
+    let supabase: any;
+    let channel: any;
+    void import("../db/supabase.js").then(({ supabase: s }) => {
+      if (cancelled) return;
+      supabase = s;
+      channel = s
+        .channel("about-page-profile-sync")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "portfolio_profile" },
+          (payload) => {
+            if (payload.new && (payload.new as any).data) {
+              const fresh = (payload.new as any).data;
+              setLiveProfile({
+                ...defaultProfile,
+                ...fresh,
+                personal: { ...defaultProfile.personal, ...(fresh.personal || {}) },
+                home: { ...defaultProfile.home, ...(fresh.home || {}) },
+                about: { ...defaultProfile.about, ...(fresh.about || {}) },
+              });
+            }
           }
-        }
-      )
-      .subscribe();
+        )
+        .subscribe();
+    });
 
     return () => {
-      supabase.removeChannel(channel);
+      cancelled = true;
+      if (supabase && channel) supabase.removeChannel(channel);
     };
   }, []);
 

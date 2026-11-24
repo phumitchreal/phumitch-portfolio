@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { ArrowUpRightIcon as ArrowUpRight } from "@phosphor-icons/react";
 import { dicts } from "../i18n.ts";
 import { defaultProfile, type DBProfile } from "../lib/portfolioData.ts";
-import { supabase } from "../db/supabase.js";
 
 interface HomeAboutShowcaseProps {
   initialProfile?: DBProfile;
@@ -16,6 +15,7 @@ export default function HomeAboutShowcase({ initialProfile }: HomeAboutShowcaseP
     // 1. Fetch live profile on mount to guarantee fresh DB state
     const fetchLiveProfile = async () => {
       try {
+        const { supabase } = await import("../db/supabase.js");
         const { data, error } = await supabase
           .from("portfolio_profile")
           .select("data")
@@ -36,31 +36,39 @@ export default function HomeAboutShowcase({ initialProfile }: HomeAboutShowcaseP
       }
     };
 
-    fetchLiveProfile();
+    void fetchLiveProfile();
 
-    // 2. Subscribe to Supabase Realtime changes
-    const channel = supabase
-      .channel("home-about-profile-sync")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "portfolio_profile" },
-        (payload) => {
-          if (payload.new && (payload.new as any).data) {
-            const fresh = (payload.new as any).data;
-            setProfile({
-              ...defaultProfile,
-              ...fresh,
-              personal: { ...defaultProfile.personal, ...(fresh.personal || {}) },
-              home: { ...defaultProfile.home, ...(fresh.home || {}) },
-              about: { ...defaultProfile.about, ...(fresh.about || {}) },
-            });
+    // 2. Subscribe to Supabase Realtime changes (lazily — the client is large)
+    let cancelled = false;
+    let supabase: any;
+    let channel: any;
+    void import("../db/supabase.js").then(({ supabase: s }) => {
+      if (cancelled) return;
+      supabase = s;
+      channel = s
+        .channel("home-about-profile-sync")
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "portfolio_profile" },
+          (payload) => {
+            if (payload.new && (payload.new as any).data) {
+              const fresh = (payload.new as any).data;
+              setProfile({
+                ...defaultProfile,
+                ...fresh,
+                personal: { ...defaultProfile.personal, ...(fresh.personal || {}) },
+                home: { ...defaultProfile.home, ...(fresh.home || {}) },
+                about: { ...defaultProfile.about, ...(fresh.about || {}) },
+              });
+            }
           }
-        }
-      )
-      .subscribe();
+        )
+        .subscribe();
+    });
 
     return () => {
-      supabase.removeChannel(channel);
+      cancelled = true;
+      if (supabase && channel) supabase.removeChannel(channel);
     };
   }, []);
 

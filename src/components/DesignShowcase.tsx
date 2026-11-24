@@ -22,6 +22,23 @@ export default function DesignShowcase({ works }: Props) {
   const [paused, setPaused] = useState(false);
   const [lightbox, setLightbox] = useState(false);
 
+  const current = useMemo(
+    () => slides[Math.min(index, slides.length - 1)],
+    [slides, index]
+  );
+  const cover = current ? getProjectCover(current) : undefined;
+
+  // Preload the current artwork so the slide swap has no network round-trip.
+  useEffect(() => {
+    if (!cover) return;
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "image";
+    link.href = cover;
+    document.head.appendChild(link);
+    return () => link.remove();
+  }, [cover]);
+
   useEffect(() => {
     setIndex((current) => (slides.length ? Math.min(current, slides.length - 1) : 0));
   }, [slides.length]);
@@ -36,9 +53,6 @@ export default function DesignShowcase({ works }: Props) {
   }, [slides.length, paused]);
 
   if (slides.length === 0) return null;
-
-  const current = slides[index];
-  const cover = getProjectCover(current)!;
 
   const goTo = (next: number) => {
     setIndex(((next % slides.length) + slides.length) % slides.length);
@@ -93,7 +107,7 @@ export default function DesignShowcase({ works }: Props) {
           >
             <img
               key={current.id || current.title}
-              src={cover}
+              src={cover || ""}
               alt={current.title}
               loading="lazy"
               decoding="async"
@@ -195,7 +209,7 @@ export default function DesignShowcase({ works }: Props) {
       </div>
 
       {lightbox && (
-        <ImageLightbox src={cover} alt={current.title} onClose={() => setLightbox(false)} />
+        <ImageLightbox src={cover || ""} alt={current.title} onClose={() => setLightbox(false)} />
       )}
     </div>
   );
