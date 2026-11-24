@@ -20,6 +20,8 @@ const {
 
 /* /verify shows its own full-page dialog — the intro overlays would sit on top of it. */
 const isVerify = /^\/verify\/?$/.test(Astro.url.pathname);
+/* /admin is its own authenticated app — the intro overlays block the dashboard. */
+const isAdmin = /^\/admin\/?$/.test(Astro.url.pathname);
 ---
 
 <html lang="th" data-theme="light">
@@ -103,8 +105,8 @@ const isVerify = /^\/verify\/?$/.test(Astro.url.pathname);
   </head>
   <body>
     <a class="skip-link" href="#main">ข้ามไปที่เนื้อหา / Skip to content</a>
-    <Preloader client:load enabled={!isVerify} />
-    <LanguageGate client:load enabled={!isVerify} />
+    <Preloader client:load enabled={!isVerify && !isAdmin} />
+    <LanguageGate client:load enabled={!isVerify && !isAdmin} />
     <TurnstileGuard client:load />
     <div class="relative z-10">
       <slot />

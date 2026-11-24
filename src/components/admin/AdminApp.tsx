@@ -870,7 +870,7 @@ export default function AdminApp() {
 
   // --- AUTHENTICATED DASHBOARD ---
   return (
-    <div className="min-h-screen bg-bg pb-24 text-fg-body">
+    <div className="min-h-screen overflow-x-clip bg-bg pb-24 text-fg-body">
       {/* Toast */}
       <AnimatePresence>
         {toast && (
@@ -879,7 +879,7 @@ export default function AdminApp() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 15, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className={`fixed bottom-6 right-6 z-50 flex items-center gap-2.5 rounded-2xl px-5 py-3.5 text-[13px] font-semibold shadow-2xl backdrop-blur-xl ${
+            className={`fixed bottom-24 left-4 right-4 z-50 flex items-center gap-2.5 rounded-2xl px-5 py-3.5 text-[13px] font-semibold shadow-2xl backdrop-blur-xl sm:bottom-6 sm:left-auto sm:right-6 sm:max-w-md ${
               toast.type === "success"
                 ? "bg-accent text-white shadow-accent/30"
                 : "bg-red-500 text-white shadow-red-500/30"
@@ -897,20 +897,20 @@ export default function AdminApp() {
 
       {/* Top Navbar */}
       <header className="sticky top-0 z-40 border-b border-line bg-surface/75 backdrop-blur-2xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
-          <div className="flex items-center gap-3">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+          <div className="flex min-w-0 items-center gap-3">
             <a
               href="/"
-              className="flex size-9 items-center justify-center rounded-xl bg-accent-soft text-accent transition-transform hover:scale-105"
+              className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent transition-transform hover:scale-105"
             >
               <Sparkle size={18} weight="fill" />
             </a>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-[15px] font-semibold tracking-tight text-fg">
+            <div className="min-w-0">
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="truncate text-[15px] font-semibold tracking-tight text-fg">
                   Portfolio Admin
                 </span>
-                <span className="flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-500">
+                <span className="hidden shrink-0 items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-500 sm:flex">
                   <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
                   Supabase Live
                 </span>
@@ -918,24 +918,26 @@ export default function AdminApp() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
-            <a
-              href="/"
-              target="_blank"
-              rel="noopener"
-              className="btn-ghost hidden text-[13px] sm:inline-flex"
-            >
-              <span>ดูหน้าเว็บ</span>
-              <ArrowSquareOut size={14} />
-            </a>
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            <div className="hidden sm:block">
+              <a
+                href="/"
+                target="_blank"
+                rel="noopener"
+                className="btn-ghost text-[13px]"
+              >
+                <span>ดูหน้าเว็บ</span>
+                <ArrowSquareOut size={14} />
+              </a>
+            </div>
 
-            <div className="h-5 w-px bg-line" />
+            <div className="hidden h-5 w-px bg-line sm:block" />
 
-            <div className="flex items-center gap-2 rounded-full border border-line bg-mist/60 px-3 py-1 text-[13px]">
-              <span className="flex size-5 items-center justify-center rounded-full bg-surface text-[10px] font-bold text-accent shadow-sm">
+            <div className="flex items-center gap-2 rounded-full border border-line bg-mist/60 px-2 py-1 text-[13px] sm:px-3">
+              <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-surface text-[10px] font-bold text-accent shadow-sm">
                 {sessionUser.slice(0, 1).toUpperCase()}
               </span>
-              <span className="max-w-[100px] truncate font-medium text-fg sm:max-w-none">
+              <span className="max-w-[56px] truncate font-medium text-fg sm:max-w-none">
                 {sessionUser}
               </span>
             </div>
@@ -952,7 +954,7 @@ export default function AdminApp() {
 
         {/* Navigation Tabs */}
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <nav className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto py-2 scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+          <nav className="grid grid-cols-2 gap-1.5 py-2 sm:flex sm:items-center sm:gap-2 sm:overflow-x-auto scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {[
               { id: "projects", label: "ผลงาน", labelFull: "ผลงาน (Projects)", count: projects.length, icon: Briefcase },
               { id: "profile", label: "ข้อมูลส่วนตัว", labelFull: "ข้อมูลส่วนตัว (Profile)", icon: User },
@@ -965,7 +967,7 @@ export default function AdminApp() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`relative flex shrink-0 cursor-pointer items-center gap-2 rounded-full px-3.5 py-2 text-[13px] font-medium transition-colors whitespace-nowrap ${
+                  className={`relative flex w-full shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full px-3.5 py-2 text-[13px] font-medium transition-colors whitespace-nowrap sm:w-auto sm:justify-start ${
                     isActive ? "text-fg" : "text-fg-muted hover:text-fg"
                   }`}
                 >
@@ -978,8 +980,8 @@ export default function AdminApp() {
                   )}
                   <span className="relative z-10 flex items-center gap-1.5 sm:gap-2">
                     <IconCmp size={16} weight={isActive ? "bold" : "regular"} />
-                    <span className="hidden sm:inline">{tab.labelFull}</span>
-                    <span className="sm:hidden">{tab.label}</span>
+                    <span className="hidden lg:inline">{tab.labelFull}</span>
+                    <span className="lg:hidden">{tab.label}</span>
                     {typeof tab.count === "number" && (
                       <span className="rounded-full bg-surface px-1.5 py-0.2 text-[11px] font-semibold text-fg-dim shadow-xs">
                         {tab.count}
@@ -1067,7 +1069,7 @@ export default function AdminApp() {
                 </div>
 
                 {/* Category Filter Pills */}
-                <div className="flex items-center overflow-x-auto scrollbar-none flex-nowrap rounded-xl border border-line bg-mist/60 p-1 text-[12px] max-w-full">
+                <div className="flex max-w-full flex-wrap items-center gap-1 rounded-xl border border-line bg-mist/60 p-1 text-[12px]">
                   {[
                     { id: "all", label: "ทั้งหมด" },
                     { id: "website", label: "Website" },
