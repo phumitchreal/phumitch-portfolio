@@ -2,9 +2,12 @@
 import Base from "../layouts/Base.astro";
 import SiteNav from "../components/SiteNav.astro";
 import PageHero from "../components/PageHero.astro";
-import WorkGrid from "../components/WorkGrid.astro";
+import WorkGridShowcase from "../components/WorkGridShowcase.tsx";
 import BackHome from "../components/BackHome.astro";
 import Footer from "../components/Footer.astro";
+import { getProjects } from "../lib/portfolioData.ts";
+
+const initialWorks = await getProjects();
 ---
 
 <Base
@@ -26,7 +29,7 @@ import Footer from "../components/Footer.astro";
       </PageHero>
 
       <div class="mt-12">
-        <WorkGrid />
+        <WorkGridShowcase client:load initialWorks={initialWorks} />
       </div>
 
       <div class="mt-14 border-t border-line pt-8">
