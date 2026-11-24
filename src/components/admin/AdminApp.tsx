@@ -41,12 +41,12 @@ import LogoBlurRow from "../LogoBlurRow.tsx";
 const SESSION_KEY = "phumitch_admin_session";
 
 const AVAILABLE_COVERS = [
-  { label: "Zexta Studio", url: "/works/zexta.jpg" },
-  { label: "Fuyuri TR", url: "/works/fuyuri.jpg" },
-  { label: "Aven Labs", url: "/works/aven-labs.jpg" },
-  { label: "FiguraTH", url: "/works/figurath.jpg" },
-  { label: "phumitch.space", url: "/works/phumitch.jpg" },
-  { label: "studio.lol", url: "/works/studio-lol.jpg" },
+  { label: "Zexta Studio", url: "/works/zexta.avif" },
+  { label: "Fuyuri TR", url: "/works/fuyuri.avif" },
+  { label: "Aven Labs", url: "/works/aven-labs.avif" },
+  { label: "FiguraTH", url: "/works/figurath.avif" },
+  { label: "phumitch.space", url: "/works/phumitch.avif" },
+  { label: "studio.lol", url: "/works/studio-lol.avif" },
 ];
 
 const AVAILABLE_PARTNER_PRESETS: DBPartner[] = defaultPartners;
@@ -496,7 +496,7 @@ export default function AdminApp() {
       role_en: "Design + Build",
       role_th: "ออกแบบและพัฒนา",
       monogram: "",
-      cover_url: "/works/zexta.jpg",
+      cover_url: "/works/zexta.avif",
       featured: false,
       sort_order: projects.length,
     });
@@ -1435,7 +1435,7 @@ export default function AdminApp() {
                 <div className="mt-5 flex flex-col gap-6 sm:flex-row sm:items-center">
                   <div className="relative size-32 shrink-0 overflow-hidden rounded-2xl bg-mist ring-1 ring-black/[0.08] shadow-md">
                     <img
-                      src={profile.about?.photo_url || "/about-photo.jpg"}
+                      src={profile.about?.photo_url || "/about-photo.avif"}
                       alt="About portrait"
                       className="size-full object-cover"
                       style={{ objectPosition: "center 30%" }}
@@ -2669,7 +2669,7 @@ export default function AdminApp() {
                         type="text"
                         value={editingProject.cover_url || ""}
                         onChange={(e) => setEditingProject({ ...editingProject, cover_url: e.target.value })}
-                        placeholder="หรือใส่ลิงก์ /works/zexta.jpg"
+                        placeholder="หรือใส่ลิงก์ /works/zexta.avif"
                         className="flex-1 rounded-xl border border-line bg-mist/60 px-3.5 py-2 text-[12px] text-fg outline-none focus:border-accent focus:bg-surface"
                       />
                     </div>

@@ -1,10 +1,10 @@
 import type { ImageMetadata } from "astro";
-import zextaCover from "../assets/works/zexta.jpg";
-import figurathCover from "../assets/works/figurath.jpg";
-import phumitchCover from "../assets/works/phumitch.jpg";
-import studioLolCover from "../assets/works/studio-lol.jpg";
-import fuyuriCover from "../assets/works/fuyuri.jpg";
-import avenLabsCover from "../assets/works/aven-labs.jpg";
+import zextaCover from "../assets/works/zexta.avif";
+import figurathCover from "../assets/works/figurath.avif";
+import phumitchCover from "../assets/works/phumitch.avif";
+import studioLolCover from "../assets/works/studio-lol.avif";
+import fuyuriCover from "../assets/works/fuyuri.avif";
+import avenLabsCover from "../assets/works/aven-labs.avif";
 
 export type WorkCategory = "bot" | "website" | "community" | "design";
 

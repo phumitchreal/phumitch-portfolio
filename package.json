@@ -14,6 +14,7 @@
     "check:edge": "node scripts/check-edge.mjs"
   },
   "dependencies": {
+    "@jsquash/avif": "^2.1.1",
     "@phosphor-icons/react": "^2.1.10",
     "@supabase/supabase-js": "^2.119.2",
     "@tailwindcss/vite": "^4.3.3",

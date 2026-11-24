@@ -8,7 +8,7 @@
 export type Song = {
   title: string;
   artist: string;
-  /** Cover image path from /public, e.g. "/song-cover.jpg" (optional). */
+  /** Cover image path from /public, e.g. "/song-cover.avif" (optional). */
   cover?: string;
   year?: string;
   duration?: string;
@@ -21,7 +21,7 @@ export type Song = {
 export const song: Song = {
   title: "YOU NEVER KNOW",
   artist: "SEXSKI",
-  cover: "/song-cover.jpg", // ← ปกเพลง (self-hosted ใน public/)
+  cover: "/song-cover.avif", // ← ปกเพลง (self-hosted ใน public/)
   year: "", // ← ปีที่ปล่อย
   duration: "", // ← ความยาว เช่น 3:24
   url: "https://music.youtube.com/watch?v=idHCTrYqBnc", // ← ลิงก์ฟังเพลง

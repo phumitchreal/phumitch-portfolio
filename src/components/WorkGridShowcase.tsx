@@ -2,11 +2,13 @@ import React, { useEffect, useMemo, useState } from "react";
 import {
   ArrowUpRightIcon as ArrowUpRight,
   ArrowRightIcon as ArrowRight,
-  XIcon as X,
 } from "@phosphor-icons/react";
 import { supabase } from "../db/supabase.js";
 import { dicts, L } from "../i18n.ts";
 import type { DBProject } from "../lib/portfolioData.ts";
+import { getProjectCover, isDesignWork } from "../lib/projectMedia.ts";
+import DesignShowcase from "./DesignShowcase.tsx";
+import ImageLightbox from "./ImageLightbox.tsx";
 
 interface Props {
   initialWorks: DBProject[];
@@ -19,7 +21,6 @@ const filters = [
   { id: "bot", en: dicts.en.work.filterBot, th: dicts.th.work.filterBot },
   { id: "website", en: dicts.en.work.filterWebsite, th: dicts.th.work.filterWebsite },
   { id: "community", en: dicts.en.work.filterCommunity, th: dicts.th.work.filterCommunity },
-  { id: "design", en: dicts.en.work.filterDesign, th: dicts.th.work.filterDesign },
 ];
 
 function mapProjectRow(item: any): DBProject {
@@ -40,15 +41,6 @@ function mapProjectRow(item: any): DBProject {
     featured: Boolean(item.featured),
     sort_order: item.sort_order ?? 0,
   };
-}
-
-/** Resolve a cover whether it is a public URL (DB) or an Astro image asset (static fallback). */
-function getCoverSrc(work: DBProject): string | undefined {
-  if (typeof work.cover === "string") return work.cover || undefined;
-  if (work.cover && typeof work.cover === "object" && "src" in work.cover) {
-    return (work.cover as any).src;
-  }
-  return work.cover_url || undefined;
 }
 
 export default function WorkGridShowcase({ initialWorks }: Props) {
@@ -100,26 +92,19 @@ export default function WorkGridShowcase({ initialWorks }: Props) {
       .forEach((el) => el.classList.add("is-revealed"));
   }, [works, filter]);
 
-  // Close the artwork lightbox with Escape.
-  useEffect(() => {
-    if (!preview) return;
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setPreview(null);
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [preview]);
+  const devWorks = useMemo(() => works.filter((work) => !isDesignWork(work)), [works]);
+  const designWorks = useMemo(() => works.filter((work) => isDesignWork(work)), [works]);
 
   const filtered = useMemo(
     () =>
       filter === "all"
-        ? works
-        : works.filter((work) => work.categories?.includes(filter as any)),
-    [works, filter]
+        ? devWorks
+        : devWorks.filter((work) => work.categories?.includes(filter as any)),
+    [devWorks, filter]
   );
 
   const renderTileBody = (work: DBProject, index: number) => {
-    const cover = getCoverSrc(work);
+    const cover = getProjectCover(work);
     const accent = accents[index % accents.length];
 
     return (
@@ -223,7 +208,7 @@ export default function WorkGridShowcase({ initialWorks }: Props) {
 
       <div data-work-grid className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
         {filtered.map((work, index) => {
-          const cover = getCoverSrc(work);
+          const cover = getProjectCover(work);
           const key = work.id || work.title;
           const delay = `${Math.min(index * 60, 300)}ms`;
 
@@ -303,35 +288,14 @@ export default function WorkGridShowcase({ initialWorks }: Props) {
       </a>
 
       {preview && (
-        <div
-          className="fixed inset-0 z-[80] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
-          role="dialog"
-          aria-modal="true"
-          aria-label={preview.title}
-          onClick={() => setPreview(null)}
-        >
-          <button
-            type="button"
-            onClick={() => setPreview(null)}
-            aria-label="Close"
-            className="absolute right-4 top-4 grid size-10 cursor-pointer place-items-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
-          >
-            <X size={20} weight="bold" />
-          </button>
-          <button
-            type="button"
-            onClick={(event) => event.stopPropagation()}
-            className="max-h-full max-w-[min(1100px,92vw)] cursor-default overflow-hidden rounded-[16px] bg-surface p-2 shadow-2xl"
-            aria-label={preview.title}
-          >
-            <img
-              src={getCoverSrc(preview)}
-              alt={preview.title}
-              className="max-h-[82vh] w-auto max-w-full rounded-[10px] object-contain"
-            />
-          </button>
-        </div>
+        <ImageLightbox
+          src={getProjectCover(preview) || ""}
+          alt={preview.title}
+          onClose={() => setPreview(null)}
+        />
       )}
+
+      <DesignShowcase works={designWorks} />
     </section>
   );
 }

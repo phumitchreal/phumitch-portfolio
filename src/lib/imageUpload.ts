@@ -1,9 +1,20 @@
 /**
- * Client-side image compression and Data URL converter.
- * Compresses images using HTML5 Canvas to WebP (with JPEG fallback),
- * maintaining high visual quality while keeping file size small (~40KB - 120KB)
- * for seamless storage in Supabase and lightning-fast loading.
+ * Client-side image compression, conversion and Data URL helper.
+ *
+ * Images are encoded to AVIF with the official Squoosh AVIF encoder (WASM).
+ * If AVIF encoding is unavailable in the current browser, we fall back to
+ * WebP/JPEG so uploads never fail — but AVIF is the preferred/normal path.
  */
+
+function bufferToDataUrl(buffer: ArrayBuffer, mimeType: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("ไม่สามารถแปลงรูปภาพเป็น Data URL ได้"));
+    reader.onload = () => resolve(reader.result as string);
+    reader.readAsDataURL(new Blob([buffer], { type: mimeType }));
+  });
+}
+
 export async function compressAndReadFile(
   file: File,
   options: {
@@ -53,19 +64,35 @@ export async function compressAndReadFile(
         ctx.imageSmoothingQuality = "high";
         ctx.drawImage(img, 0, 0, width, height);
 
-        // Try webp first, fallback to jpeg
-        try {
-          const webpData = canvas.toDataURL("image/webp", quality);
-          if (webpData.startsWith("data:image/webp")) {
-            resolve(webpData);
+        // Encode to AVIF in the browser (loaded lazily so public pages stay light).
+        (async () => {
+          try {
+            const { encode } = await import("@jsquash/avif");
+            const imageData = ctx.getImageData(0, 0, width, height);
+            const buffer = await encode(imageData, {
+              quality: Math.round(quality * 100),
+              qualityAlpha: -1,
+              speed: 7,
+            });
+            resolve(await bufferToDataUrl(buffer, "image/avif"));
             return;
+          } catch (err) {
+            console.warn("AVIF encoding failed, falling back to WebP:", err);
           }
-        } catch (_) {
-          // ignore and fall through to jpeg
-        }
 
-        const jpegData = canvas.toDataURL("image/jpeg", quality);
-        resolve(jpegData);
+          // Fallback: WebP, then JPEG.
+          try {
+            const webpData = canvas.toDataURL("image/webp", quality);
+            if (webpData.startsWith("data:image/webp")) {
+              resolve(webpData);
+              return;
+            }
+          } catch (_) {
+            // ignore and fall through to jpeg
+          }
+
+          resolve(canvas.toDataURL("image/jpeg", quality));
+        })();
       };
 
       img.src = reader.result as string;

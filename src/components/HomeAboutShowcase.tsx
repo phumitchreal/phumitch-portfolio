@@ -92,7 +92,7 @@ export default function HomeAboutShowcase({ initialProfile }: HomeAboutShowcaseP
           <div data-reveal className="mx-auto w-full max-w-[360px] lg:mx-0">
             <div className="relative overflow-hidden rounded-[28px] bg-mist ring-1 ring-black/[0.06] shadow-[var(--shadow-panel)]">
               <img
-                src={profile.about?.photo_url || "/about-photo.jpg"}
+                src={profile.about?.photo_url || "/about-photo.avif"}
                 alt={`${profile.personal.fullName[1]} (${profile.personal.nickname[1]}) — ${profile.personal.fullName[0]}`}
                 className="aspect-[4/5] h-full w-full object-cover transition-transform duration-500 hover:scale-[1.02]"
                 style={{ objectPosition: "center 30%" }}

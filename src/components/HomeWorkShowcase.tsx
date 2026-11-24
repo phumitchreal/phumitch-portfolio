@@ -3,6 +3,8 @@ import { ArrowUpRightIcon as ArrowUpRight, CaretRightIcon as CaretRight } from "
 import { supabase } from "../db/supabase.js";
 import { L } from "../i18n.ts";
 import type { DBProject } from "../lib/portfolioData.ts";
+import { isDesignWork } from "../lib/projectMedia.ts";
+import DesignShowcase from "./DesignShowcase.tsx";
 
 interface Props {
   initialWorks: DBProject[];
@@ -73,8 +75,11 @@ export default function HomeWorkShowcase({ initialWorks }: Props) {
     };
   }, []);
 
-  const featured = works.find((w) => w.featured) || works[0];
-  const rest = works.filter((w) => w !== featured);
+  const devWorks = works.filter((w) => !isDesignWork(w));
+  const designWorks = works.filter((w) => isDesignWork(w));
+
+  const featured = devWorks.find((w) => w.featured) || devWorks[0];
+  const rest = devWorks.filter((w) => w !== featured);
   const duo = rest.slice(0, 2);
   const trio = rest.slice(2);
 
@@ -108,7 +113,7 @@ export default function HomeWorkShowcase({ initialWorks }: Props) {
           </div>
           <p className="flex items-baseline gap-3 sm:justify-end">
             <span className="text-[56px] font-semibold leading-none tracking-[-0.05em] text-fg tabular-nums sm:text-[72px]">
-              {String(works.length).padStart(2, "0")}
+              {String(devWorks.length).padStart(2, "0")}
             </span>
             <span className="text-[13px] leading-[1.35] font-medium text-fg-muted">
               <span data-lang="en">
@@ -360,6 +365,8 @@ export default function HomeWorkShowcase({ initialWorks }: Props) {
             </div>
           )}
         </div>
+
+        <DesignShowcase works={designWorks} />
 
         {/* See All Work CTA */}
         <div className="mt-14 flex justify-center" data-reveal>

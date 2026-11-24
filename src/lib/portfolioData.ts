@@ -133,7 +133,7 @@ export async function getProjects(): Promise<DBProject[]> {
       return defaultWorks.map((w, idx) => ({
         ...w,
         id: `static-${idx}`,
-        cover_url: w.cover ? `/works/${w.title.toLowerCase().replace(/[^a-z0-9]/g, "-")}.jpg` : undefined,
+        cover_url: w.cover ? `/works/${w.title.toLowerCase().replace(/[^a-z0-9]/g, "-")}.avif` : undefined,
       }));
     }
 

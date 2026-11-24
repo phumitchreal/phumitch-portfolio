@@ -201,7 +201,7 @@ export default function AboutPage({ profile = defaultProfile }: { profile?: DBPr
       {/* Dynamic Header */}
       <header className="flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:gap-7">
         <img
-          src={liveProfile.about?.photo_url || "/about-photo.jpg"}
+          src={liveProfile.about?.photo_url || "/about-photo.avif"}
           alt={`${liveProfile.personal.fullName[1]} (${liveProfile.personal.nickname[1]}) — ${liveProfile.personal.fullName[0]}`}
           className="h-24 w-24 shrink-0 rounded-full object-cover shadow-[var(--shadow-panel)] ring-1 ring-black/[0.06] sm:h-28 sm:w-28 transition-transform duration-300 hover:scale-105"
           style={{ objectPosition: "center 30%" }}
