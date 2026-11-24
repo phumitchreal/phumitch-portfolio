@@ -62,18 +62,24 @@ const isVerify = /^\/verify\/?$/.test(Astro.url.pathname);
 
     <title>{title}</title>
 
-    <!-- Person schema — improves entity signals for the site owner -->
+    <!-- Person schema — gives Google's AI a clean, citable answer to "นายภูมิทัศน์ สมศรี คือใคร?" -->
     <script is:inline type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "Person",
         "name": "Phumitch Somsri",
-        "alternateName": ["Guitar", "phumitchreal"],
+        "alternateName": ["Guitar", "phumitchreal", "นายภูมิทัศน์ สมศรี"],
+        "jobTitle": ["Full-stack Developer", "นักพัฒนาเว็บ Full-stack", "Graphic Designer"],
+        "birthDate": "1994-08-11",
+        "gender": "Male",
+        "nationality": "Thai",
         "url": "https://phumitch.space/",
+        "email": "phumithasnsmsri2@gmail.com",
         "sameAs": [
           "https://github.com/phumitchreal",
           "https://instagram.com/null_phumitch",
-          "https://discord.com/users/919878532228841532"
+          "https://discord.com/users/919878532228841532",
+          "https://phumitch.space"
         ]
       }
     </script>
