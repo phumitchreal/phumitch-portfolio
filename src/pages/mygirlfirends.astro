@@ -21,14 +21,14 @@ const ageAt = (from: Date, to: Date) => {
 
 const age = ageAt(bd, now);
 
+const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 const nextBirthday = new Date(now.getFullYear(), bd.getMonth(), bd.getDate());
-if (nextBirthday.getTime() < new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()) {
+if (nextBirthday.getTime() < today.getTime()) {
   nextBirthday.setFullYear(now.getFullYear() + 1);
 }
-const daysToBirthday = Math.round(
-  (nextBirthday.getTime() - new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()) /
-    86400000
-);
+const daysToBirthday = Math.round((nextBirthday.getTime() - today.getTime()) / 86400000);
+/** Age she turns on the next birthday (today counts as the birthday). */
+const turningAge = nextBirthday.getFullYear() - bd.getFullYear();
 
 const MONTHS_TH = [
   "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
@@ -38,6 +38,8 @@ const MONTHS_EN = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December",
 ];
+const nextBirthdayTh = `${nextBirthday.getDate()} ${MONTHS_TH[nextBirthday.getMonth()]} ${nextBirthday.getFullYear() + 543}`;
+const nextBirthdayEn = `${nextBirthday.getDate()} ${MONTHS_EN[nextBirthday.getMonth()]} ${nextBirthday.getFullYear()}`;
 const WEEKDAYS_TH = ["วันอาทิตย์", "วันจันทร์", "วันอังคาร", "วันพุธ", "วันพฤหัสบดี", "วันศุกร์", "วันเสาร์"];
 const WEEKDAYS_EN = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -123,18 +125,15 @@ const facts = [
 
 <Base
   title="แฟนของผม · My girlfriend | phumitch.space"
-  description="Who my girlfriend is — name, nickname, age and birthday."
-  ogImage="/works/zexta.avif"
+  description="หน้าเล็ก ๆ สำหรับคนสำคัญ — a little page about my girlfriend."
+  ogImage="/og/mygirlfirends.jpg"
+  ogImageAlt="แฟนของผม · My girlfriend — phumitch.space"
   noindex
 >
   <div class="relative flex min-h-screen flex-col overflow-x-clip text-fg-body">
     <SiteNav />
 
     <main id="main" class="container-apple relative z-10 flex-1 pb-24 pt-20 sm:pt-28">
-      <div class="reveal mb-10 md:mb-14" data-reveal>
-        <BackHome />
-      </div>
-
       <!-- ── Hero ─────────────────────────────────────────────────────── -->
       <section class="grid grid-cols-1 items-center gap-10 md:grid-cols-[1.25fr_0.75fr] md:gap-14" data-reveal>
         <div>
@@ -182,7 +181,6 @@ const facts = [
         <!-- Portrait / monogram -->
         <div class="relative mx-auto w-full max-w-[320px]">
           <div class="gf-portrait" data-gf="portrait">
-            <div class="gf-portrait__glow" aria-hidden="true"></div>
             {girlfriend.photo ? (
               <img
                 src={girlfriend.photo}
@@ -249,7 +247,7 @@ const facts = [
       </section>
 
       <!-- ── Next birthday ────────────────────────────────────────────── -->
-      <section class="mt-4" data-reveal>
+      <section class="mt-4" data-reveal data-birth-date={girlfriend.birthDate}>
         <div class="gf-countdown">
           <div>
             <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-fg-dim">
@@ -258,15 +256,15 @@ const facts = [
             </p>
             <p class="mt-2 text-[15px] leading-relaxed text-fg-body sm:text-[16px]">
               <span data-lang="th">
-                อีก <strong class="text-fg" data-gf="days">-</strong> วัน — <span data-gf="next-date-th"></span>
+                อีก <strong class="text-fg" data-gf="days">{daysToBirthday}</strong> วัน — <span data-gf="next-date-th">{nextBirthdayTh}</span>
               </span>
               <span data-lang="en">
-                <strong class="text-fg" data-gf="days-en">-</strong> days to go — <span data-gf="next-date-en"></span>
+                <strong class="text-fg" data-gf="days-en">{daysToBirthday}</strong> days to go — <span data-gf="next-date-en">{nextBirthdayEn}</span>
               </span>
             </p>
           </div>
           <div class="gf-countdown__num">
-            <span data-gf="countdown-age">{age}</span>
+            <span data-gf="countdown-age">{turningAge}</span>
             <span class="ml-1 text-[0.5em] font-medium text-fg-muted">
               <span data-lang="th">ปี</span>
               <span data-lang="en">yrs</span>
@@ -275,43 +273,61 @@ const facts = [
         </div>
       </section>
 
-      <!-- ── Likes ────────────────────────────────────────────────────── -->
-      <section class="mt-20 sm:mt-28" data-reveal>
-        <p class="eyebrow">
-          <span data-lang="th">สิ่งที่เธอชอบ</span>
-          <span data-lang="en">A few of her favourite things</span>
-        </p>
-        <div class="mt-6 flex flex-wrap gap-2.5" data-gf="likes">
-          {girlfriend.likes.map((like) => (
-            <span class="gf-like">
-              <span data-lang="th">{like.th}</span>
-              <span data-lang="en">{like.en}</span>
-            </span>
-          ))}
-        </div>
-      </section>
+      {/* ── Likes ────────────────────────────────────────────────────── */}
+      {girlfriend.likes.length > 0 && (
+        <section class="mt-20 sm:mt-28" data-reveal>
+          <p class="eyebrow">
+            <span data-lang="th">สิ่งที่เธอชอบ</span>
+            <span data-lang="en">A few of her favourite things</span>
+          </p>
+          <div class="mt-6 flex flex-wrap gap-2.5" data-gf="likes">
+            {girlfriend.likes.map((like) => (
+              <span class="gf-like">
+                <span data-lang="th">{like.th}</span>
+                <span data-lang="en">{like.en}</span>
+              </span>
+            ))}
+          </div>
+        </section>
+      )}
 
-      <!-- ── CTA ──────────────────────────────────────────────────────── -->
-      <section class="mt-20 sm:mt-28" data-reveal>
-        <a href="/love" class="gf-cta group">
-          <span>
-            <span class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-fg-dim">
-              <span data-lang="th">หน้าถัดไป</span>
-              <span data-lang="en">Next</span>
-            </span>
-            <span class="mt-1.5 block text-[20px] font-semibold tracking-[-0.02em] text-fg sm:text-[24px]">
-              <span data-lang="th">อ่านจดหมายถึงเธอ</span>
-              <span data-lang="en">Read the letter for her</span>
-            </span>
-          </span>
-          <span class="gf-cta__arrow" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
-              <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-          </span>
-        </a>
-      </section>
+      <div class="mt-16 flex justify-center sm:mt-24" data-reveal>
+        <BackHome />
+      </div>
     </main>
   </div>
+
+  <script is:inline data-astro-rerun>
+    (() => {
+      const root = document.querySelector("[data-birth-date]");
+      const birthDate = root && root.getAttribute("data-birth-date");
+      if (!birthDate) return;
+
+      const bd = new Date(`${birthDate}T00:00:00`);
+      if (Number.isNaN(bd.getTime())) return;
+
+      const monthsTh = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+      const monthsEn = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const next = new Date(today.getFullYear(), bd.getMonth(), bd.getDate());
+      if (next.getTime() < today.getTime()) next.setFullYear(today.getFullYear() + 1);
+
+      const days = Math.round((next.getTime() - today.getTime()) / 86400000);
+      const turningAge = next.getFullYear() - bd.getFullYear();
+
+      const setText = (selector, value) => {
+        const el = document.querySelector(selector);
+        if (el) el.textContent = String(value);
+      };
+
+      setText('[data-gf="days"]', days);
+      setText('[data-gf="days-en"]', days);
+      setText('[data-gf="next-date-th"]', `${next.getDate()} ${monthsTh[next.getMonth()]} ${next.getFullYear() + 543}`);
+      setText('[data-gf="next-date-en"]', `${next.getDate()} ${monthsEn[next.getMonth()]} ${next.getFullYear()}`);
+      setText('[data-gf="countdown-age"]', turningAge);
+    })();
+  </script>
 </Base>
 

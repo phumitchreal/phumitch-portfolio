@@ -172,7 +172,6 @@ export async function getProjects(): Promise<DBProject[]> {
  */
 export function mergeGirlfriend(input?: Partial<GirlfriendProfile> | null): GirlfriendProfile {
   const src = input || {};
-  const love = src.love || defaultGirlfriend.love;
   return {
     ...defaultGirlfriend,
     ...src,
@@ -181,15 +180,6 @@ export function mergeGirlfriend(input?: Partial<GirlfriendProfile> | null): Girl
     hometown: { ...defaultGirlfriend.hometown, ...(src.hometown || {}) },
     bio: { ...defaultGirlfriend.bio, ...(src.bio || {}) },
     likes: src.likes || defaultGirlfriend.likes,
-    love: {
-      ...defaultGirlfriend.love,
-      ...love,
-      hero: { ...defaultGirlfriend.love.hero, ...(love.hero || {}) },
-      reasons: love.reasons || defaultGirlfriend.love.reasons,
-      moments: love.moments || defaultGirlfriend.love.moments,
-      letter: { ...defaultGirlfriend.love.letter, ...(love.letter || {}) },
-      closing: { ...defaultGirlfriend.love.closing, ...(love.closing || {}) },
-    },
   };
 }
 

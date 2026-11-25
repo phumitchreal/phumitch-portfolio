@@ -4,7 +4,7 @@ import SiteNav from "../components/SiteNav.astro";
 import HeroMotion from "../components/HeroMotion.tsx";
 import HomeWorkShowcase from "../components/HomeWorkShowcase.tsx";
 import HomeAboutShowcase from "../components/HomeAboutShowcase.tsx";
-import SongCard from "../components/SongCard.astro";
+import GirlfriendCard from "../components/GirlfriendCard.astro";
 import Footer from "../components/Footer.astro";
 import { getProjects, getProfile } from "../lib/portfolioData.ts";
 
@@ -24,7 +24,7 @@ const initialProfile = await getProfile();
       <HeroMotion client:load initialProfile={initialProfile} />
       <HomeWorkShowcase client:load initialWorks={initialWorks} />
       <HomeAboutShowcase client:load initialProfile={initialProfile} />
-      <SongCard />
+      <GirlfriendCard girlfriend={initialProfile.girlfriend} />
     </main>
     <Footer />
   </div>

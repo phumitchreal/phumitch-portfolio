@@ -10,11 +10,8 @@ export default defineConfig({
   redirects: {
     '/studio_lol': '/',
   },
-  integrations: [
-    react(),
-    // /love is a private gift page (noindex) — keep it out of the sitemap.
-    sitemap({ filter: (page) => !page.includes("/love") }),
-  ],
+  // The girlfriend page is noindex and shared privately — keep it out of the sitemap.
+  integrations: [react(), sitemap({ filter: (page) => !page.includes("/mygirlfirends") })],
   vite: {
     plugins: [tailwindcss()],
   },

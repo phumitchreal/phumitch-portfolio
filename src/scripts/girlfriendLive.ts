@@ -2,8 +2,8 @@ import { mergeGirlfriend, type GirlfriendProfile } from "../lib/portfolioData.ts
 
 /**
  * Load the girlfriend/profile row from Supabase and subscribe to live changes.
- * Used by the private /mygirlfirends and /love pages so edits saved in /admin
- * appear without waiting for a redeploy.
+ * Used by the private /mygirlfirends page so edits saved in /admin appear
+ * without waiting for a redeploy.
  */
 export function subscribeGirlfriend(onData: (g: GirlfriendProfile) => void) {
   let cancelled = false;

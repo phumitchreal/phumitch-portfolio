@@ -1,0 +1,293 @@
+---
+import { ArrowUpRightIcon as ArrowUpRight, HeartIcon as Heart } from "@phosphor-icons/react";
+import type { GirlfriendProfile } from "../content/girlfriend.ts";
+
+interface Props {
+  girlfriend: GirlfriendProfile;
+}
+
+const { girlfriend } = Astro.props;
+
+const initials = girlfriend.fullName.en
+  .split(/\s+/)
+  .filter(Boolean)
+  .map((part) => part[0])
+  .join("")
+  .slice(0, 2)
+  .toUpperCase();
+
+const since = girlfriend.togetherSince
+  ? new Date(`${girlfriend.togetherSince}T00:00:00`)
+  : null;
+const sinceYear = since && !Number.isNaN(since.getTime()) ? since.getFullYear() : null;
+---
+
+<div class="gf-card-wrap" data-reveal>
+  <div class="container-apple">
+    <a class="gf-card" href="/mygirlfirends" aria-labelledby="gf-card-label gf-card-name">
+      <span class="gf-card__avatar" aria-hidden="true">
+        {
+          girlfriend.photo ? (
+            <img
+              src={girlfriend.photo}
+              alt=""
+              width="64"
+              height="64"
+              loading="lazy"
+              decoding="async"
+            />
+          ) : (
+            <span class="gf-card__mono">{initials}</span>
+          )
+        }
+      </span>
+
+      <span class="gf-card__body">
+        <span class="gf-card__eyebrow" id="gf-card-label">
+          <span class="gf-card__heart" aria-hidden="true">
+            <Heart size={11} weight="fill" />
+          </span>
+          <span data-lang="th">แฟนของผม</span>
+          <span data-lang="en">My girlfriend</span>
+        </span>
+
+        <span class="gf-card__name" id="gf-card-name">
+          <span data-lang="th">{girlfriend.nickname.th}</span>
+          <span data-lang="en">{girlfriend.nickname.en}</span>
+          {
+            sinceYear && (
+              <span class="gf-card__since">
+                <span aria-hidden="true">· </span>
+                <span data-lang="th">ตั้งแต่ {sinceYear + 543}</span>
+                <span data-lang="en">since {sinceYear}</span>
+              </span>
+            )
+          }
+        </span>
+
+        <span class="gf-card__bio">
+          <span data-lang="th">{girlfriend.bio.th}</span>
+          <span data-lang="en">{girlfriend.bio.en}</span>
+        </span>
+      </span>
+
+      <span class="gf-card__cta">
+        <span class="gf-card__cta-label">
+          <span data-lang="th">อ่านหน้าแนะนำตัว</span>
+          <span data-lang="en">Read her intro</span>
+        </span>
+        <span class="gf-card__arrow" aria-hidden="true">
+          <span class="gf-card__arrow-icon">
+            <ArrowUpRight size={18} weight="bold" />
+          </span>
+        </span>
+      </span>
+    </a>
+  </div>
+</div>
+
+<style>
+  .gf-card-wrap {
+    padding-bottom: clamp(4rem, 7vw, 6rem);
+  }
+
+  .gf-card {
+    --gf-heart: #c94f6d;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    max-width: 720px;
+    margin-inline: auto;
+    padding: 20px 24px;
+    border: 1px solid var(--line);
+    border-radius: 26px;
+    background: var(--surface);
+    box-shadow: var(--shadow-card);
+    color: inherit;
+    text-decoration: none;
+    isolation: isolate;
+    transition:
+      background-color var(--dur) var(--ease),
+      border-color var(--dur) var(--ease),
+      transform var(--dur) var(--ease);
+  }
+  :global([data-theme="dark"]) .gf-card {
+    --gf-heart: #ff8fb0;
+  }
+  .gf-card:hover {
+    background: var(--surface-hover);
+    border-color: var(--line-strong);
+    transform: translateY(-2px);
+  }
+  .gf-card:active {
+    transform: translateY(0);
+  }
+  .gf-card:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .gf-card__avatar {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    flex: none;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: var(--mist);
+  }
+  .gf-card__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .gf-card__mono {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.06em;
+    color: var(--text-dim);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .gf-card__body {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .gf-card__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .gf-card__heart {
+    display: inline-flex;
+    color: var(--gf-heart);
+  }
+
+  .gf-card__name {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 4px;
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+    color: var(--text);
+  }
+  .gf-card__since {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: var(--text-dim);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .gf-card__bio {
+    display: -webkit-box;
+    margin-top: 4px;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-muted);
+    text-wrap: pretty;
+  }
+
+  .gf-card__cta {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 12px;
+    margin-left: 4px;
+  }
+  .gf-card__cta-label {
+    display: none;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.3;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  .gf-card__arrow {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    background: var(--mist);
+    color: var(--text);
+    transition:
+      background-color var(--dur) var(--ease),
+      color var(--dur) var(--ease);
+  }
+  .gf-card__arrow-icon {
+    display: grid;
+    place-items: center;
+    transition: transform var(--dur) var(--ease);
+  }
+  .gf-card:hover .gf-card__arrow,
+  .gf-card:focus-visible .gf-card__arrow {
+    background: var(--text);
+    color: var(--bg);
+  }
+  .gf-card:hover .gf-card__arrow-icon,
+  .gf-card:focus-visible .gf-card__arrow-icon {
+    transform: translate(2px, -2px);
+  }
+
+  @media (min-width: 640px) {
+    .gf-card__cta-label {
+      display: block;
+    }
+  }
+
+  @media (max-width: 479px) {
+    .gf-card {
+      gap: 12px;
+      padding: 16px;
+      border-radius: 24px;
+    }
+    .gf-card__avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+    }
+    .gf-card__name {
+      font-size: 17px;
+    }
+    .gf-card__bio {
+      font-size: 12.5px;
+    }
+    .gf-card__arrow {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gf-card,
+    .gf-card__arrow,
+    .gf-card__arrow-icon {
+      transition: none;
+    }
+    .gf-card:hover,
+    .gf-card:active,
+    .gf-card:hover .gf-card__arrow-icon,
+    .gf-card:focus-visible .gf-card__arrow-icon {
+      transform: none;
+    }
+  }
+</style>
