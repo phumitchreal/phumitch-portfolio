@@ -15,13 +15,19 @@ interface Props {
 const {
   title = "Phumitch Somsri · Guitar | Vibe Coding Full-stack",
   description = "Expert in prompting AI to build production websites · Vibe Coding ◆ Full-stack · Zexta Studio",
-  ogImage = "/zt-icon.png",
+  ogImage = "/works/zexta.avif",
 } = Astro.props;
 
 /* /verify shows its own full-page dialog — the intro overlays would sit on top of it. */
 const isVerify = /^\/verify\/?$/.test(Astro.url.pathname);
 /* /admin is its own authenticated app — the intro overlays block the dashboard. */
 const isAdmin = /^\/admin\/?$/.test(Astro.url.pathname);
+
+/* Absolute URLs are required by Open Graph / Twitter cards and preferred by
+   search engines for canonical + og:url. */
+const siteOrigin = Astro.site ?? new URL("https://phumitch.space/");
+const canonicalUrl = new URL(Astro.url.pathname, siteOrigin).href;
+const ogImageUrl = new URL(ogImage, siteOrigin).href;
 ---
 
 <html lang="th" data-theme="light">
@@ -35,20 +41,22 @@ const isAdmin = /^\/admin\/?$/.test(Astro.url.pathname);
     <meta name="keywords" content={Astro.props.keywords || "Graphic design, web development, Discord bots, Thai developer, Phumitch Somsri"} />
     <meta name="author" content="Phumitch Somsri" />
 
-    <link rel="canonical" href={Astro.url.href} />
+    <link rel="canonical" href={canonicalUrl} />
 
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={Astro.url.href} />
-    <meta property="og:image" content={ogImage} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:alt" content={title} />
     <meta property="og:site_name" content="phumitch.space" />
     <meta property="og:locale" content="th_TH" />
+    <meta property="og:locale:alternate" content="en_US" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image" content={ogImageUrl} />
 
     <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
