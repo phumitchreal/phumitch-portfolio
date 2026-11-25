@@ -10,7 +10,11 @@ export default defineConfig({
   redirects: {
     '/studio_lol': '/',
   },
-  integrations: [react(), sitemap()],
+  integrations: [
+    react(),
+    // /love is a private gift page (noindex) — keep it out of the sitemap.
+    sitemap({ filter: (page) => !page.includes("/love") }),
+  ],
   vite: {
     plugins: [tailwindcss()],
   },

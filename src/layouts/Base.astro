@@ -11,11 +11,14 @@ interface Props {
   description?: string;
   keywords?: string;
   ogImage?: string;
+  /** Personal / private pages can opt out of search indexing. */
+  noindex?: boolean;
 }
 const {
   title = "Phumitch Somsri · Guitar | Vibe Coding Full-stack",
   description = "Expert in prompting AI to build production websites · Vibe Coding ◆ Full-stack · Zexta Studio",
   ogImage = "/works/zexta.avif",
+  noindex = false,
 } = Astro.props;
 
 /* /verify shows its own full-page dialog — the intro overlays would sit on top of it. */
@@ -36,7 +39,11 @@ const ogImageUrl = new URL(ogImage, siteOrigin).href;
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    {noindex ? (
+      <meta name="robots" content="noindex, nofollow" />
+    ) : (
+      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    )}
     <meta name="description" content={description} />
     <meta name="keywords" content={Astro.props.keywords || "Graphic design, web development, Discord bots, Thai developer, Phumitch Somsri"} />
     <meta name="author" content="Phumitch Somsri" />

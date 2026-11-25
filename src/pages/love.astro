@@ -1,0 +1,558 @@
+---
+/**
+ * A little page made for one person. 💌
+ *
+ * แก้ข้อความทั้งหมดได้จากตัวแปรด้านล่างนี้เลย
+ * (ชื่อเล่น, เหตุผล, ช่วงเวลา, จดหมาย) แล้ว deploy — ไม่ต้องแตะ HTML
+ */
+import Base from "../layouts/Base.astro";
+import SiteNav from "../components/SiteNav.astro";
+import BackHome from "../components/BackHome.astro";
+
+const partner = { th: "ที่รัก", en: "my love" };
+
+const hero = {
+  eyebrow: { th: "หน้าเว็บเล็ก ๆ ที่ตั้งใจทำให้คนหนึ่งคน", en: "A tiny website made for one person" },
+  title: { th: "สำหรับเธอ", en: "For you" },
+  subtitle: {
+    th: "ทุกวันที่มีเธอ ธรรมดาก็กลายเป็นเรื่องพิเศษ",
+    en: "Every day with you turns ordinary into something special.",
+  },
+  hint: { th: "เลื่อนลงมาช้า ๆ นะ", en: "Scroll down slowly." },
+};
+
+const reasons = [
+  {
+    th: "รอยยิ้มของเธอทำให้วันที่แย่ที่สุด กลายเป็นวันที่พอทนได้",
+    en: "Your smile turns the worst days into days I can get through.",
+  },
+  {
+    th: "เธอฟังทุกเรื่องของเรา แม้เรื่องที่ไม่มีสาระเลยก็ตาม",
+    en: "You listen to everything I say — even the pointless things.",
+  },
+  {
+    th: "อยู่กับเธอแล้วรู้สึกเหมือนได้กลับบ้าน ทั้งที่อยู่ที่ไหนก็ได้",
+    en: "With you I feel at home, no matter where we are.",
+  },
+  {
+    th: "ความอดทนของเธอ กับความพยายามที่ไม่เคยหยุดของเธอ",
+    en: "Your patience, and the way you never stop trying.",
+  },
+  {
+    th: "เธอเชื่อในเรา ในวันที่เรายังไม่กล้าเชื่อในตัวเอง",
+    en: "You believe in us on the days I forget to believe in myself.",
+  },
+  {
+    th: "และเพราะเธอเป็นเธอ — แค่นั้นก็พอแล้ว",
+    en: "And because you're you — that's already enough.",
+  },
+];
+
+const moments = [
+  {
+    date: { th: "วันแรก", en: "Day one" },
+    title: { th: "วันที่เราเริ่มรู้จักกัน", en: "The day we first met" },
+    desc: {
+      th: "วันที่ไม่มีอะไรพิเศษในปฏิทิน แต่พิเศษที่สุดในความจำ",
+      en: "A date with nothing special on the calendar — and everything special in my memory.",
+    },
+  },
+  {
+    date: { th: "ครั้งแรก", en: "First time" },
+    title: { th: "ทริปแรกที่ได้ไปด้วยกัน", en: "Our first trip together" },
+    desc: {
+      th: "หลงทางนิดหน่อย แต่ไม่เคยรู้สึกว่าอยากกลับ",
+      en: "We got a little lost, and I never once wanted to turn back.",
+    },
+  },
+  {
+    date: { th: "ทุกวัน", en: "Every day" },
+    title: { th: "วันที่เราเลือกกันและกัน", en: "The day we chose each other" },
+    desc: {
+      th: "ไม่ใช่แค่วันเดียว แต่เลือกซ้ำ ๆ ทุกวัน",
+      en: "Not just once — we choose each other again, every day.",
+    },
+  },
+  {
+    date: { th: "ตอนนี้", en: "Right now" },
+    title: { th: "และทุก ๆ วันหลังจากนี้", en: "And every day after this" },
+    desc: {
+      th: "ยังอยากเดินข้าง ๆ เธออยู่เหมือนเดิม",
+      en: "I still want to walk beside you, just like this.",
+    },
+  },
+];
+
+const letter = {
+  th: `ถึงเธอ,
+
+ขอบคุณที่เข้ามาเป็นส่วนหนึ่งของทุกวัน
+ขอบคุณที่อยู่ตอนที่เราไม่ได้น่ารัก
+และขอบคุณที่เลือกจะเดินต่อด้วยกัน
+
+เราไม่ได้สมบูรณ์แบบ แต่ทุกครั้งที่เจอปัญหา
+เราได้เรียนรู้ที่จะเข้าใจกันมากขึ้นเรื่อย ๆ
+และนั่นคือสิ่งที่มีค่าที่สุดสำหรับเรา
+
+ไม่ว่าจะผ่านไปอีกกี่ปี
+ก็ยังอยากเป็นคนที่ทำให้เธอยิ้มได้ในทุกวัน
+
+รักเธอเสมอ,
+กีต้า`,
+  en: `To you,
+
+Thank you for being part of my every day.
+Thank you for staying on the days I wasn't easy to love.
+And thank you for choosing to keep walking forward together.
+
+We're not perfect, but every time something gets hard,
+we learn to understand each other a little more.
+That is the most valuable thing I have.
+
+No matter how many years pass,
+I still want to be the person who makes you smile.
+
+Always,
+Guitar`,
+};
+
+const closing = {
+  th: "ถ้าให้เริ่มใหม่ทั้งหมด ก็ยังจะเลือกเธอ",
+  en: "If I could start over, I'd still choose you.",
+};
+
+/* floating hearts: x position %, size px, delay s, duration s */
+const hearts = [
+  { x: 8, s: 16, d: 0, t: 9 },
+  { x: 18, s: 10, d: 2.2, t: 11 },
+  { x: 31, s: 20, d: 1.1, t: 10 },
+  { x: 44, s: 12, d: 3.4, t: 12 },
+  { x: 57, s: 18, d: 0.6, t: 9.5 },
+  { x: 68, s: 11, d: 2.8, t: 11.5 },
+  { x: 79, s: 22, d: 1.6, t: 10.5 },
+  { x: 90, s: 13, d: 3.9, t: 12.5 },
+];
+---
+
+<Base
+  title="สำหรับเธอ · For you | phumitch.space"
+  description="A small page made with love — for one person only."
+  ogImage="/works/zexta.avif"
+  noindex
+>
+  <div class="love-page relative flex min-h-screen flex-col overflow-x-clip text-fg-body">
+    <SiteNav />
+
+    <main id="main" class="relative z-10 flex-1">
+      <!-- ── Hero ─────────────────────────────────────────────────────── -->
+      <section class="relative isolate flex min-h-[86svh] flex-col items-center justify-center px-5 py-20 text-center sm:py-28">
+        <div class="love-glow love-glow--a" aria-hidden="true"></div>
+        <div class="love-glow love-glow--b" aria-hidden="true"></div>
+
+        <div class="love-hearts" aria-hidden="true">
+          {hearts.map((h) => (
+            <span
+              class="love-heart"
+              style={`--x:${h.x}%;--s:${h.s}px;--d:${h.d}s;--t:${h.t}s`}
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" width="100%" height="100%">
+                <path d="M12 21s-7.5-4.7-9.5-9.2C1 8.2 3.2 4.5 6.9 4.5c2 0 3.6 1.1 5.1 2.9 1.5-1.8 3.1-2.9 5.1-2.9 3.7 0 5.9 3.7 4.4 7.3C19.5 16.3 12 21 12 21z" />
+              </svg>
+            </span>
+          ))}
+        </div>
+
+        <p class="reveal eyebrow m-0" data-reveal>
+          <span data-lang="th">{hero.eyebrow.th}</span>
+          <span data-lang="en">{hero.eyebrow.en}</span>
+        </p>
+
+        <h1 class="love-title mt-5 text-[clamp(3.2rem,15vw,8rem)] font-semibold leading-[0.95] tracking-[-0.05em] text-fg">
+          <span data-lang="th">{hero.title.th}</span>
+          <span data-lang="en">{hero.title.en}</span>
+        </h1>
+
+        <p class="mt-6 max-w-[520px] text-[16px] leading-relaxed text-fg-muted sm:text-[18px]">
+          <span data-lang="th">{hero.subtitle.th}</span>
+          <span data-lang="en">{hero.subtitle.en}</span>
+        </p>
+
+        <p class="mt-12 text-[11px] font-semibold uppercase tracking-[0.22em] text-fg-dim">
+          <span data-lang="th">{hero.hint.th}</span>
+          <span data-lang="en">{hero.hint.en}</span>
+          <span class="love-scroll-dot" aria-hidden="true"></span>
+        </p>
+      </section>
+
+      <!-- ── Reasons ──────────────────────────────────────────────────── -->
+      <section class="container-apple py-20 sm:py-28">
+        <div class="max-w-[640px]" data-reveal>
+          <p class="eyebrow">
+            <span data-lang="th">เหตุผลที่รักเธอ</span>
+            <span data-lang="en">Reasons I love you</span>
+          </p>
+          <h2 class="headline mt-3 text-[34px] sm:text-[48px]">
+            <span data-lang="th">มีมากกว่าที่จะเขียนหมด</span>
+            <span data-lang="en">More than I could ever list</span>
+          </h2>
+        </div>
+
+        <ol class="mt-10 grid list-none grid-cols-1 gap-4 p-0 sm:mt-14 sm:grid-cols-2 lg:grid-cols-3">
+          {reasons.map((reason, i) => (
+            <li class="love-card" data-reveal style={`transition-delay:${i * 60}ms`}>
+              <span class="love-num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+              <p class="mt-6 text-[15px] leading-relaxed text-fg-body sm:text-[16px]">
+                <span data-lang="th">{reason.th}</span>
+                <span data-lang="en">{reason.en}</span>
+              </p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <!-- ── Moments ──────────────────────────────────────────────────── -->
+      <section class="container-apple pb-20 sm:pb-28">
+        <div class="love-panel" data-reveal>
+          <p class="eyebrow">
+            <span data-lang="th">ช่วงเวลาของเรา</span>
+            <span data-lang="en">Our moments</span>
+          </p>
+          <h2 class="headline mt-3 text-[32px] sm:text-[44px]">
+            <span data-lang="th">เรื่องเล่าเล็ก ๆ ที่เราสร้างกัน</span>
+            <span data-lang="en">The little story we made together</span>
+          </h2>
+
+          <ol class="love-timeline mt-10 list-none p-0">
+            {moments.map((moment) => (
+              <li class="love-moment">
+                <span class="love-moment__dot" aria-hidden="true"></span>
+                <div>
+                  <p class="love-moment__date">
+                    <span data-lang="th">{moment.date.th}</span>
+                    <span data-lang="en">{moment.date.en}</span>
+                  </p>
+                  <h3 class="mt-1.5 text-[19px] font-semibold leading-snug tracking-[-0.01em] text-fg sm:text-[22px]">
+                    <span data-lang="th">{moment.title.th}</span>
+                    <span data-lang="en">{moment.title.en}</span>
+                  </h3>
+                  <p class="mt-1.5 max-w-[560px] text-[14px] leading-relaxed text-fg-muted sm:text-[15px]">
+                    <span data-lang="th">{moment.desc.th}</span>
+                    <span data-lang="en">{moment.desc.en}</span>
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      <!-- ── Letter ───────────────────────────────────────────────────── -->
+      <section class="container-apple pb-24 sm:pb-32">
+        <div class="mx-auto max-w-[720px]" data-reveal>
+          <details class="love-letter group">
+            <summary class="love-letter__btn">
+              <span class="love-letter__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="22" height="22">
+                  <rect x="3" y="5" width="18" height="14" rx="2.5" />
+                  <path d="m4 7 8 6 8-6" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+              <span>
+                <span class="block text-[15px] font-semibold text-fg">
+                  <span data-lang="th">เปิดจดหมาย</span>
+                  <span data-lang="en">Open the letter</span>
+                </span>
+                <span class="mt-0.5 block text-[12px] text-fg-muted">
+                  <span data-lang="th">กดตรงนี้ได้เลย</span>
+                  <span data-lang="en">Tap here</span>
+                </span>
+              </span>
+              <span class="love-letter__chev" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                  <path d="m6 9 6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </summary>
+
+            <div class="love-letter__body">
+              <p class="whitespace-pre-line text-[15px] leading-[1.9] text-fg-body sm:text-[16px]">
+                <span data-lang="th">{letter.th}</span>
+                <span data-lang="en">{letter.en}</span>
+              </p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <!-- ── Closing ──────────────────────────────────────────────────── -->
+      <section class="relative isolate overflow-hidden px-5 pb-24 text-center sm:pb-32">
+        <div class="love-glow love-glow--c" aria-hidden="true"></div>
+        <blockquote class="mx-auto max-w-[760px]" data-reveal>
+          <p class="text-[clamp(1.6rem,6vw,3.2rem)] font-semibold leading-[1.15] tracking-[-0.03em] text-fg">
+            <span data-lang="th">{closing.th}</span>
+            <span data-lang="en">{closing.en}</span>
+          </p>
+          <footer class="mt-7 text-[13px] font-medium tracking-[0.16em] text-fg-dim uppercase">
+            <span data-lang="th">ด้วยรักทั้งหมด · กีต้า</span>
+            <span data-lang="en">With all my love · Guitar</span>
+          </footer>
+        </blockquote>
+
+        <div class="mt-16 flex justify-center">
+          <BackHome />
+        </div>
+      </section>
+    </main>
+  </div>
+</Base>
+
+<style>
+  /* Scoped to the love page only. Brand stays the same; the accent is rosier. */
+  .love-page {
+    --love-rose: #d23f6a;
+    --love-rose-soft: rgba(210, 63, 106, 0.12);
+  }
+  :global([data-theme="dark"]) .love-page {
+    --love-rose: #ff7aa2;
+    --love-rose-soft: rgba(255, 122, 162, 0.16);
+  }
+
+  .love-title {
+    background: linear-gradient(100deg, var(--text) 20%, var(--love-rose) 85%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .love-glow {
+    position: absolute;
+    z-index: -1;
+    border-radius: 9999px;
+    filter: blur(90px);
+    pointer-events: none;
+    background: var(--love-rose);
+    opacity: 0.16;
+  }
+  .love-glow--a {
+    width: min(52vw, 460px);
+    height: min(52vw, 460px);
+    top: -8%;
+    left: -10%;
+  }
+  .love-glow--b {
+    width: min(46vw, 400px);
+    height: min(46vw, 400px);
+    right: -8%;
+    bottom: -14%;
+    opacity: 0.12;
+  }
+  .love-glow--c {
+    width: min(60vw, 520px);
+    height: min(60vw, 520px);
+    left: 50%;
+    top: 10%;
+    transform: translateX(-50%);
+    opacity: 0.1;
+  }
+
+  /* ── floating hearts ── */
+  .love-hearts {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 78%, transparent);
+  }
+  .love-heart {
+    position: absolute;
+    bottom: -40px;
+    left: var(--x);
+    width: var(--s);
+    height: var(--s);
+    color: var(--love-rose);
+    opacity: 0;
+    animation: love-float var(--t) linear var(--d) infinite;
+  }
+  @keyframes love-float {
+    0% {
+      transform: translate3d(0, 0, 0) rotate(-8deg);
+      opacity: 0;
+    }
+    12% {
+      opacity: 0.5;
+    }
+    85% {
+      opacity: 0.35;
+    }
+    100% {
+      transform: translate3d(18px, -88svh, 0) rotate(10deg);
+      opacity: 0;
+    }
+  }
+
+  .love-scroll-dot {
+    display: inline-block;
+    width: 3px;
+    height: 3px;
+    margin-left: 10px;
+    border-radius: 999px;
+    background: currentColor;
+    vertical-align: middle;
+    animation: love-blink 2.4s ease-in-out infinite;
+  }
+  @keyframes love-blink {
+    0%,
+    100% {
+      opacity: 0.25;
+      transform: translateY(0);
+    }
+    50% {
+      opacity: 1;
+      transform: translateY(3px);
+    }
+  }
+
+  /* ── cards ── */
+  .love-card {
+    position: relative;
+    border-radius: 26px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    padding: 26px 24px 24px;
+    box-shadow: var(--shadow-card);
+    transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
+  }
+  .love-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-float);
+  }
+  .love-num {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    color: var(--love-rose);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .love-panel {
+    border-radius: 32px;
+    border: 1px solid var(--line);
+    background: var(--mist);
+    padding: clamp(26px, 5vw, 56px);
+  }
+
+  /* ── timeline ── */
+  .love-timeline {
+    position: relative;
+    display: grid;
+    gap: 28px;
+    padding-left: 22px;
+  }
+  .love-timeline::before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 6px;
+    bottom: 6px;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--love-rose), transparent 92%);
+    opacity: 0.45;
+  }
+  .love-moment {
+    position: relative;
+  }
+  .love-moment__dot {
+    position: absolute;
+    left: -21px;
+    top: 7px;
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: var(--love-rose);
+    box-shadow: 0 0 0 4px var(--love-rose-soft);
+  }
+  .love-moment__date {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--love-rose);
+  }
+
+  /* ── letter ── */
+  .love-letter {
+    overflow: hidden;
+    border-radius: 28px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    box-shadow: var(--shadow-card);
+  }
+  .love-letter__btn {
+    display: flex;
+    cursor: pointer;
+    list-style: none;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 22px;
+    transition: background-color 0.25s var(--ease);
+  }
+  .love-letter__btn::-webkit-details-marker {
+    display: none;
+  }
+  .love-letter__btn:hover {
+    background: var(--surface-hover);
+  }
+  .love-letter__btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+  .love-letter__icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    flex: none;
+    border-radius: 14px;
+    background: var(--love-rose-soft);
+    color: var(--love-rose);
+  }
+  .love-letter__chev {
+    margin-left: auto;
+    color: var(--text-dim);
+    transition: transform 0.3s var(--ease);
+  }
+  .love-letter[open] .love-letter__chev {
+    transform: rotate(180deg);
+  }
+  .love-letter__body {
+    padding: 4px 24px 28px;
+    border-top: 1px solid var(--line);
+    background: linear-gradient(180deg, var(--mist), transparent 40%);
+    animation: love-unfold 0.45s var(--ease) both;
+  }
+  @keyframes love-unfold {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .love-heart,
+    .love-scroll-dot,
+    .love-letter__body {
+      animation: none;
+    }
+    .love-heart {
+      opacity: 0.25;
+    }
+    .love-card {
+      transition: none;
+    }
+  }
+</style>
