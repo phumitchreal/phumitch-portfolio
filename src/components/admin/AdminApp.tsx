@@ -31,10 +31,12 @@ import {
   CameraIcon as Camera,
   ArrowCounterClockwiseIcon as ArrowCounterClockwise,
   PaletteIcon as Palette,
+  HeartIcon as Heart,
 } from "@phosphor-icons/react";
 import { supabase } from "../../db/supabase.js";
 import { hashPassword, generateSalt, generateSessionToken } from "../../lib/authCrypto.ts";
-import { defaultProfile, defaultPartners, type DBProfile, type DBPartner } from "../../lib/portfolioData.ts";
+import { defaultProfile, defaultPartners, mergeGirlfriend, type DBProfile, type DBPartner } from "../../lib/portfolioData.ts";
+import { type GirlfriendProfile } from "../../content/girlfriend.ts";
 import { compressAndReadFile } from "../../lib/imageUpload.ts";
 import LogoBlurRow from "../LogoBlurRow.tsx";
 
@@ -57,8 +59,8 @@ export default function AdminApp() {
   const [hasAdmin, setHasAdmin] = useState(false);
   const [sessionUser, setSessionUser] = useState<string | null>(null);
 
-  // Tabs: "projects" | "profile" | "partners" | "account"
-  const [activeTab, setActiveTab] = useState<"projects" | "profile" | "partners" | "account">("projects");
+  // Tabs: "projects" | "profile" | "girlfriend" | "partners" | "account"
+  const [activeTab, setActiveTab] = useState<"projects" | "profile" | "girlfriend" | "partners" | "account">("projects");
 
   // Search & Filter
   const [searchQuery, setSearchQuery] = useState("");
@@ -93,6 +95,7 @@ export default function AdminApp() {
   const [uploadingAboutPhoto, setUploadingAboutPhoto] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
   const [uploadingPartnerIndex, setUploadingPartnerIndex] = useState<{ idx: number; mode: "light" | "dark" } | null>(null);
+  const [uploadingGirlfriendPhoto, setUploadingGirlfriendPhoto] = useState(false);
 
   // Account State
   const [newUsername, setNewUsername] = useState("");
@@ -236,6 +239,7 @@ export default function AdminApp() {
           home: { ...defaultProfile.home, ...(data.data.home || {}) },
           about: { ...defaultProfile.about, ...(data.data.about || {}) },
           partners: data.data.partners || defaultPartners,
+          girlfriend: mergeGirlfriend(data.data.girlfriend),
         });
       }
     } catch (err) {
@@ -605,6 +609,47 @@ export default function AdminApp() {
     }
   };
 
+  // ── Girlfriend profile (stored inside portfolio_profile.data.girlfriend) ──
+  const updateGirlfriend = (patch: Partial<GirlfriendProfile>) => {
+    setProfileHasChanges(true);
+    setProfile((prev) => ({
+      ...prev,
+      girlfriend: { ...prev.girlfriend, ...patch },
+    }));
+  };
+
+  const updateGirlfriendLike = (index: number, key: "th" | "en", value: string) => {
+    const likes = [...profile.girlfriend.likes];
+    likes[index] = { ...likes[index], [key]: value };
+    updateGirlfriend({ likes });
+  };
+
+  // ── /love page content ──
+  const updateLove = (patch: Partial<GirlfriendProfile["love"]>) => {
+    updateGirlfriend({ love: { ...profile.girlfriend.love, ...patch } });
+  };
+
+  const updateLoveHero = (key: "eyebrow" | "title" | "subtitle" | "hint", lang: "th" | "en", value: string) => {
+    updateLove({ hero: { ...profile.girlfriend.love.hero, [key]: { ...profile.girlfriend.love.hero[key], [lang]: value } } });
+  };
+
+  const updateLoveReason = (index: number, lang: "th" | "en", value: string) => {
+    const reasons = [...profile.girlfriend.love.reasons];
+    reasons[index] = { ...reasons[index], [lang]: value };
+    updateLove({ reasons });
+  };
+
+  const updateLoveMoment = (
+    index: number,
+    field: "date" | "title" | "desc",
+    lang: "th" | "en",
+    value: string
+  ) => {
+    const moments = [...profile.girlfriend.love.moments];
+    moments[index] = { ...moments[index], [field]: { ...moments[index][field], [lang]: value } };
+    updateLove({ moments });
+  };
+
   const handleSaveProfile = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setSavingProfile(true);
@@ -958,6 +1003,7 @@ export default function AdminApp() {
             {[
               { id: "projects", label: "ผลงาน", labelFull: "ผลงาน (Projects)", count: projects.length, icon: Briefcase },
               { id: "profile", label: "ข้อมูลส่วนตัว", labelFull: "ข้อมูลส่วนตัว (Profile)", icon: User },
+              { id: "girlfriend", label: "แฟน", labelFull: "ข้อมูลแฟน (Girlfriend)", icon: Heart },
               { id: "partners", label: "พาร์ทเนอร์", labelFull: "พาร์ทเนอร์ & ลูกค้า (Partners)", count: (profile.partners || defaultPartners).length, icon: Users },
               { id: "account", label: "บัญชีผู้ดูแล", labelFull: "บัญชีผู้ดูแล (Account)", icon: LockKey },
             ].map((tab) => {
@@ -2043,6 +2089,492 @@ export default function AdminApp() {
                 >
                   <FloppyDisk size={16} weight="bold" />
                   <span>{savingProfile ? "กำลังบันทึก..." : "บันทึกข้อมูลทั้งหมด"}</span>
+                </button>
+              </div>
+            </form>
+          </section>
+        )}
+
+        {/* TAB: GIRLFRIEND */}
+        {activeTab === "girlfriend" && (
+          <section className="space-y-6">
+            <form onSubmit={handleSaveProfile} className="space-y-6">
+              <div className="rounded-3xl border border-line bg-surface p-6 shadow-xs">
+                <div className="flex flex-col gap-3 border-b border-line pb-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <span className="flex size-8 items-center justify-center rounded-xl bg-accent-soft text-accent">
+                      <Heart size={18} weight="bold" />
+                    </span>
+                    <div>
+                      <h3 className="text-[16px] font-semibold text-fg">ข้อมูลแฟน (Girlfriend)</h3>
+                      <p className="text-[12px] text-fg-muted">
+                        แสดงในหน้า <a href="/mygirlfirends" target="_blank" className="text-accent hover:underline">/mygirlfirends</a> — เก็บใน Supabase
+                      </p>
+                    </div>
+                  </div>
+                  <label className="flex cursor-pointer items-center gap-2 text-[12px] font-medium text-fg-body">
+                    <input
+                      type="checkbox"
+                      checked={!profile.girlfriend.isPlaceholder}
+                      onChange={(e) => updateGirlfriend({ isPlaceholder: !e.target.checked })}
+                      className="size-4 cursor-pointer accent-[var(--accent)]"
+                    />
+                    ใช้ข้อมูลจริงแล้ว (ซ่อนป้ายตัวอย่าง)
+                  </label>
+                </div>
+
+                <div className="mt-5 flex flex-col gap-6 sm:flex-row sm:items-start">
+                  <div className="relative aspect-[4/5] w-32 shrink-0 overflow-hidden rounded-2xl bg-mist ring-1 ring-black/[0.08] shadow-md">
+                    {profile.girlfriend.photo ? (
+                      <img
+                        src={profile.girlfriend.photo}
+                        alt="Girlfriend portrait"
+                        className="size-full object-cover"
+                      />
+                    ) : (
+                      <div className="grid size-full place-items-center text-[28px] font-bold text-fg-dim">
+                        {profile.girlfriend.fullName.en
+                          .split(/\s+/)
+                          .map((p) => p[0])
+                          .join("")
+                          .slice(0, 2)
+                          .toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex-1 space-y-3">
+                    <div className="flex flex-wrap gap-2">
+                      <label className="btn-primary cursor-pointer inline-flex items-center gap-2 px-4 py-2 text-[13px]">
+                        <UploadSimple size={16} weight="bold" />
+                        <span>{uploadingGirlfriendPhoto ? "กำลังอัปโหลด..." : "อัปโหลดรูปแฟน"}</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          disabled={uploadingGirlfriendPhoto}
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            try {
+                              setUploadingGirlfriendPhoto(true);
+                              const dataUrl = await compressAndReadFile(file, {
+                                maxWidth: 900,
+                                maxHeight: 1100,
+                                quality: 0.85,
+                              });
+                              updateGirlfriend({ photo: dataUrl });
+                            } catch (err: any) {
+                              alert(err.message || "เกิดข้อผิดพลาดในการอัปโหลดรูป");
+                            } finally {
+                              setUploadingGirlfriendPhoto(false);
+                            }
+                          }}
+                        />
+                      </label>
+                      {profile.girlfriend.photo && (
+                        <button
+                          type="button"
+                          onClick={() => updateGirlfriend({ photo: undefined })}
+                          className="flex cursor-pointer items-center gap-1 rounded-xl border border-line px-3 py-2 text-[12px] font-medium text-fg-dim hover:text-red-500"
+                        >
+                          <ArrowCounterClockwise size={14} />
+                          ลบรูป
+                        </button>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] text-fg-dim">หรือใส่ลิงก์รูปภาพ (Direct Image URL)</label>
+                      <input
+                        type="text"
+                        placeholder="https://... หรือ /girlfriend.avif"
+                        value={profile.girlfriend.photo || ""}
+                        onChange={(e) => updateGirlfriend({ photo: e.target.value || undefined })}
+                        className="mt-1 w-full rounded-xl border border-line bg-mist/60 px-3 py-1.5 text-[12px] text-fg outline-none focus:border-accent focus:bg-surface"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-3xl border border-line bg-surface p-6 shadow-xs">
+                <h3 className="border-b border-line pb-4 text-[16px] font-semibold text-fg">ชื่อและวันเกิด</h3>
+                <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="block text-[12px] font-medium text-fg-body">ชื่อจริง (EN)</label>
+                    <input
+                      type="text"
+                      value={profile.girlfriend.fullName.en}
+                      onChange={(e) =>
+                        updateGirlfriend({ fullName: { ...profile.girlfriend.fullName, en: e.target.value } })
+                      }
+                      className="mt-1 w-full rounded-xl border border-line bg-mist/60 px-3.5 py-2.5 text-[13px] text-fg outline-none focus:border-accent focus:bg-surface"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[12px] font-medium text-fg-body">ชื่อจริง (TH)</label>
+                    <input
+                      type="text"
+                      value={profile.girlfriend.fullName.th}
+                      onChange={(e) =>
+                        updateGirlfriend({ fullName: { ...profile.girlfriend.fullName, th: e.target.value } })
+                      }
+                      className="mt-1 w-full rounded-xl border border-line bg-mist/60 px-3.5 py-2.5 text-[13px] text-fg outline-none focus:border-accent focus:bg-surface"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[12px] font-medium text-fg-body">ชื่อเล่น (EN)</label>
+                    <input
+                      type="text"
+                      value={profile.girlfriend.nickname.en}
+                      onChange={(e) =>
+                        updateGirlfriend({ nickname: { ...profile.girlfriend.nickname, en: e.target.value } })
+                      }
+                      className="mt-1 w-full rounded-xl border border-line bg-mist/60 px-3.5 py-2.5 text-[13px] text-fg outline-none focus:border-accent focus:bg-surface"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[12px] font-medium text-fg-body">ชื่อเล่น (TH)</label>
+                    <input
+                      type="text"
+                      value={profile.girlfriend.nickname.th}
+                      onChange={(e) =>
+                        updateGirlfriend({ nickname: { ...profile.girlfriend.nickname, th: e.target.value } })
+                      }
+                      className="mt-1 w-full rounded-xl border border-line bg-mist/60 px-3.5 py-2.5 text-[13px] text-fg outline-none focus:border-accent focus:bg-surface"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[12px] font-medium text-fg-body">วันเกิด (ใช้คำนวณอายุ)</label>
+                    <input
+                      type="date"
+                      value={profile.girlfriend.birthDate}
+                      onChange={(e) => updateGirlfriend({ birthDate: e.target.value })}
+                      className="mt-1 w-full rounded-xl border border-line bg-mist/60 px-3.5 py-2.5 text-[13px] text-fg outline-none focus:border-accent focus:bg-surface"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[12px] font-medium text-fg-body">คบกันตั้งแต่วันที่</label>
+                    <input
+                      type="date"
+                      value={profile.girlfriend.togetherSince || ""}
+                      onChange={(e) => updateGirlfriend({ togetherSince: e.target.value || undefined })}
+                      className="mt-1 w-full rounded-xl border border-line bg-mist/60 px-3.5 py-2.5 text-[13px] text-fg outline-none focus:border-accent focus:bg-surface"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[12px] font-medium text-fg-body">บ้านเกิด (EN)</label>
+                    <input
+                      type="text"
+                      value={profile.girlfriend.hometown.en}
+                      onChange={(e) =>
+                        updateGirlfriend({ hometown: { ...profile.girlfriend.hometown, en: e.target.value } })
+                      }
+                      className="mt-1 w-full rounded-xl border border-line bg-mist/60 px-3.5 py-2.5 text-[13px] text-fg outline-none focus:border-accent focus:bg-surface"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[12px] font-medium text-fg-body">บ้านเกิด (TH)</label>
+                    <input
+                      type="text"
+                      value={profile.girlfriend.hometown.th}
+                      onChange={(e) =>
+                        updateGirlfriend({ hometown: { ...profile.girlfriend.hometown, th: e.target.value } })
+                      }
+                      className="mt-1 w-full rounded-xl border border-line bg-mist/60 px-3.5 py-2.5 text-[13px] text-fg outline-none focus:border-accent focus:bg-surface"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-3xl border border-line bg-surface p-6 shadow-xs">
+                <h3 className="border-b border-line pb-4 text-[16px] font-semibold text-fg">แนะนำตัวสั้น ๆ</h3>
+                <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="block text-[12px] font-medium text-fg-body">Bio (EN)</label>
+                    <textarea
+                      rows={4}
+                      value={profile.girlfriend.bio.en}
+                      onChange={(e) => updateGirlfriend({ bio: { ...profile.girlfriend.bio, en: e.target.value } })}
+                      className="mt-1 w-full resize-y rounded-xl border border-line bg-mist/60 px-3.5 py-2.5 text-[13px] leading-relaxed text-fg outline-none focus:border-accent focus:bg-surface"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[12px] font-medium text-fg-body">Bio (TH)</label>
+                    <textarea
+                      rows={4}
+                      value={profile.girlfriend.bio.th}
+                      onChange={(e) => updateGirlfriend({ bio: { ...profile.girlfriend.bio, th: e.target.value } })}
+                      className="mt-1 w-full resize-y rounded-xl border border-line bg-mist/60 px-3.5 py-2.5 text-[13px] leading-relaxed text-fg outline-none focus:border-accent focus:bg-surface"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-3xl border border-line bg-surface p-6 shadow-xs">
+                <div className="flex items-center justify-between border-b border-line pb-4">
+                  <h3 className="text-[16px] font-semibold text-fg">สิ่งที่เธอชอบ</h3>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      updateGirlfriend({ likes: [...profile.girlfriend.likes, { th: "", en: "" }] })
+                    }
+                    className="flex cursor-pointer items-center gap-1 rounded-xl bg-mist px-3 py-1.5 text-[12px] font-medium text-fg hover:bg-mist-strong"
+                  >
+                    <Plus size={14} weight="bold" /> เพิ่ม
+                  </button>
+                </div>
+                <div className="mt-4 space-y-2">
+                  {profile.girlfriend.likes.map((like, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        placeholder="EN"
+                        value={like.en}
+                        onChange={(e) => updateGirlfriendLike(index, "en", e.target.value)}
+                        className="w-full rounded-xl border border-line bg-mist/60 px-3 py-2 text-[13px] text-fg outline-none focus:border-accent focus:bg-surface"
+                      />
+                      <input
+                        type="text"
+                        placeholder="TH"
+                        value={like.th}
+                        onChange={(e) => updateGirlfriendLike(index, "th", e.target.value)}
+                        className="w-full rounded-xl border border-line bg-mist/60 px-3 py-2 text-[13px] text-fg outline-none focus:border-accent focus:bg-surface"
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          updateGirlfriend({
+                            likes: profile.girlfriend.likes.filter((_, i) => i !== index),
+                          })
+                        }
+                        className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-xl text-fg-dim hover:bg-red-500/10 hover:text-red-500"
+                        aria-label="ลบรายการ"
+                      >
+                        <Trash size={15} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-3xl border border-line bg-surface p-6 shadow-xs">
+                <div className="flex items-center justify-between border-b border-line pb-4">
+                  <div className="flex items-center gap-2.5">
+                    <span className="flex size-8 items-center justify-center rounded-xl bg-accent-soft text-accent">
+                      <Sparkle size={18} weight="bold" />
+                    </span>
+                    <div>
+                      <h3 className="text-[16px] font-semibold text-fg">หน้า /love — Hero</h3>
+                      <p className="text-[12px] text-fg-muted">หัวข้อเปิดหน้าเว็บ</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  {([
+                    ["eyebrow", "Eyebrow"],
+                    ["title", "หัวข้อหลัก"],
+                    ["subtitle", "คำโปรย"],
+                    ["hint", "ข้อความใบ้ (เลื่อนลง)"],
+                  ] as const).map(([key, label]) => (
+                    <div key={key}>
+                      <label className="block text-[12px] font-medium text-fg-body">{label} (TH)</label>
+                      <input
+                        type="text"
+                        value={profile.girlfriend.love.hero[key].th}
+                        onChange={(e) => updateLoveHero(key, "th", e.target.value)}
+                        className="mt-1 w-full rounded-xl border border-line bg-mist/60 px-3.5 py-2.5 text-[13px] text-fg outline-none focus:border-accent focus:bg-surface"
+                      />
+                      <label className="mt-2 block text-[12px] font-medium text-fg-body">{label} (EN)</label>
+                      <input
+                        type="text"
+                        value={profile.girlfriend.love.hero[key].en}
+                        onChange={(e) => updateLoveHero(key, "en", e.target.value)}
+                        className="mt-1 w-full rounded-xl border border-line bg-mist/60 px-3.5 py-2.5 text-[13px] text-fg outline-none focus:border-accent focus:bg-surface"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-3xl border border-line bg-surface p-6 shadow-xs">
+                <div className="flex items-center justify-between border-b border-line pb-4">
+                  <h3 className="text-[16px] font-semibold text-fg">หน้า /love — เหตุผลที่รัก</h3>
+                  <button
+                    type="button"
+                    onClick={() => updateLove({ reasons: [...profile.girlfriend.love.reasons, { th: "", en: "" }] })}
+                    className="flex cursor-pointer items-center gap-1 rounded-xl bg-mist px-3 py-1.5 text-[12px] font-medium text-fg hover:bg-mist-strong"
+                  >
+                    <Plus size={14} weight="bold" /> เพิ่ม
+                  </button>
+                </div>
+                <div className="mt-4 space-y-3">
+                  {profile.girlfriend.love.reasons.map((reason, index) => (
+                    <div key={index} className="rounded-2xl border border-line bg-mist/40 p-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-semibold text-fg-dim">ข้อ {index + 1}</span>
+                        <button
+                          type="button"
+                          onClick={() => updateLove({ reasons: profile.girlfriend.love.reasons.filter((_, i) => i !== index) })}
+                          className="flex size-8 cursor-pointer items-center justify-center rounded-lg text-fg-dim hover:bg-red-500/10 hover:text-red-500"
+                          aria-label="ลบข้อนี้"
+                        >
+                          <Trash size={14} />
+                        </button>
+                      </div>
+                      <textarea
+                        rows={2}
+                        placeholder="TH"
+                        value={reason.th}
+                        onChange={(e) => updateLoveReason(index, "th", e.target.value)}
+                        className="mt-2 w-full resize-y rounded-xl border border-line bg-surface px-3 py-2 text-[13px] text-fg outline-none focus:border-accent"
+                      />
+                      <textarea
+                        rows={2}
+                        placeholder="EN"
+                        value={reason.en}
+                        onChange={(e) => updateLoveReason(index, "en", e.target.value)}
+                        className="mt-2 w-full resize-y rounded-xl border border-line bg-surface px-3 py-2 text-[13px] text-fg outline-none focus:border-accent"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-3xl border border-line bg-surface p-6 shadow-xs">
+                <div className="flex items-center justify-between border-b border-line pb-4">
+                  <h3 className="text-[16px] font-semibold text-fg">หน้า /love — ช่วงเวลาของเรา</h3>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      updateLove({
+                        moments: [
+                          ...profile.girlfriend.love.moments,
+                          { date: { th: "", en: "" }, title: { th: "", en: "" }, desc: { th: "", en: "" } },
+                        ],
+                      })
+                    }
+                    className="flex cursor-pointer items-center gap-1 rounded-xl bg-mist px-3 py-1.5 text-[12px] font-medium text-fg hover:bg-mist-strong"
+                  >
+                    <Plus size={14} weight="bold" /> เพิ่ม
+                  </button>
+                </div>
+                <div className="mt-4 space-y-4">
+                  {profile.girlfriend.love.moments.map((moment, index) => (
+                    <div key={index} className="rounded-2xl border border-line bg-mist/40 p-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-semibold text-fg-dim">ช่วงที่ {index + 1}</span>
+                        <button
+                          type="button"
+                          onClick={() => updateLove({ moments: profile.girlfriend.love.moments.filter((_, i) => i !== index) })}
+                          className="flex size-8 cursor-pointer items-center justify-center rounded-lg text-fg-dim hover:bg-red-500/10 hover:text-red-500"
+                          aria-label="ลบช่วงนี้"
+                        >
+                          <Trash size={14} />
+                        </button>
+                      </div>
+                      <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                        {(["date", "title"] as const).map((field) => (
+                          <div key={field}>
+                            <label className="block text-[11px] text-fg-dim">
+                              {field === "date" ? "ป้ายวันที่" : "หัวเรื่อง"}
+                            </label>
+                            <input
+                              type="text"
+                              placeholder="TH"
+                              value={moment[field].th}
+                              onChange={(e) => updateLoveMoment(index, field, "th", e.target.value)}
+                              className="mt-1 w-full rounded-xl border border-line bg-surface px-3 py-2 text-[13px] text-fg outline-none focus:border-accent"
+                            />
+                            <input
+                              type="text"
+                              placeholder="EN"
+                              value={moment[field].en}
+                              onChange={(e) => updateLoveMoment(index, field, "en", e.target.value)}
+                              className="mt-1.5 w-full rounded-xl border border-line bg-surface px-3 py-2 text-[13px] text-fg outline-none focus:border-accent"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-2">
+                        <label className="block text-[11px] text-fg-dim">คำอธิบาย</label>
+                        <textarea
+                          rows={2}
+                          placeholder="TH"
+                          value={moment.desc.th}
+                          onChange={(e) => updateLoveMoment(index, "desc", "th", e.target.value)}
+                          className="mt-1 w-full resize-y rounded-xl border border-line bg-surface px-3 py-2 text-[13px] text-fg outline-none focus:border-accent"
+                        />
+                        <textarea
+                          rows={2}
+                          placeholder="EN"
+                          value={moment.desc.en}
+                          onChange={(e) => updateLoveMoment(index, "desc", "en", e.target.value)}
+                          className="mt-1.5 w-full resize-y rounded-xl border border-line bg-surface px-3 py-2 text-[13px] text-fg outline-none focus:border-accent"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-3xl border border-line bg-surface p-6 shadow-xs">
+                <div className="border-b border-line pb-4">
+                  <h3 className="text-[16px] font-semibold text-fg">หน้า /love — จดหมาย & ปิดท้าย</h3>
+                  <p className="text-[12px] text-fg-muted">ขึ้นบรรทัดใหม่ได้ตามปกติ</p>
+                </div>
+                <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="block text-[12px] font-medium text-fg-body">จดหมาย (TH)</label>
+                    <textarea
+                      rows={10}
+                      value={profile.girlfriend.love.letter.th}
+                      onChange={(e) => updateLove({ letter: { ...profile.girlfriend.love.letter, th: e.target.value } })}
+                      className="mt-1 w-full resize-y rounded-xl border border-line bg-mist/60 px-3.5 py-2.5 text-[13px] leading-relaxed text-fg outline-none focus:border-accent focus:bg-surface"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[12px] font-medium text-fg-body">จดหมาย (EN)</label>
+                    <textarea
+                      rows={10}
+                      value={profile.girlfriend.love.letter.en}
+                      onChange={(e) => updateLove({ letter: { ...profile.girlfriend.love.letter, en: e.target.value } })}
+                      className="mt-1 w-full resize-y rounded-xl border border-line bg-mist/60 px-3.5 py-2.5 text-[13px] leading-relaxed text-fg outline-none focus:border-accent focus:bg-surface"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[12px] font-medium text-fg-body">ข้อความปิดท้าย (TH)</label>
+                    <textarea
+                      rows={2}
+                      value={profile.girlfriend.love.closing.th}
+                      onChange={(e) => updateLove({ closing: { ...profile.girlfriend.love.closing, th: e.target.value } })}
+                      className="mt-1 w-full resize-y rounded-xl border border-line bg-mist/60 px-3.5 py-2.5 text-[13px] leading-relaxed text-fg outline-none focus:border-accent focus:bg-surface"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[12px] font-medium text-fg-body">ข้อความปิดท้าย (EN)</label>
+                    <textarea
+                      rows={2}
+                      value={profile.girlfriend.love.closing.en}
+                      onChange={(e) => updateLove({ closing: { ...profile.girlfriend.love.closing, en: e.target.value } })}
+                      className="mt-1 w-full resize-y rounded-xl border border-line bg-mist/60 px-3.5 py-2.5 text-[13px] leading-relaxed text-fg outline-none focus:border-accent focus:bg-surface"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="sticky bottom-6 flex flex-col gap-3 rounded-2xl border border-line bg-surface/90 p-4 shadow-xl backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between">
+                <span className="text-center text-[13px] font-medium text-fg-muted sm:text-left">
+                  {profileHasChanges ? "⚠️ มีการแก้ไขที่ยังไม่ได้บันทึก" : "ข้อมูลเป็นปัจจุบันแล้ว"}
+                </span>
+                <button
+                  type="submit"
+                  disabled={savingProfile}
+                  className="btn-primary w-full cursor-pointer justify-center px-6 py-2.5 text-[14px] sm:w-auto"
+                >
+                  <FloppyDisk size={16} weight="bold" />
+                  <span>{savingProfile ? "กำลังบันทึก..." : "บันทึกข้อมูลแฟน"}</span>
                 </button>
               </div>
             </form>

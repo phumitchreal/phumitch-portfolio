@@ -1,5 +1,6 @@
 import { supabase } from "../db/supabase.js";
 import { works as defaultWorks, type WorkCategory } from "../content/work.ts";
+import { girlfriend as defaultGirlfriend, type GirlfriendProfile } from "../content/girlfriend.ts";
 import { dicts } from "../i18n.ts";
 
 export type DBPartner = {
@@ -51,6 +52,8 @@ export type DBProfile = {
   what_i_do: Array<{ en: string; th: string }>;
   socials: Array<{ label: string; handle: string; href: string }>;
   partners: DBPartner[];
+  /** Girlfriend profile — edited from /admin, stored in the same JSONB blob. */
+  girlfriend: GirlfriendProfile;
 };
 
 export const defaultPartners: DBPartner[] = [
@@ -116,6 +119,7 @@ export const defaultProfile: DBProfile = {
     { label: "Website", handle: "phumitch.space", href: "https://phumitch.space" },
   ],
   partners: defaultPartners,
+  girlfriend: defaultGirlfriend,
 };
 
 /**
@@ -163,6 +167,33 @@ export async function getProjects(): Promise<DBProject[]> {
 }
 
 /**
+ * Deep-merge a stored girlfriend record on top of the bundled defaults, so
+ * records saved before a new field was added still render without gaps.
+ */
+export function mergeGirlfriend(input?: Partial<GirlfriendProfile> | null): GirlfriendProfile {
+  const src = input || {};
+  const love = src.love || defaultGirlfriend.love;
+  return {
+    ...defaultGirlfriend,
+    ...src,
+    fullName: { ...defaultGirlfriend.fullName, ...(src.fullName || {}) },
+    nickname: { ...defaultGirlfriend.nickname, ...(src.nickname || {}) },
+    hometown: { ...defaultGirlfriend.hometown, ...(src.hometown || {}) },
+    bio: { ...defaultGirlfriend.bio, ...(src.bio || {}) },
+    likes: src.likes || defaultGirlfriend.likes,
+    love: {
+      ...defaultGirlfriend.love,
+      ...love,
+      hero: { ...defaultGirlfriend.love.hero, ...(love.hero || {}) },
+      reasons: love.reasons || defaultGirlfriend.love.reasons,
+      moments: love.moments || defaultGirlfriend.love.moments,
+      letter: { ...defaultGirlfriend.love.letter, ...(love.letter || {}) },
+      closing: { ...defaultGirlfriend.love.closing, ...(love.closing || {}) },
+    },
+  };
+}
+
+/**
  * Fetch profile information from Supabase with fallback
  */
 export async function getProfile(): Promise<DBProfile> {
@@ -193,6 +224,7 @@ export async function getProfile(): Promise<DBProfile> {
         ...(data.data.about || {}),
       },
       partners: data.data.partners || defaultPartners,
+      girlfriend: mergeGirlfriend(data.data.girlfriend),
     };
   } catch {
     return defaultProfile;

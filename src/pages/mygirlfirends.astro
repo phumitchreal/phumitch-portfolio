@@ -1,0 +1,317 @@
+---
+import Base from "../layouts/Base.astro";
+import SiteNav from "../components/SiteNav.astro";
+import BackHome from "../components/BackHome.astro";
+import { getProfile } from "../lib/portfolioData.ts";
+
+const profile = await getProfile();
+const girlfriend = profile.girlfriend;
+
+const bd = new Date(`${girlfriend.birthDate}T00:00:00`);
+const now = new Date();
+
+const ageAt = (from: Date, to: Date) => {
+  let age = to.getFullYear() - from.getFullYear();
+  const beforeBirthday =
+    to.getMonth() < from.getMonth() ||
+    (to.getMonth() === from.getMonth() && to.getDate() < from.getDate());
+  if (beforeBirthday) age -= 1;
+  return age;
+};
+
+const age = ageAt(bd, now);
+
+const nextBirthday = new Date(now.getFullYear(), bd.getMonth(), bd.getDate());
+if (nextBirthday.getTime() < new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()) {
+  nextBirthday.setFullYear(now.getFullYear() + 1);
+}
+const daysToBirthday = Math.round(
+  (nextBirthday.getTime() - new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()) /
+    86400000
+);
+
+const MONTHS_TH = [
+  "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
+  "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม",
+];
+const MONTHS_EN = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+const WEEKDAYS_TH = ["วันอาทิตย์", "วันจันทร์", "วันอังคาร", "วันพุธ", "วันพฤหัสบดี", "วันศุกร์", "วันเสาร์"];
+const WEEKDAYS_EN = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+const birthDateTh = `${WEEKDAYS_TH[bd.getDay()]}ที่ ${bd.getDate()} ${MONTHS_TH[bd.getMonth()]} ${bd.getFullYear() + 543}`;
+const birthDateEn = `${WEEKDAYS_EN[bd.getDay()]}, ${bd.getDate()} ${MONTHS_EN[bd.getMonth()]} ${bd.getFullYear()}`;
+
+/** Thai zodiac (ปีนักษัตร) — index 0 = rat, from the CE year. */
+const zodiacTh = ["ชวด (หนู)", "ฉลู (วัว)", "ขาล (เสือ)", "เถาะ (กระต่าย)", "มะโรง (งูใหญ่)", "มะเส็ง (งูเล็ก)", "มะเมีย (ม้า)", "มะแม (แพะ)", "วอก (ลิง)", "ระกา (ไก่)", "จอ (สุนัข)", "กุน (หมู)"];
+const zodiacEn = ["Rat", "Ox", "Tiger", "Rabbit", "Dragon", "Snake", "Horse", "Goat", "Monkey", "Rooster", "Dog", "Pig"];
+const zodiacIndex = (((bd.getFullYear() - 4) % 12) + 12) % 12;
+
+/** Western star sign from month/day cutoffs. */
+const starSigns: Array<{ from: [number, number]; th: string; en: string }> = [
+  { from: [1, 20], th: "ราศีกุมภ์", en: "Aquarius" },
+  { from: [2, 19], th: "ราศีมีน", en: "Pisces" },
+  { from: [3, 21], th: "ราศีเมษ", en: "Aries" },
+  { from: [4, 20], th: "ราศีพฤษภ", en: "Taurus" },
+  { from: [5, 21], th: "ราศีเมถุน", en: "Gemini" },
+  { from: [6, 21], th: "ราศีกรกฎ", en: "Cancer" },
+  { from: [7, 23], th: "ราศีสิงห์", en: "Leo" },
+  { from: [8, 23], th: "ราศีกันย์", en: "Virgo" },
+  { from: [9, 23], th: "ราศีตุลย์", en: "Libra" },
+  { from: [10, 23], th: "ราศีพิจิก", en: "Scorpio" },
+  { from: [11, 22], th: "ราศีธนู", en: "Sagittarius" },
+  { from: [12, 22], th: "ราศีมังกร", en: "Capricorn" },
+];
+const md = (bd.getMonth() + 1) * 100 + bd.getDate();
+const sign =
+  md >= 1222 || md < 120
+    ? { from: [12, 22] as [number, number], th: "ราศีมังกร", en: "Capricorn" }
+    : [...starSigns].reverse().find((s) => md >= s.from[0] * 100 + s.from[1]) ?? starSigns[0];
+
+const since = girlfriend.togetherSince
+  ? new Date(`${girlfriend.togetherSince}T00:00:00`)
+  : null;
+const sinceTh = since
+  ? `${since.getDate()} ${MONTHS_TH[since.getMonth()]} ${since.getFullYear() + 543}`
+  : "";
+const sinceEn = since
+  ? `${since.getDate()} ${MONTHS_EN[since.getMonth()]} ${since.getFullYear()}`
+  : "";
+
+const initials = girlfriend.fullName.en
+  .split(/\s+/)
+  .map((part) => part[0])
+  .join("")
+  .slice(0, 2)
+  .toUpperCase();
+
+const facts = [
+  {
+    label: { th: "ชื่อจริง", en: "Full name" },
+    value: girlfriend.fullName.th,
+    valueEn: girlfriend.fullName.en,
+  },
+  {
+    label: { th: "ชื่อเล่น", en: "Nickname" },
+    value: girlfriend.nickname.th,
+    valueEn: girlfriend.nickname.en,
+  },
+  {
+    label: { th: "วันเกิด", en: "Birthday" },
+    value: birthDateTh,
+    valueEn: birthDateEn,
+  },
+  {
+    label: { th: "อายุ", en: "Age" },
+    value: `${age} ปี`,
+    valueEn: `${age} years old`,
+  },
+  {
+    label: { th: "บ้านเกิด", en: "Hometown" },
+    value: girlfriend.hometown.th,
+    valueEn: girlfriend.hometown.en,
+  },
+  {
+    label: { th: "ราศี", en: "Star sign" },
+    value: `${sign.th} · ปี${zodiacTh[zodiacIndex]}`,
+    valueEn: `${sign.en} · Year of the ${zodiacEn[zodiacIndex]}`,
+  },
+];
+---
+
+<Base
+  title="แฟนของผม · My girlfriend | phumitch.space"
+  description="Who my girlfriend is — name, nickname, age and birthday."
+  ogImage="/works/zexta.avif"
+  noindex
+>
+  <div class="relative flex min-h-screen flex-col overflow-x-clip text-fg-body">
+    <SiteNav />
+
+    <main id="main" class="container-apple relative z-10 flex-1 pb-24 pt-20 sm:pt-28">
+      <div class="reveal mb-10 md:mb-14" data-reveal>
+        <BackHome />
+      </div>
+
+      <!-- ── Hero ─────────────────────────────────────────────────────── -->
+      <section class="grid grid-cols-1 items-center gap-10 md:grid-cols-[1.25fr_0.75fr] md:gap-14" data-reveal>
+        <div>
+          <p class="eyebrow">
+            <span data-lang="th">แฟนของผม</span>
+            <span data-lang="en">My girlfriend</span>
+          </p>
+
+          <h1 class="mt-4 text-[clamp(2.6rem,8vw,4.6rem)] font-semibold leading-[1.02] tracking-[-0.04em] text-fg">
+            <span data-lang="th" data-gf="name-th">{girlfriend.fullName.th}</span>
+            <span data-lang="en" data-gf="name-en">{girlfriend.fullName.en}</span>
+            <span class="mt-2 block text-[0.42em] font-medium tracking-[-0.02em] text-fg-muted">
+              <span data-lang="th" data-gf="nick-th">เรียกสั้น ๆ ว่า “{girlfriend.nickname.th}”</span>
+              <span data-lang="en" data-gf="nick-en">Known as “{girlfriend.nickname.en}”</span>
+            </span>
+          </h1>
+
+          <p class="mt-6 max-w-[560px] text-[15px] leading-relaxed text-fg-muted sm:text-[17px]">
+            <span data-lang="th" data-gf="bio-th">{girlfriend.bio.th}</span>
+            <span data-lang="en" data-gf="bio-en">{girlfriend.bio.en}</span>
+          </p>
+
+          <div class="mt-8 flex flex-wrap gap-2.5">
+            <span class="gf-chip">
+              <span class="gf-chip__k" data-lang="th">อายุ</span>
+              <span class="gf-chip__k" data-lang="en">Age</span>
+              <span class="gf-chip__v" data-gf="age">{age}</span>
+            </span>
+            <span class="gf-chip">
+              <span class="gf-chip__k" data-lang="th">วันเกิด</span>
+              <span class="gf-chip__k" data-lang="en">Birthday</span>
+              <span class="gf-chip__v" data-gf="birthday">{bd.getDate()} {MONTHS_EN[bd.getMonth()].slice(0, 3)}</span>
+            </span>
+            <span class="gf-chip">
+              <span class="gf-chip__k" data-lang="th">ราศี</span>
+              <span class="gf-chip__k" data-lang="en">Sign</span>
+              <span class="gf-chip__v">
+                <span data-lang="th" data-gf="sign-th">{sign.th}</span>
+                <span data-lang="en" data-gf="sign-en">{sign.en}</span>
+              </span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Portrait / monogram -->
+        <div class="relative mx-auto w-full max-w-[320px]">
+          <div class="gf-portrait" data-gf="portrait">
+            <div class="gf-portrait__glow" aria-hidden="true"></div>
+            {girlfriend.photo ? (
+              <img
+                src={girlfriend.photo}
+                alt={girlfriend.fullName.en}
+                width={520}
+                height={620}
+                loading="eager"
+                decoding="async"
+                class="size-full object-cover"
+              />
+            ) : (
+              <div class="gf-portrait__mono" aria-hidden="true">{initials}</div>
+            )}
+          </div>
+          <p
+            class="mt-4 text-center text-[11px] font-semibold uppercase tracking-[0.18em] text-fg-dim"
+            data-gf="since-wrap"
+            style={since ? undefined : "display:none"}
+          >
+            <span data-lang="th" data-gf="since-th">ตั้งแต่วันที่ {sinceTh}</span>
+            <span data-lang="en" data-gf="since-en">Since {sinceEn}</span>
+          </p>
+        </div>
+      </section>
+
+      {girlfriend.isPlaceholder && (
+        <p class="mt-10 rounded-2xl border border-line bg-mist px-4 py-3 text-[13px] leading-relaxed text-fg-muted" data-gf="placeholder">
+          <span data-lang="th">
+            ตอนนี้เป็นข้อมูลตัวอย่าง — แก้ที่ <code>/admin</code> แท็บ “แฟน” แล้วติ๊ก
+            “ใช้ข้อมูลจริงแล้ว” เพื่อซ่อนข้อความนี้
+          </span>
+          <span data-lang="en">
+            This is placeholder data — edit it from <code>/admin</code> → “Girlfriend” and tick
+            “Using real data” to hide this note.
+          </span>
+        </p>
+      )}
+
+      <!-- ── Facts ────────────────────────────────────────────────────── -->
+      <section class="mt-20 sm:mt-28" data-reveal>
+        <p class="eyebrow">
+          <span data-lang="th">ข้อมูลสั้น ๆ</span>
+          <span data-lang="en">Quick facts</span>
+        </p>
+        <h2 class="headline mt-3 text-[30px] sm:text-[42px]">
+          <span data-lang="th">เธอเป็นใคร</span>
+          <span data-lang="en">Who she is</span>
+        </h2>
+
+        <dl class="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {facts.map((fact, i) => (
+            <div class="gf-fact">
+              <dt class="gf-fact__label">
+                <span data-lang="th">{fact.label.th}</span>
+                <span data-lang="en">{fact.label.en}</span>
+              </dt>
+              <dd class="mt-2 text-[16px] font-medium leading-snug text-fg sm:text-[17px]">
+                <span data-lang="th" data-gf={`fact-${i}-th`}>{fact.value}</span>
+                <span data-lang="en" data-gf={`fact-${i}-en`}>{fact.valueEn}</span>
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      <!-- ── Next birthday ────────────────────────────────────────────── -->
+      <section class="mt-4" data-reveal>
+        <div class="gf-countdown">
+          <div>
+            <p class="text-[11px] font-semibold uppercase tracking-[0.18em] text-fg-dim">
+              <span data-lang="th">วันเกิดครั้งถัดไป</span>
+              <span data-lang="en">Next birthday</span>
+            </p>
+            <p class="mt-2 text-[15px] leading-relaxed text-fg-body sm:text-[16px]">
+              <span data-lang="th">
+                อีก <strong class="text-fg" data-gf="days">-</strong> วัน — <span data-gf="next-date-th"></span>
+              </span>
+              <span data-lang="en">
+                <strong class="text-fg" data-gf="days-en">-</strong> days to go — <span data-gf="next-date-en"></span>
+              </span>
+            </p>
+          </div>
+          <div class="gf-countdown__num">
+            <span data-gf="countdown-age">{age}</span>
+            <span class="ml-1 text-[0.5em] font-medium text-fg-muted">
+              <span data-lang="th">ปี</span>
+              <span data-lang="en">yrs</span>
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Likes ────────────────────────────────────────────────────── -->
+      <section class="mt-20 sm:mt-28" data-reveal>
+        <p class="eyebrow">
+          <span data-lang="th">สิ่งที่เธอชอบ</span>
+          <span data-lang="en">A few of her favourite things</span>
+        </p>
+        <div class="mt-6 flex flex-wrap gap-2.5" data-gf="likes">
+          {girlfriend.likes.map((like) => (
+            <span class="gf-like">
+              <span data-lang="th">{like.th}</span>
+              <span data-lang="en">{like.en}</span>
+            </span>
+          ))}
+        </div>
+      </section>
+
+      <!-- ── CTA ──────────────────────────────────────────────────────── -->
+      <section class="mt-20 sm:mt-28" data-reveal>
+        <a href="/love" class="gf-cta group">
+          <span>
+            <span class="block text-[11px] font-semibold uppercase tracking-[0.18em] text-fg-dim">
+              <span data-lang="th">หน้าถัดไป</span>
+              <span data-lang="en">Next</span>
+            </span>
+            <span class="mt-1.5 block text-[20px] font-semibold tracking-[-0.02em] text-fg sm:text-[24px]">
+              <span data-lang="th">อ่านจดหมายถึงเธอ</span>
+              <span data-lang="en">Read the letter for her</span>
+            </span>
+          </span>
+          <span class="gf-cta__arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+              <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </span>
+        </a>
+      </section>
+    </main>
+  </div>
+</Base>
+
