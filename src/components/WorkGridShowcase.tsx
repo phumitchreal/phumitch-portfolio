@@ -5,7 +5,7 @@ import {
 } from "@phosphor-icons/react";
 import { dicts, L } from "../i18n.ts";
 import type { DBProject } from "../lib/portfolioData.ts";
-import { getProjectCover, isDesignWork } from "../lib/projectMedia.ts";
+import { getCoverSrcSet, getProjectCover, isDesignWork } from "../lib/projectMedia.ts";
 import DesignShowcase from "./DesignShowcase.tsx";
 import ImageLightbox from "./ImageLightbox.tsx";
 
@@ -124,6 +124,8 @@ export default function WorkGridShowcase({ initialWorks }: Props) {
               {cover ? (
                 <img
                   src={cover}
+                  srcSet={getCoverSrcSet(cover)}
+                  sizes="(min-width: 640px) 46vw, 92vw"
                   alt={work.title}
                   loading="lazy"
                   decoding="async"

@@ -146,6 +146,7 @@ export default function LogoBlurRow({ logos: rawLogos, desktopCount = 3, mobileC
                 rel={href ? "noopener noreferrer" : undefined}
                 aria-label={href ? `${name} — visit website` : undefined}
                 title={href ? `${name} — visit website` : undefined}
+                className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center"
                 initial={{ y: "40%", opacity: 0, filter: "blur(8px)" }}
                 animate={{ y: "0%", opacity: 1, filter: "blur(0px)" }}
                 exit={{ y: "-40%", opacity: 0, filter: "blur(8px)" }}

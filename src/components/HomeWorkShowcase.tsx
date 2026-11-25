@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ArrowUpRightIcon as ArrowUpRight, CaretRightIcon as CaretRight } from "@phosphor-icons/react";
 import { L } from "../i18n.ts";
 import type { DBProject } from "../lib/portfolioData.ts";
-import { getProjectCover, isDesignWork } from "../lib/projectMedia.ts";
+import { getCoverSrcSet, getProjectCover, isDesignWork } from "../lib/projectMedia.ts";
 import DesignShowcase from "./DesignShowcase.tsx";
 
 interface Props {
@@ -90,19 +90,6 @@ export default function HomeWorkShowcase({ initialWorks }: Props) {
   const rest = devWorks.filter((w) => w !== featured);
   const duo = rest.slice(0, 2);
   const trio = rest.slice(2);
-
-  // Preload the featured work cover so the first paint of / has it in cache.
-  const featuredCover = featured ? getProjectCover(featured) : undefined;
-  useEffect(() => {
-    if (!featuredCover || document.querySelector(`link[data-preload-cover="${featuredCover}"]`)) return;
-    const link = document.createElement("link");
-    link.rel = "preload";
-    link.as = "image";
-    link.href = featuredCover;
-    link.setAttribute("data-preload-cover", featuredCover);
-    document.head.appendChild(link);
-    return () => link.remove();
-  }, [featuredCover]);
 
   const getHostname = (url?: string) => {
     if (!url) return "";
@@ -245,7 +232,9 @@ export default function HomeWorkShowcase({ initialWorks }: Props) {
                       <div className="work-cover-frame relative aspect-[16/10] w-full overflow-hidden">
                         {featured.cover_url || featured.cover ? (
                           <img
-                            src={featured.cover_url || featured.cover}
+                            src={getProjectCover(featured)}
+                            srcSet={getCoverSrcSet(getProjectCover(featured))}
+                            sizes="(min-width: 1024px) 520px, 88vw"
                             alt={featured.title}
                             width={coverDims(featured).width}
                             height={coverDims(featured).height}
@@ -270,12 +259,14 @@ export default function HomeWorkShowcase({ initialWorks }: Props) {
           {/* TIER 2: THE DUO */}
           {duo.length > 0 && (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              {duo.map((w, idx) => (
+              {duo.map((w, idx) => {
+                const CardTag: any = w.href ? "a" : "div";
+                return (
                 <div key={w.id || w.title} data-reveal style={{ transitionDelay: `${idx * 100}ms` }}>
-                  <a
-                    href={w.href}
-                    target={w.href ? "_blank" : undefined}
-                    rel={w.href ? "noopener" : undefined}
+                  <CardTag
+                    {...(w.href
+                      ? { href: w.href, target: "_blank", rel: "noopener" }
+                      : {})}
                     className="group relative flex h-full flex-col justify-between overflow-hidden rounded-[28px] sm:rounded-[36px] bg-mist border border-line ring-1 ring-black/[0.04] dark:ring-white/[0.06] p-7 sm:p-9 shadow-sm transition-all duration-500 hover:bg-mist-strong hover:shadow-xl"
                   >
                     <div>
@@ -315,7 +306,9 @@ export default function HomeWorkShowcase({ initialWorks }: Props) {
                       <div className="work-cover-frame relative aspect-[16/10] w-full overflow-hidden transition-transform duration-500 ease-apple group-hover:scale-[1.03]">
                         {w.cover_url || w.cover ? (
                           <img
-                            src={w.cover_url || w.cover}
+                            src={getProjectCover(w)}
+                            srcSet={getCoverSrcSet(getProjectCover(w))}
+                            sizes="(min-width: 768px) 45vw, 88vw"
                             alt={w.title}
                             width={coverDims(w).width}
                             height={coverDims(w).height}
@@ -330,21 +323,24 @@ export default function HomeWorkShowcase({ initialWorks }: Props) {
                         )}
                       </div>
                     </div>
-                  </a>
+                  </CardTag>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
 
           {/* TIER 3: THE TRIO */}
           {trio.length > 0 && (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {trio.map((w, idx) => (
+              {trio.map((w, idx) => {
+                const CardTag: any = w.href ? "a" : "div";
+                return (
                 <div key={w.id || w.title} data-reveal style={{ transitionDelay: `${idx * 80}ms` }}>
-                  <a
-                    href={w.href}
-                    target={w.href ? "_blank" : undefined}
-                    rel={w.href ? "noopener" : undefined}
+                  <CardTag
+                    {...(w.href
+                      ? { href: w.href, target: "_blank", rel: "noopener" }
+                      : {})}
                     className="group relative flex h-full flex-col justify-between overflow-hidden rounded-[24px] sm:rounded-[28px] bg-mist border border-line ring-1 ring-black/[0.04] dark:ring-white/[0.06] p-6 sm:p-7 shadow-xs transition-all duration-400 hover:bg-mist-strong hover:shadow-lg"
                   >
                     <div>
@@ -384,7 +380,9 @@ export default function HomeWorkShowcase({ initialWorks }: Props) {
                       <div className="work-cover-frame relative aspect-[16/10] w-full overflow-hidden transition-transform duration-500 ease-apple group-hover:scale-[1.04]">
                         {w.cover_url || w.cover ? (
                           <img
-                            src={w.cover_url || w.cover}
+                            src={getProjectCover(w)}
+                            srcSet={getCoverSrcSet(getProjectCover(w))}
+                            sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 88vw"
                             alt={w.title}
                             width={coverDims(w).width}
                             height={coverDims(w).height}
@@ -399,9 +397,10 @@ export default function HomeWorkShowcase({ initialWorks }: Props) {
                         )}
                       </div>
                     </div>
-                  </a>
+                  </CardTag>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

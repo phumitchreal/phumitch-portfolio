@@ -6,12 +6,14 @@ import {
 } from "@phosphor-icons/react";
 import { L } from "../i18n.ts";
 import type { DBProject } from "../lib/portfolioData.ts";
-import { getProjectCover } from "../lib/projectMedia.ts";
+import { getCoverSrcSet, getProjectCover } from "../lib/projectMedia.ts";
 import ImageLightbox from "./ImageLightbox.tsx";
 
 interface Props {
   works: DBProject[];
 }
+
+const SLIDE_SIZES = "(min-width: 1200px) 1080px, 94vw";
 
 export default function DesignShowcase({ works }: Props) {
   const slides = useMemo(
@@ -35,6 +37,11 @@ export default function DesignShowcase({ works }: Props) {
     link.rel = "preload";
     link.as = "image";
     link.href = cover;
+    const srcSet = getCoverSrcSet(cover);
+    if (srcSet) {
+      link.setAttribute("imagesrcset", srcSet);
+      link.setAttribute("imagesizes", SLIDE_SIZES);
+    }
     document.head.appendChild(link);
     return () => link.remove();
   }, [cover]);
@@ -108,6 +115,8 @@ export default function DesignShowcase({ works }: Props) {
             <img
               key={current.id || current.title}
               src={cover || ""}
+              srcSet={getCoverSrcSet(cover)}
+              sizes={SLIDE_SIZES}
               alt={current.title}
               loading="lazy"
               decoding="async"

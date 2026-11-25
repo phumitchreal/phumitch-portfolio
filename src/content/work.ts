@@ -1,11 +1,3 @@
-import type { ImageMetadata } from "astro";
-import zextaCover from "../assets/works/zexta.avif";
-import figurathCover from "../assets/works/figurath.avif";
-import phumitchCover from "../assets/works/phumitch.avif";
-import studioLolCover from "../assets/works/studio-lol.avif";
-import fuyuriCover from "../assets/works/fuyuri.avif";
-import avenLabsCover from "../assets/works/aven-labs.avif";
-
 export type WorkCategory = "bot" | "website" | "community" | "design";
 
 export type Work = {
@@ -19,9 +11,8 @@ export type Work = {
   role: string;
   roleTh: string;
   monogram: string;
-  /** Optional cover image (drop files in src/assets/works/ and import here).
-   *  When absent, WorkCover renders the tokenized CSS cover instead. */
-  cover?: ImageMetadata;
+  /** Optional cover image: a public path under /works (already AVIF-optimized). */
+  cover?: string;
   featured?: boolean;
 };
 
@@ -37,7 +28,7 @@ export const works: Work[] = [
     role: "Studio · Full-stack",
     roleTh: "สตูดิโอ · Full-stack",
     monogram: "Zx",
-    cover: zextaCover,
+    cover: "/works/zexta.avif",
     featured: true,
   },
   {
@@ -51,7 +42,7 @@ export const works: Work[] = [
     role: "Design + Build",
     roleTh: "ออกแบบและพัฒนา",
     monogram: "Fu",
-    cover: fuyuriCover,
+    cover: "/works/fuyuri.avif",
   },
   {
     title: "Aven Labs",
@@ -64,7 +55,7 @@ export const works: Work[] = [
     role: "Design + Build",
     roleTh: "ออกแบบและพัฒนา",
     monogram: "Av",
-    cover: avenLabsCover,
+    cover: "/works/aven-labs.avif",
   },
   {
     title: "FiguraTH",
@@ -77,7 +68,7 @@ export const works: Work[] = [
     role: "Community · Docs",
     roleTh: "คอมมูนิตี้ · เอกสาร",
     monogram: "Fg",
-    cover: figurathCover,
+    cover: "/works/figurath.avif",
   },
   {
     title: "phumitch.space",
@@ -90,7 +81,7 @@ export const works: Work[] = [
     role: "Personal site · design + build",
     roleTh: "เว็บส่วนตัว · ออกแบบและพัฒนา",
     monogram: "P.",
-    cover: phumitchCover,
+    cover: "/works/phumitch.avif",
   },
   {
     title: "studio.lol",
@@ -102,7 +93,7 @@ export const works: Work[] = [
     role: "Community · Bot",
     roleTh: "คอมมูนิตี้ · บอท",
     monogram: "sl",
-    cover: studioLolCover,
+    cover: "/works/studio-lol.avif",
   },
   {
     title: "Campaign Banner Series",
@@ -114,7 +105,7 @@ export const works: Work[] = [
     role: "Graphic Designer",
     roleTh: "กราฟิกเดเบิร์ต",
     monogram: "Cb",
-    cover: fuyuriCover,
+    cover: "/works/fuyuri.avif",
   },
   {
     title: "Brand Wordmark Kit",
@@ -126,6 +117,6 @@ export const works: Work[] = [
     role: "Illustrator",
     roleTh: "ออกแบะภาพ",
     monogram: "Lk",
-    cover: zextaCover,
+    cover: "/works/zexta.avif",
   },
 ];
